@@ -116,42 +116,6 @@
         .publish-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .publish-content-pad { padding-bottom: 80px; }
 
-        /* Sold banner (shown to everyone once status === 'sold') */
-        .sold-banner {
-            background: #0d1a12;
-            border-bottom: 2px solid var(--green);
-            padding: 14px 20px;
-            text-align: center;
-        }
-        .sold-banner-title {
-            font-size: 0.85rem; font-weight: 800; color: var(--green);
-            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px;
-        }
-        .sold-banner-sub {
-            font-size: 0.78rem; color: #94a3b8; line-height: 1.4;
-        }
-
-        /* Seller-only "mark as sold" bar — shown when a valid edit token is in the URL */
-        .sold-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 998;
-            background: #0f0f0f;
-            border-top: 2px solid #3d3d3d;
-            padding: 14px 20px;
-            display: flex; align-items: center; gap: 12px;
-        }
-        .sold-bar-text { flex: 1; font-size: 0.78rem; color: #94a3b8; }
-        .sold-bar-text strong { color: white; display: block; font-size: 0.88rem; }
-        .sold-btn {
-            background: transparent;
-            color: var(--cream); border: 1px solid #4b5563; border-radius: 12px;
-            padding: 14px 22px; font-family: inherit;
-            font-size: 0.9rem; font-weight: 700;
-            cursor: pointer; white-space: nowrap;
-            transition: filter 0.15s;
-        }
-        .sold-btn:hover { border-color: var(--green); color: var(--green); }
-        .sold-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
         /* Content */
         .content { max-width: 640px; margin: 0 auto; padding: 24px 20px 60px; }
 
@@ -381,12 +345,6 @@
     <div class="preview-banner-sub">Only you can see this link. The listing won't appear in search until you publish.</div>
 </div>
 
-<!-- Sold banner — shown by JS when status === 'sold' -->
-<div id="soldBanner" class="sold-banner" style="display:none;">
-    <div class="sold-banner-title">&#9989; Sold</div>
-    <div class="sold-banner-sub">This vehicle is no longer available. It's been removed from Motor-Oid search.</div>
-</div>
-
 <nav class="back-nav">
     <a href="/browse">&#8592; Browse listings</a>
     <button onclick="window.print()" style="background:none;border:none;cursor:pointer;color:var(--silver);font-size:0.82rem;font-family:'Outfit',sans-serif;min-height:0;padding:0;">&#128247; Print</button>
@@ -528,36 +486,6 @@
     <button class="publish-btn" id="publishBtn" onclick="publishListing()">Publish →</button>
 </div>
 
-<!-- Mark-as-sold bar — shown by JS when a valid seller edit/removal token (?token=) is in the URL -->
-<div id="soldBar" class="sold-bar" style="display:none;">
-    <div class="sold-bar-text">
-        <strong>Sold the car?</strong>
-        Marks it sold and takes it out of Motor-Oid search.
-    </div>
-    <button class="sold-btn" id="soldBtn" onclick="markAsSold()">Mark as sold</button>
-</div>
-
-<!-- Mark-as-sold confirm overlay -->
-<div id="soldConfirmOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:#0f0f0f; overflow-y:auto;">
-    <div style="max-width:520px; margin:0 auto; padding:48px 24px 60px;">
-        <div style="text-align:center; margin-bottom:28px;">
-            <div style="font-size:3.5rem; margin-bottom:16px;">&#9989;</div>
-            <h2 style="font-family:'Caveat',cursive; font-size:2.6rem; color:var(--green); margin-bottom:0; line-height:1.1;">Sold it? Nice one.</h2>
-        </div>
-        <div style="background:#0d1a12; border:2px solid #22c55e; border-radius:16px; padding:28px 24px; margin-bottom:32px; font-family:'Outfit',sans-serif; font-size:1rem; line-height:1.8; color:#e2e8f0;">
-            <p>Marking this sold takes it off Motor-Oid search straight away.</p>
-            <p style="margin-top:6px;">Buyers won't be able to find or contact you about it any more.</p>
-            <p style="margin-top:18px; color:#fbbf24; font-weight:700;">This can't be undone from here — you'd need to list it again from scratch.</p>
-        </div>
-        <button onclick="confirmMarkAsSold()" id="confirmSoldBtn" style="width:100%; background:linear-gradient(135deg,#22c55e,#16a34a); color:#0f0f0f; font-weight:800; padding:18px 20px; border-radius:12px; border:none; cursor:pointer; font-family:'Outfit',sans-serif; font-size:1rem; margin-bottom:12px; letter-spacing:0.01em;">
-            Yes — mark it sold
-        </button>
-        <button onclick="document.getElementById('soldConfirmOverlay').style.display='none'" style="width:100%; background:transparent; color:#94a3b8; font-weight:600; padding:14px 20px; border-radius:12px; border:1px solid #3d3d3d; cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.95rem;">
-            Wait — not yet
-        </button>
-    </div>
-</div>
-
 <!-- Hard-stop confirm overlay — operator must confirm payment before listing goes live -->
 <div id="hardStopOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:#0f0f0f; overflow-y:auto;">
     <div style="max-width:520px; margin:0 auto; padding:48px 24px 60px;">
@@ -599,9 +527,7 @@ try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) 
 
 const slug = window.location.pathname.split('/').pop() || window.location.pathname.split('/').slice(-2)[0];
 const publishToken = new URLSearchParams(window.location.search).get('pt') || '';
-const editToken = new URLSearchParams(window.location.search).get('token') || '';
 let listingHeadlineGlobal = 'Vehicle listing';
-let listingStatusGlobal = '';
 
 async function loadListing() {
     if (!slug || !sb) { showError(); return; }
@@ -611,12 +537,10 @@ async function loadListing() {
             .from('motor_listings')
             .select('*')
             .eq('slug', slug)
-            .in('status', ['active', 'preview', 'sold'])
+            .in('status', ['active', 'preview'])
             .single();
 
         if (error || !data) { showError(); return; }
-
-        listingStatusGlobal = data.status;
 
         if (data.status === 'preview') {
             const banner = document.getElementById('previewBanner');
@@ -640,18 +564,6 @@ async function loadListing() {
                 const printNote = document.getElementById('printFreeNote');
                 if (printNote) printNote.classList.add('is-preview');
             }
-        }
-
-        if (data.status === 'sold') {
-            document.getElementById('soldBanner').style.display = 'block';
-            // Sold — no point offering contact buttons for a car that's gone.
-            const contactCard = document.getElementById('contactCard');
-            if (contactCard) contactCard.style.display = 'none';
-        } else if (editToken) {
-            // Seller holding a valid-looking edit/removal token — offer the mark-as-sold bar.
-            // The token itself is verified server-side when they actually confirm.
-            document.getElementById('soldBar').style.display = 'flex';
-            document.getElementById('listingContent').classList.add('publish-content-pad');
         }
 
         renderListing(data);
@@ -686,43 +598,6 @@ async function confirmAndPublish() {
         btn.disabled = false;
         btn.textContent = 'Publish →';
         alert('Could not publish: ' + e.message);
-    }
-}
-
-function markAsSold() {
-    document.getElementById('soldConfirmOverlay').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-async function confirmMarkAsSold() {
-    document.getElementById('soldConfirmOverlay').style.display = 'none';
-    const btn = document.getElementById('soldBtn');
-    const confirmBtn = document.getElementById('confirmSoldBtn');
-    if (btn) { btn.disabled = true; btn.textContent = 'Marking sold…'; }
-    if (confirmBtn) confirmBtn.disabled = true;
-
-    try {
-        const res = await fetch('/.netlify/functions/mark-listing-sold', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slug, token: editToken }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Could not mark as sold');
-
-        // Reflect the change in place — no need to refetch from Supabase.
-        listingStatusGlobal = 'sold';
-        document.getElementById('soldBar').style.display = 'none';
-        document.getElementById('previewBanner').style.display = 'none';
-        document.getElementById('publishBar').style.display = 'none';
-        document.getElementById('soldBanner').style.display = 'block';
-        const contactCard = document.getElementById('contactCard');
-        if (contactCard) contactCard.style.display = 'none';
-    } catch (e) {
-        if (btn) { btn.disabled = false; btn.textContent = 'Mark as sold'; }
-        if (confirmBtn) confirmBtn.disabled = false;
-        alert('Could not mark as sold: ' + e.message);
     }
 }
 
