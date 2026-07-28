@@ -120,11 +120,7 @@ Injects the top banner + a self-contained join modal (3 tier cards → Patreon) 
 
 ## Not yet built
 
-- ~~Mark as sold~~ — wired up: `listing.html` shows a "Mark as sold" button when the
-  URL carries the seller's existing delete_token (same token edit.html already uses)
-  and the listing is active; `functions/mark-listing-sold.js` verifies the token and
-  flips `status` to `sold`, which drops it out of `browse.html`'s `status = 'active'`
-  query immediately. Remove-listing (as opposed to mark-sold) is still unbuilt.
+- Mark as sold / remove listing (delete token already generated, not wired)
 - An actual composited-image watermark for preview listings
 
 ---

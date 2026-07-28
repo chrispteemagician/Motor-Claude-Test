@@ -105,9 +105,10 @@
         </div>
 
         <a id="viewListingLink" href="#" target="_blank" rel="noopener"
-           style="display:block; text-align:center; background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); border-radius:10px; padding:12px; margin-bottom:20px; font-weight:700; color:var(--accent); font-size:0.9rem;">
+           style="display:block; text-align:center; background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); border-radius:10px; padding:12px; margin-bottom:6px; font-weight:700; color:var(--accent); font-size:0.9rem;">
             &#128065; View live listing &rarr;
         </a>
+        <p style="text-align:center; color:#555; font-size:0.78rem; margin-bottom:20px;">Sold the car? Open the live listing above &mdash; there's a &quot;Mark as sold&quot; button at the bottom.</p>
 
         <div class="card">
             <p style="font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:16px;">Price &amp; Contact</p>
@@ -185,7 +186,7 @@ try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) 
 const pathParts = window.location.pathname.replace(/\/$/, '').split('/');
 const slug  = pathParts[pathParts.length - 1];
 const token = new URLSearchParams(window.location.search).get('token') || '';
-const listingUrl = `https://motor-oid.co.uk/listing/${slug}`;
+const listingUrl = `https://motor-oid.co.uk/listing/${slug}?token=${encodeURIComponent(token)}`;
 
 function show(id) {
     ['loadingState','errorState','editState','successState'].forEach(s => {
