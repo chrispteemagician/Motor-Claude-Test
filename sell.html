@@ -749,6 +749,7 @@
             <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="printListingFlyer()">&#128424;&#65039; Print windscreen page &mdash; free</button>
             <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="downloadListingHTML()">&#128190; Save page to phone</button>
             <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="openEditPage()">&#9998; Edit listing &mdash; change price, contact or defects</button>
+            <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="openListingWithToken()">&#9989; Sold it? Mark as sold</button>
 
             <div class="delete-token-box" style="margin-top:20px;">
                 <p style="margin-bottom:6px;"><strong>&#128274; Save this removal code</strong></p>
@@ -1911,6 +1912,14 @@ function openEditPage() {
     const slug  = listingUrl.split('/').pop();
     const token = document.getElementById('doneToken').textContent.trim();
     window.open(`/edit/${slug}?token=${encodeURIComponent(token)}`, '_blank');
+}
+
+function openListingWithToken() {
+    // Same removal/edit token as openEditPage() above — listing.html shows a
+    // "Mark as sold" button when it sees this token and the listing is active.
+    const slug  = listingUrl.split('/').pop();
+    const token = document.getElementById('doneToken').textContent.trim();
+    window.open(`/listing/${slug}?token=${encodeURIComponent(token)}`, '_blank');
 }
 
 function buildListingFlyerHTML() {

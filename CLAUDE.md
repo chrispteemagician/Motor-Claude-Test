@@ -17,6 +17,8 @@ UK private car marketplace. Sellers list direct to buyers — no dealer step, no
 - Patreon only for recurring memberships — no Stripe/BMAC/Ko-fi subscriptions.
 - Deploy = `git push` to `main` → Netlify auto-deploys. Never drag-to-Netlify. `git pull` before every push.
 - AGPL v3 licence — keep the `LICENSE` file.
+- **Before shipping anything that could break the live build:** push a backup branch to the remote first (the session container is ephemeral — a local commit alone is not a safety net), commit locally as you go without pushing after every step, then ask "anything else before I push?" once and push+merge to `main` in the same motion. Afterwards, confirm the push actually landed on `main` (check `git remote show origin`'s HEAD branch) — a feature-branch push alone doesn't count as shipped. Commit messages must be specific enough to locate the change in history later, not generic ("Update sell.html" is not one).
+- **An open-ended or ambiguous instruction** ("improve the sell flow", a one-liner with no spec) means clarify scope before writing code — don't guess-and-build.
 - No new domain purchases — new pages use `.netlify.app`; existing `.co.uk` domains are kept.
 - Don't gate core tools (Spanner Jack analysis, Quick Check, Engine Ears) behind Patreon. Listing fees (£15/£25, real commerce) are the one thing that's genuinely paid — see Pricing below.
 - `PAYMENT_ENABLED = true` in `sell.html` is live and intentional. Don't flip it without confirming first.
@@ -118,7 +120,11 @@ Injects the top banner + a self-contained join modal (3 tier cards → Patreon) 
 
 ## Not yet built
 
-- Mark as sold / remove listing (delete token exists, not wired up)
+- ~~Mark as sold~~ — wired up: `listing.html` shows a "Mark as sold" button when the
+  URL carries the seller's existing delete_token (same token edit.html already uses)
+  and the listing is active; `functions/mark-listing-sold.js` verifies the token and
+  flips `status` to `sold`, which drops it out of `browse.html`'s `status = 'active'`
+  query immediately. Remove-listing (as opposed to mark-sold) is still unbuilt.
 - An actual composited-image watermark for preview listings
 
 ---
