@@ -116,41 +116,6 @@
         .publish-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .publish-content-pad { padding-bottom: 80px; }
 
-        /* Seller tools bar — mark as sold. Only ever shown when the URL carries the
-           seller's own removal/edit token (the same delete_token used by edit.html) and
-           the listing is currently active — see markAsSold() below. */
-        .seller-tools-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
-            background: #0f0f0f;
-            border-top: 2px solid var(--border);
-            padding: 14px 20px;
-            display: flex; align-items: center; gap: 12px;
-        }
-        .seller-tools-text { flex: 1; font-size: 0.78rem; color: #94a3b8; }
-        .seller-tools-text strong { color: white; display: block; font-size: 0.88rem; }
-        .btn-sold {
-            background: transparent;
-            border: 1px solid var(--red, #ef4444); color: #ef4444;
-            border-radius: 12px; padding: 14px 20px; font-family: inherit;
-            font-size: 0.92rem; font-weight: 700;
-            cursor: pointer; white-space: nowrap;
-            transition: background 0.15s;
-        }
-        .btn-sold:hover { background: rgba(239,68,68,0.1); }
-        .btn-sold:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .sold-banner {
-            background: rgba(34,197,94,0.08);
-            border-bottom: 2px solid #22c55e;
-            padding: 14px 20px;
-            text-align: center;
-        }
-        .sold-banner-title {
-            font-size: 0.85rem; font-weight: 800; color: #22c55e;
-            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px;
-        }
-        .sold-banner-sub { font-size: 0.78rem; color: #94a3b8; line-height: 1.4; }
-
         /* Content */
         .content { max-width: 640px; margin: 0 auto; padding: 24px 20px 60px; }
 
@@ -353,7 +318,7 @@
            windscreen for the world to read. */
         #printFreeNote { display: none; }
         @media print {
-            .back-nav, .jack-cta, .preview-banner, .seller-tools-bar, .sold-banner, .publish-bar { display: none !important; }
+            .back-nav, .jack-cta, .preview-banner { display: none !important; }
             body { background: #fff; color: #000; }
             .card, .card-accent { border-color: #ddd; background: #fff; }
             .listing-hero { background: #fff; }
@@ -378,12 +343,6 @@
 <div id="previewBanner" class="preview-banner" style="display:none;">
     <div class="preview-banner-title">Preview — not live yet</div>
     <div class="preview-banner-sub">Only you can see this link. The listing won't appear in search until you publish.</div>
-</div>
-
-<!-- Sold confirmation banner — shown after the seller taps Mark as sold below -->
-<div id="soldBanner" class="sold-banner" style="display:none;">
-    <div class="sold-banner-title">&#9989; Marked as sold</div>
-    <div class="sold-banner-sub">This listing no longer appears in Motor-Oid search. Nice one.</div>
 </div>
 
 <nav class="back-nav">
@@ -527,16 +486,6 @@
     <button class="publish-btn" id="publishBtn" onclick="publishListing()">Publish →</button>
 </div>
 
-<!-- Seller tools bar — shown by JS when the URL carries the seller's own removal/edit
-     token (same delete_token as edit.html) and the listing is currently active -->
-<div id="sellerToolsBar" class="seller-tools-bar" style="display:none;">
-    <div class="seller-tools-text">
-        <strong>Sold it?</strong>
-        Mark it sold — buyers won't see it in search any more.
-    </div>
-    <button class="btn-sold" id="markSoldBtn" onclick="markAsSold()">Mark as sold</button>
-</div>
-
 <!-- Hard-stop confirm overlay — operator must confirm payment before listing goes live -->
 <div id="hardStopOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:#0f0f0f; overflow-y:auto;">
     <div style="max-width:520px; margin:0 auto; padding:48px 24px 60px;">
@@ -578,7 +527,6 @@ try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) 
 
 const slug = window.location.pathname.split('/').pop() || window.location.pathname.split('/').slice(-2)[0];
 const publishToken = new URLSearchParams(window.location.search).get('pt') || '';
-const sellerToken = new URLSearchParams(window.location.search).get('token') || '';
 let listingHeadlineGlobal = 'Vehicle listing';
 
 async function loadListing() {
@@ -653,36 +601,6 @@ async function confirmAndPublish() {
     }
 }
 
-async function markAsSold() {
-    const sure = confirm("Mark this listing as sold? It'll disappear from Motor-Oid search straight away and buyers won't be able to find it any more.");
-    if (!sure) return;
-
-    const btn = document.getElementById('markSoldBtn');
-    btn.disabled = true;
-    btn.textContent = 'Marking as sold…';
-
-    try {
-        const res = await fetch('/.netlify/functions/mark-listing-sold', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slug, token: sellerToken }),
-        });
-
-        const data = await res.json();
-        if (!res.ok || !data.success) throw new Error(data.error || 'Could not mark as sold');
-
-        document.getElementById('sellerToolsBar').style.display = 'none';
-        document.getElementById('listingContent').classList.remove('publish-content-pad');
-        document.getElementById('soldBanner').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    } catch (e) {
-        btn.disabled = false;
-        btn.textContent = 'Mark as sold';
-        alert('Could not mark as sold — ' + e.message + '. Try again.');
-    }
-}
-
 function showError() {
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('errorState').style.display = 'block';
@@ -691,14 +609,6 @@ function showError() {
 function renderListing(data) {
     const v = data.vehicle || {};
     const headline = data.listing_headline || [v.year, v.make, v.model].filter(Boolean).join(' ');
-
-    // Seller tools — only for the seller holding their own removal/edit token (the same
-    // delete_token edit.html already authenticates with), and only while the listing is
-    // actually live to mark sold.
-    if (sellerToken && data.delete_token && sellerToken === data.delete_token && data.status === 'active') {
-        document.getElementById('sellerToolsBar').style.display = 'flex';
-        document.getElementById('listingContent').classList.add('publish-content-pad');
-    }
 
     // Update page title
     document.title = headline + ' | Motor-Oid';
