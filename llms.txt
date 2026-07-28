@@ -1,0 +1,50 @@
+# Motor-Oid
+
+> The honest vehicle marketplace. AI-powered tools for buyers and sellers. No middleman. No portal fees. Just transparency.
+
+## What Motor-Oid Does
+
+Motor-Oid is a UK vehicle marketplace built on honesty and equal power.
+
+**For buyers:** Spanner Jack — a fierce AI advisor that analyses used vehicles before you buy. Reads listings, spots red flags, checks MOT history, values the vehicle, asks the questions a mechanic would ask. Free forever. Anonymous — we see a question, not a person.
+
+**For sellers:** The Walkround — film a 2-minute walkaround of your vehicle, Spanner Jack reads the video, builds a professional listing page with honest condition report, specs, and valuation. QR code goes on the windscreen. Buyers call you direct. No middleman. No portal fees.
+
+**For operators (Spicy Hustlers):** A micro-agency model. Buy a credit bundle, film vehicles for sellers at £25 a vehicle, keep the margin. Your own hamlet page. Earn kudos. Build a reputation.
+
+## Pricing
+
+- List a vehicle: £15 (Villager member) / £25 (non-member)
+- Villager membership: £3/month (Patreon)
+- Founder membership: £15/month (Patreon) — own hamlet, 10 passes/month to gift
+- Operator bundles: 5 credits £50 / 10 credits £80 / 20 credits £140
+
+## The Village
+
+Motor-Oid is built around a village structure — garages, mechanics, and trusted sellers have hamlet pages. Members earn kudos. Founders earn their way up by contributing, not just paying.
+
+## Pages
+
+- [Home](https://motor-oid.co.uk/): Spanner Jack buyer tools + The Walkround seller flow
+- [Sell — The Walkround](https://motor-oid.co.uk/sell): Film your vehicle → AI listing → QR code → live in minutes
+- [Story](https://motor-oid.co.uk/story): Why Motor-Oid exists — "The game was rigged. Now you're armed."
+- [Dealers](https://motor-oid.co.uk/dealers): Live dealer directory with service filters
+- [Dealer join](https://motor-oid.co.uk/dealers/join): Dealer onboarding
+- [Spicy Hustler — Operators](https://motor-oid.co.uk/operators/join): Become a mobile vehicle listing agent
+- [Operator dashboard](https://motor-oid.co.uk/operators/dashboard): Credit balance, hamlet link, workflow guide
+- [Hamlet directory](https://motor-oid.co.uk/hamlet): Village pages for garages and mechanics
+- [GR Autos — Hamlet #001](https://motor-oid.co.uk/hamlet/gr-autos): Founding Garage — Gary & Glyn Rushent, Yate, Bristol
+
+## Philosophy
+
+Not the middleman — just transparency. Bad actors self-select out when they know the honest condition report is on the windscreen. Equal power for buyer and seller.
+
+Spanner Jack doesn't take a cut of your sale. Motor-Oid doesn't own your listing. Your page is yours.
+
+All searches are anonymous. We see a question, not a person.
+
+## About
+
+Part of the FeelFamous ecosystem — free AI tools for specialists, collectors, and personal sellers.
+Built by Chris P Taylor (Doc Strange / T333CPT). PLUR. World domination through kindness. One ember at a time.
+Contact: chris@chrisptee.com | motor-oid.co.uk

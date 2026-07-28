@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Vehicles | Motor-Oid</title>
+  <meta name="description" content="Find vehicles for sale near you. Honest sellers, Walkround-verified listings.">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --deep:   #0f0f0f;
+      --mid:    #181818;
+      --surface:#252525;
+      --accent: #f97316;
+      --silver: #b0bece;
+      --cream:  #e2e8f0;
+      --green:  #22c55e;
+      --amber:  #fbbf24;
+      --red:    #ef4444;
+      --border: #3d3d3d;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--deep);
+      color: var(--cream);
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; }
+
+    /* ── Nav ── */
+    .top-nav {
+      padding: 14px 20px;
+      border-bottom: 1px solid #222;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15,15,15,0.96);
+      backdrop-filter: blur(8px);
+    }
+    .top-nav .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1rem; color: var(--cream);
+      text-decoration: none;
+    }
+    .top-nav .brand img { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; }
+    .top-nav .brand span { color: var(--accent); }
+    .top-nav .sell-link {
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--accent); text-decoration: none;
+      padding: 7px 14px;
+      border: 1px solid rgba(249,115,22,0.4);
+      border-radius: 100px;
+      transition: background 0.15s;
+    }
+    .top-nav .sell-link:hover { background: rgba(249,115,22,0.1); }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      padding: 16px 16px 12px;
+      background: var(--deep);
+      border-bottom: 1px solid #1e1e1e;
+      position: sticky; top: 57px; z-index: 40;
+    }
+    .search-row {
+      display: flex; gap: 8px; align-items: center;
+      margin-bottom: 10px;
+    }
+    .search-input {
+      flex: 1;
+      background: var(--mid);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      color: var(--cream);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: #666; }
+    .near-me-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--mid);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      color: var(--silver);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+    .near-me-btn:hover { border-color: var(--accent); color: var(--cream); }
+    .near-me-btn.active {
+      background: rgba(34,197,94,0.1);
+      border-color: var(--green);
+      color: var(--green);
+    }
+    .near-me-btn .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+    .radius-row {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px;
+    }
+    .radius-row::-webkit-scrollbar { display: none; }
+    .radius-chip {
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--silver);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.82rem; font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .radius-chip.selected {
+      background: rgba(249,115,22,0.12);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .radius-chip:hover:not(.selected) { border-color: #555; color: var(--cream); }
+
+    /* ── Status bar ── */
+    .status-bar {
+      padding: 10px 16px 0;
+      font-size: 0.8rem;
+      color: #666;
+      min-height: 28px;
+    }
+    .status-bar strong { color: var(--silver); }
+
+    /* ── Grid ── */
+    .grid-wrap { padding: 12px 12px 80px; }
+    .listing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    @media (min-width: 540px)  { .listing-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
+    @media (min-width: 900px)  { .listing-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; } }
+
+    /* ── Card ── */
+    .listing-card {
+      background: var(--mid);
+      border: 1px solid #2a2a2a;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color 0.2s, transform 0.15s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    .listing-card:hover {
+      border-color: rgba(249,115,22,0.4);
+      transform: translateY(-2px);
+    }
+    .card-thumb {
+      position: relative;
+      aspect-ratio: 4/3;
+      background: #1a1a1a;
+      overflow: hidden;
+    }
+    .card-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .card-thumb .no-photo {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      color: #333;
+    }
+    .condition-badge {
+      position: absolute; top: 8px; right: 8px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .cond-Excellent { background: rgba(34,197,94,0.2); border: 1px solid rgba(34,197,94,0.5); color: var(--green); }
+    .cond-Good      { background: rgba(249,115,22,0.2); border: 1px solid rgba(249,115,22,0.5); color: var(--accent); }
+    .cond-Fair      { background: rgba(251,191,36,0.2); border: 1px solid rgba(251,191,36,0.5); color: var(--amber); }
+    .cond-Poor      { background: rgba(239,68,68,0.2);  border: 1px solid rgba(239,68,68,0.5);  color: var(--red); }
+
+    .traffic-light-dot {
+      position: absolute; bottom: 8px; left: 8px;
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .tl-green  { background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,0.7); }
+    .tl-amber  { background: var(--amber); box-shadow: 0 0 6px rgba(251,191,36,0.7); }
+    .tl-red    { background: var(--red);   box-shadow: 0 0 6px rgba(239,68,68,0.7); }
+
+    .card-body { padding: 10px 11px 12px; flex: 1; display: flex; flex-direction: column; }
+    .card-price {
+      font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .card-headline {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(0.95rem, 3vw, 1.15rem);
+      color: var(--cream);
+      line-height: 1.2;
+      margin-bottom: 6px;
+      flex: 1;
+    }
+    .card-meta {
+      font-size: 0.72rem;
+      color: #666;
+      display: flex; align-items: center; gap: 4px;
+      margin-top: auto;
+    }
+    .card-meta .sep { color: #333; }
+    .card-distance {
+      font-size: 0.72rem;
+      color: var(--green);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .card-distance.no-loc { color: #555; font-weight: 400; }
+
+    /* ── Skeleton ── */
+    .skeleton-card {
+      background: var(--mid);
+      border: 1px solid #222;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .skeleton-thumb {
+      aspect-ratio: 4/3;
+      background: linear-gradient(90deg, #1e1e1e 25%, #282828 50%, #1e1e1e 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton-body { padding: 10px 11px 12px; }
+    .skeleton-line {
+      height: 14px; border-radius: 6px; margin-bottom: 8px;
+      background: linear-gradient(90deg, #222 25%, #2c2c2c 50%, #222 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton-line.short { width: 55%; }
+    .skeleton-line.tall { height: 20px; }
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    /* ── Empty / Error states ── */
+    .centre-msg {
+      text-align: center; padding: 60px 20px;
+    }
+    .centre-msg .icon { font-size: 3rem; margin-bottom: 12px; display: block; }
+    .centre-msg h2 {
+      font-family: 'Caveat', cursive;
+      font-size: 1.8rem; margin-bottom: 8px;
+    }
+    .centre-msg p { color: var(--silver); font-size: 0.9rem; }
+    .centre-msg .try-wide {
+      margin-top: 16px;
+      display: inline-block;
+      padding: 10px 20px;
+      background: rgba(249,115,22,0.1);
+      border: 1px solid rgba(249,115,22,0.3);
+      border-radius: 100px;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    /* ── Location denied banner ── */
+    .loc-denied {
+      display: none;
+      margin: 0 16px 0;
+      padding: 10px 14px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 10px;
+      font-size: 0.8rem;
+      color: #f87171;
+    }
+
+    /* ── Sell CTA footer ── */
+    .sell-cta {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid #1a1a1a;
+    }
+    .sell-cta h3 {
+      font-family: 'Caveat', cursive;
+      font-size: 1.6rem; margin-bottom: 6px;
+    }
+    .sell-cta p { color: var(--silver); font-size: 0.85rem; margin-bottom: 20px; }
+    .btn-cta {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), #ea580c);
+      color: white; font-weight: 800;
+      padding: 14px 28px; border-radius: 14px;
+      font-size: 1rem; font-family: 'Outfit', sans-serif;
+      text-decoration: none;
+      transition: filter 0.15s;
+    }
+    .btn-cta:hover { filter: brightness(1.1); color: white; }
+  </style>
+</head>
+<body>
+
+<script src="/banner.js"></script>
+
+<!-- ── Nav ── -->
+<nav class="top-nav">
+  <a class="brand" href="/">
+    <img src="/logo.jpg" alt="Motor-Oid">
+    Motor<span>-Oid</span>
+  </a>
+  <a class="sell-link" href="/sell">Sell your car →</a>
+</nav>
+
+<!-- ── Toolbar ── -->
+<div class="toolbar">
+  <div class="search-row">
+    <input
+      class="search-input"
+      id="searchInput"
+      type="search"
+      placeholder="Search make, model, year..."
+      autocomplete="off"
+    >
+    <button class="near-me-btn" id="nearMeBtn" title="Find listings near you">
+      <span class="dot"></span> Near me
+    </button>
+  </div>
+  <div class="radius-row" id="radiusRow">
+    <button class="radius-chip selected" data-miles="5">5 miles</button>
+    <button class="radius-chip" data-miles="10">10 miles</button>
+    <button class="radius-chip" data-miles="25">25 miles</button>
+    <button class="radius-chip" data-miles="Infinity">Nationwide</button>
+  </div>
+  <div class="radius-row" id="categoryRow" style="margin-top:6px;">
+    <button class="radius-chip selected" data-cat="all">All listings</button>
+    <button class="radius-chip" data-cat="vehicle">🚗 Cars &amp; Vans</button>
+    <button class="radius-chip" data-cat="cbradio">📻 CB Radios</button>
+  </div>
+</div>
+
+<!-- ── Status bar ── -->
+<div class="status-bar" id="statusBar"></div>
+<div class="loc-denied" id="locDenied">Location access denied. Enable in browser settings, or browse nationwide.</div>
+
+<!-- ── Grid ── -->
+<div class="grid-wrap">
+  <div class="listing-grid" id="listingGrid">
+    <!-- skeleton cards while loading -->
+    <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line tall"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line tall"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line tall"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line tall"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+  </div>
+  <div id="emptyState" style="display:none;"></div>
+</div>
+
+<!-- ── Sell CTA ── -->
+<div class="sell-cta">
+  <h3>Got something to sell?</h3>
+  <p>Film a 2-minute walkaround for a car. Photo your CB radio. Honest listings, live in minutes.</p>
+  <a class="btn-cta" href="/sell" style="display:inline-block; width:auto; margin-bottom:10px;">🚗 Sell a vehicle →</a>
+  <br>
+  <a class="btn-cta" href="/sell-cb.html" style="display:inline-block; width:auto; background:transparent; border:1px solid rgba(249,115,22,0.5); color:var(--accent);">📻 List a CB radio →</a>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://pdnjeynugptnavkdbmxh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkbmpleW51Z3B0bmF2a2RibXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMTEzMDAsImV4cCI6MjA4NDU4NzMwMH0.GawisR01EykMtdauBMxenmHF2NXDMzDOJl8WgzkwFQo';
+
+let sb;
+try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+
+// Seller-submitted listing fields (headline, condition, make/model/location) are rendered
+// below via innerHTML — escape them so a crafted listing can't run script on this public page.
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+/* ── State ── */
+let allListings   = [];
+let userLat       = null;
+let userLng       = null;
+let locationActive = false;
+let radiusMiles   = 5;
+let searchQuery   = '';
+let categoryFilter = 'all';
+
+/* ── Elements ── */
+const grid       = document.getElementById('listingGrid');
+const emptyState = document.getElementById('emptyState');
+const statusBar  = document.getElementById('statusBar');
+const nearMeBtn  = document.getElementById('nearMeBtn');
+const searchInput = document.getElementById('searchInput');
+const locDenied  = document.getElementById('locDenied');
+
+/* ── Haversine distance (miles) ── */
+function milesApart(lat1, lng1, lat2, lng2) {
+  const R = 3958.8;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2)
+    + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180)
+    * Math.sin(dLng/2) * Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+/* ── Build card HTML ── */
+function conditionClass(cond) {
+  if (!cond) return '';
+  const c = cond.charAt(0).toUpperCase() + cond.slice(1).toLowerCase();
+  return 'cond-' + c;
+}
+
+function trafficLightClass(tl) {
+  if (!tl) return '';
+  const t = (tl || '').toLowerCase();
+  if (t === 'green') return 'tl-green';
+  if (t === 'amber') return 'tl-amber';
+  if (t === 'red')   return 'tl-red';
+  return '';
+}
+
+function cardHtml(listing) {
+  const v   = listing.vehicle || {};
+  const slug = listing.slug;
+  const price = listing.price || v.asking_price || '';
+  // Seller-submitted fields — escaped before use, this is a public unauthenticated listing feed.
+  const headline = escapeHtml(listing.listing_headline || v.listing_headline
+    || [v.year, v.make, v.model].filter(Boolean).join(' ')
+    || 'Vehicle for sale');
+  const condition = escapeHtml(v.condition || '');
+  const cClass = conditionClass(v.condition || '');
+  const tlClass = trafficLightClass(v.traffic_light);
+  const trafficLightLabel = escapeHtml(v.traffic_light || '');
+  const location = escapeHtml(v.w3w_location ? '///' + v.w3w_location : (v.location || ''));
+  const make  = escapeHtml(v.make  || '');
+  const model = escapeHtml(v.model || '');
+  const year  = escapeHtml(v.year  || '');
+
+  // Thumbnail
+  const frames = listing.frames || [];
+  const isCB = (v.category === 'cbradio');
+  let thumbHtml = '<div class="no-photo">' + (isCB ? '📻' : '🚗') + '</div>';
+  if (frames.length > 0 && frames[0] && frames[0].data) {
+    thumbHtml = '<img src="data:image/jpeg;base64,' + frames[0].data + '" alt="' + headline + '" loading="lazy">';
+  }
+
+  // Condition badge
+  const badgeHtml = cClass
+    ? '<span class="condition-badge ' + cClass + '">' + condition + '</span>'
+    : '';
+
+  // Traffic light
+  const tlHtml = tlClass
+    ? '<span class="traffic-light-dot ' + tlClass + '" title="Disclosure: ' + trafficLightLabel + '"></span>'
+    : '';
+
+  // Distance
+  let distHtml = '';
+  if (locationActive && listing._distance !== undefined) {
+    if (listing._distance < Infinity) {
+      const d = listing._distance < 1
+        ? (listing._distance * 5280).toFixed(0) + ' ft away'
+        : listing._distance.toFixed(1) + ' miles away';
+      distHtml = '<div class="card-distance">' + d + '</div>';
+    } else {
+      distHtml = '<div class="card-distance no-loc">' + (location || 'Location not stored') + '</div>';
+    }
+  } else if (location) {
+    distHtml = '<div class="card-meta"><span>' + location + '</span></div>';
+  }
+
+  // Meta line
+  const metaParts = [make, model, year].filter(Boolean);
+  const metaHtml = metaParts.length
+    ? '<div class="card-meta">' + metaParts.join(' · ') + '</div>'
+    : '';
+
+  return '<a class="listing-card" href="/listing/' + slug + '">' +
+    '<div class="card-thumb">' +
+      thumbHtml + badgeHtml + tlHtml +
+    '</div>' +
+    '<div class="card-body">' +
+      (price ? '<div class="card-price">£' + price.toString().replace(/^£/, '') + '</div>' : '') +
+      '<div class="card-headline">' + headline + '</div>' +
+      metaHtml +
+      distHtml +
+    '</div>' +
+  '</a>';
+}
+
+/* ── Filter + render ── */
+function render() {
+  let results = allListings.slice();
+  const q = searchQuery.trim().toLowerCase();
+
+  // Category filter
+  if (categoryFilter !== 'all') {
+    results = results.filter(l => {
+      const cat = (l.vehicle || {}).category || 'vehicle';
+      return cat === categoryFilter;
+    });
+  }
+
+  // Text search
+  if (q) {
+    results = results.filter(l => {
+      const v = l.vehicle || {};
+      const searchable = [
+        l.listing_headline, v.listing_headline,
+        v.make, v.model, v.year, v.body_type, v.fuel_type, v.colour,
+        v.band, v.modes, v.accessories
+      ].filter(Boolean).join(' ').toLowerCase();
+      return searchable.includes(q);
+    });
+  }
+
+  // Attach distances if location active
+  if (locationActive && userLat !== null) {
+    results = results.map(l => {
+      const v = l.vehicle || {};
+      const lat = v.lat;
+      const lng = v.lng;
+      const dist = (lat && lng) ? milesApart(userLat, userLng, lat, lng) : Infinity;
+      return Object.assign({}, l, { _distance: dist });
+    });
+
+    // Radius filter — only applies to listings with a known location
+    if (radiusMiles < Infinity) {
+      results = results.filter(l => l._distance <= radiusMiles);
+    }
+
+    // Sort: by distance (unknown location goes last)
+    results.sort((a, b) => a._distance - b._distance);
+  }
+
+  // Render
+  if (results.length === 0) {
+    grid.innerHTML = '';
+    let msg = '';
+    if (locationActive && radiusMiles < Infinity) {
+      msg = '<div class="centre-msg">' +
+        '<span class="icon">🔍</span>' +
+        '<h2>Nothing nearby</h2>' +
+        '<p>No listings within ' + radiusMiles + ' miles right now.</p>' +
+        '<span class="try-wide" onclick="setRadius(Infinity)">Try nationwide →</span>' +
+      '</div>';
+    } else if (q) {
+      msg = '<div class="centre-msg">' +
+        '<span class="icon">🔍</span>' +
+        '<h2>No matches for "' + q + '"</h2>' +
+        '<p>Try a different make or model.</p>' +
+      '</div>';
+    } else {
+      msg = '<div class="centre-msg">' +
+        '<span class="icon">🚗</span>' +
+        '<h2>No listings yet</h2>' +
+        '<p>Be the first to list a vehicle.</p>' +
+        '<a class="try-wide" href="/sell">Start a Walkround →</a>' +
+      '</div>';
+    }
+    emptyState.innerHTML = msg;
+    emptyState.style.display = 'block';
+  } else {
+    emptyState.style.display = 'none';
+    grid.innerHTML = results.map(cardHtml).join('');
+  }
+
+  // Status bar
+  const total = allListings.length;
+  const showing = results.length;
+  if (locationActive) {
+    const withLoc = results.filter(l => l._distance < Infinity).length;
+    statusBar.innerHTML = '<strong>' + showing + '</strong> listing' + (showing !== 1 ? 's' : '') +
+      (showing < total ? ' · filtered from ' + total : '') +
+      (withLoc < showing ? ' · ' + (showing - withLoc) + ' without location data' : '') +
+      ' · sorted by distance';
+  } else {
+    statusBar.innerHTML = '<strong>' + showing + '</strong> listing' + (showing !== 1 ? 's' : '') +
+      (total > 0 ? ' · newest first' : '');
+  }
+}
+
+/* ── Fetch listings ── */
+async function fetchListings() {
+  if (!sb) {
+    grid.innerHTML = '<div class="centre-msg"><span class="icon">⚠️</span><h2>Connection error</h2><p>Could not connect to database.</p></div>';
+    return;
+  }
+  try {
+    const { data, error } = await sb
+      .from('motor_listings')
+      .select('slug, vehicle, frames, price, listing_headline, created_at')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    allListings = data || [];
+    render();
+  } catch (err) {
+    console.error('fetch error', err);
+    grid.innerHTML = '<div class="centre-msg"><span class="icon">⚠️</span><h2>Could not load listings</h2><p>' + (err.message || 'Please try again.') + '</p></div>';
+  }
+}
+
+/* ── Near me ── */
+function requestLocation() {
+  if (!navigator.geolocation) {
+    locDenied.style.display = 'block';
+    locDenied.textContent = 'Geolocation is not supported by your browser.';
+    return;
+  }
+  nearMeBtn.textContent = '⏳ Locating...';
+  nearMeBtn.disabled = true;
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      userLat = pos.coords.latitude;
+      userLng = pos.coords.longitude;
+      locationActive = true;
+      locDenied.style.display = 'none';
+      nearMeBtn.innerHTML = '<span class="dot"></span> Near me';
+      nearMeBtn.classList.add('active');
+      nearMeBtn.disabled = false;
+      render();
+    },
+    err => {
+      nearMeBtn.innerHTML = '<span class="dot"></span> Near me';
+      nearMeBtn.disabled = false;
+      locDenied.style.display = 'block';
+      locDenied.textContent = err.code === 1
+        ? 'Location access denied. Enable in browser settings, or browse nationwide below.'
+        : 'Could not get your location. Try again.';
+    },
+    { timeout: 8000, maximumAge: 300000 }
+  );
+}
+
+function toggleLocation() {
+  if (locationActive) {
+    locationActive = false;
+    userLat = null; userLng = null;
+    nearMeBtn.classList.remove('active');
+    nearMeBtn.innerHTML = '<span class="dot"></span> Near me';
+    render();
+  } else {
+    requestLocation();
+  }
+}
+
+/* ── Radius chips ── */
+function setRadius(miles) {
+  radiusMiles = parseFloat(miles) || Infinity;
+  document.querySelectorAll('.radius-chip').forEach(chip => {
+    const val = chip.dataset.miles;
+    chip.classList.toggle('selected', parseFloat(val) === radiusMiles || (val === 'Infinity' && radiusMiles === Infinity));
+  });
+  render();
+}
+
+/* ── Events ── */
+nearMeBtn.addEventListener('click', toggleLocation);
+
+document.getElementById('radiusRow').addEventListener('click', e => {
+  const chip = e.target.closest('.radius-chip');
+  if (!chip || !chip.dataset.miles) return;
+  const miles = chip.dataset.miles === 'Infinity' ? Infinity : parseFloat(chip.dataset.miles);
+  setRadius(miles);
+  if (!locationActive) requestLocation();
+});
+
+document.getElementById('categoryRow').addEventListener('click', e => {
+  const chip = e.target.closest('.radius-chip');
+  if (!chip || !chip.dataset.cat) return;
+  categoryFilter = chip.dataset.cat;
+  document.querySelectorAll('#categoryRow .radius-chip').forEach(c => {
+    c.classList.toggle('selected', c.dataset.cat === categoryFilter);
+  });
+  render();
+});
+
+let searchTimer;
+searchInput.addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    searchQuery = e.target.value;
+    render();
+  }, 250);
+});
+
+/* ── Boot ── */
+fetchListings();
+</script>
+
+</body>
+</html>

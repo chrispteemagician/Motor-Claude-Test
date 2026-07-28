@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Your Listing | Motor-Oid</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --deep:    #0f0f0f;
+            --mid:     #1a1a1a;
+            --surface: #222;
+            --accent:  #f97316;
+            --silver:  #94a3b8;
+            --cream:   #e2e8f0;
+            --green:   #22c55e;
+            --red:     #ef4444;
+            --border:  #2d2d2d;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; background: var(--deep); color: var(--cream); min-height: 100vh; font-size: 17px; line-height: 1.7; }
+        a { color: var(--accent); text-decoration: none; }
+
+.back-nav { padding:14px 20px; border-bottom:1px solid #1e1e1e; display:flex; align-items:center; }
+        .back-nav a { color:var(--silver); font-size:0.85rem; display:inline-flex; align-items:center; gap:6px; }
+        .back-nav a:hover { color:var(--cream); }
+
+        .container { max-width:580px; margin:0 auto; padding:32px 20px 80px; }
+
+        .card { background:var(--mid); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:16px; }
+
+        label { font-weight:600; font-size:0.88rem; display:block; margin-bottom:5px; color:var(--silver); text-transform:uppercase; letter-spacing:0.04em; }
+        input[type="text"], input[type="tel"], input[type="email"], textarea {
+            width:100%; background:#111; border:1px solid var(--border); color:var(--cream);
+            border-radius:8px; padding:11px 14px; font-family:'Outfit',sans-serif;
+            font-size:0.95rem; transition:border-color 0.2s;
+        }
+        input:focus, textarea:focus { border-color:var(--accent); outline:none; }
+        .field { margin-bottom:16px; }
+        .field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+        .btn-primary { width:100%; background:var(--accent); color:#000; font-weight:700; padding:14px; border-radius:10px; border:none; cursor:pointer; font-family:'Outfit',sans-serif; font-size:1rem; min-height:48px; transition:opacity 0.2s; }
+        .btn-primary:hover:not(:disabled) { opacity:0.9; }
+        .btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
+        .btn-secondary { background:transparent; color:var(--silver); font-weight:600; padding:11px 20px; border-radius:10px; border:1px solid var(--border); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.9rem; min-height:48px; transition:all 0.2s; }
+        .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
+
+        .msg { padding:11px 15px; border-radius:8px; font-size:0.88rem; margin-top:10px; display:none; }
+        .msg.error   { background:rgba(239,68,68,0.1);  border:1px solid var(--red);   color:var(--red); }
+        .msg.success { background:rgba(34,197,94,0.1);  border:1px solid var(--green); color:var(--green); }
+        .msg.info    { background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.3); color:var(--accent); }
+
+        .centre { text-align:center; padding:80px 20px; }
+        .centre .icon { font-size:3rem; display:block; margin-bottom:16px; }
+        .centre h2 { font-family:'Caveat',cursive; font-size:2rem; margin-bottom:8px; }
+        .centre p { color:var(--silver); }
+
+        .success-box { text-align:center; padding:32px 0 20px; }
+        .success-box .tick { font-size:3rem; display:block; margin-bottom:12px; }
+        .success-box h2 { font-family:'Caveat',cursive; font-size:2.4rem; color:var(--accent); margin-bottom:8px; }
+        .success-box p { color:var(--silver); font-size:0.95rem; }
+        .btn-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; }
+
+        footer { text-align:center; padding:40px 20px 24px; border-top:1px solid #1a1a1a; color:#333; font-size:0.8rem; }
+        footer a { color:var(--accent); }
+
+        @media (max-width:420px) { .field-row { grid-template-columns:1fr; } .btn-row { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+
+<script src="/banner.js"></script>
+
+<nav class="back-nav">
+    <a href="/index.html">&#8592; Motor-Oid</a>
+</nav>
+
+<!-- Loading -->
+<div id="loadingState" class="centre">
+    <span class="icon">&#128295;</span>
+    <h2>Loading your listing&hellip;</h2>
+    <p>Just a moment.</p>
+</div>
+
+<!-- Error -->
+<div id="errorState" class="centre" style="display:none;">
+    <span class="icon">&#128274;</span>
+    <h2 id="errorTitle">Something went wrong</h2>
+    <p id="errorMsg" style="margin-bottom:20px;"></p>
+    <a href="/index.html" class="btn-secondary" style="display:inline-block; padding:12px 24px;">Back to Motor-Oid</a>
+</div>
+
+<!-- Edit form -->
+<div id="editState" style="display:none;">
+    <div class="container">
+
+        <div style="margin-bottom:28px;">
+            <h1 style="font-family:'Caveat',cursive; font-size:clamp(2rem,7vw,2.8rem); color:var(--cream); margin-bottom:6px;" id="editTitle">Edit Your Listing</h1>
+            <p style="color:var(--silver); font-size:0.9rem;">Your listing is live while you edit. Changes appear immediately.</p>
+            <p style="color:#555; font-size:0.78rem; margin-top:4px;">This is your 20% &mdash; double-check everything before saving.</p>
+        </div>
+
+        <a id="viewListingLink" href="#" target="_blank" rel="noopener"
+           style="display:block; text-align:center; background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); border-radius:10px; padding:12px; margin-bottom:20px; font-weight:700; color:var(--accent); font-size:0.9rem;">
+            &#128065; View live listing &rarr;
+        </a>
+
+        <div class="card">
+            <p style="font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:16px;">Price &amp; Contact</p>
+
+            <div class="field">
+                <label for="e_price">Asking Price &#163;</label>
+                <input type="text" id="e_price" placeholder="4,500">
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="e_phone">Contact Phone</label>
+                    <input type="tel" id="e_phone" placeholder="07700 900000">
+                </div>
+                <div class="field">
+                    <label for="e_email">Contact Email <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+                    <input type="email" id="e_email" placeholder="you@email.com">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <p style="font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:16px;">Known Defects &amp; Disclosure</p>
+
+            <div class="field">
+                <label for="e_defects">Known defects <span style="font-weight:400; text-transform:none;">(one per line)</span></label>
+                <textarea id="e_defects" rows="3" placeholder="Small dent on rear bumper.&#10;Rear wiper doesn't park correctly."></textarea>
+            </div>
+
+            <div class="field" style="margin-bottom:0;">
+                <label for="e_disclosure">Honest disclosure <span style="font-weight:400; text-transform:none;">(shown on listing)</span></label>
+                <textarea id="e_disclosure" rows="5" placeholder="What buyers need to know about this car&hellip;"></textarea>
+                <p style="font-size:0.75rem; color:#555; margin-top:4px;">Honest sellers find their buyers faster. You&apos;re responsible for accuracy.</p>
+            </div>
+        </div>
+
+        <div id="saveMsg" class="msg"></div>
+
+        <button class="btn-primary" id="saveBtn" onclick="saveChanges()">Save Changes &rarr;</button>
+
+    </div>
+</div>
+
+<!-- Success -->
+<div id="successState" style="display:none;">
+    <div class="container">
+        <div class="card">
+            <div class="success-box">
+                <span class="tick">&#9989;</span>
+                <h2>Listing updated.</h2>
+                <p>Your changes are live.</p>
+            </div>
+            <div class="btn-row">
+                <button class="btn-secondary" onclick="showEdit()">Edit again</button>
+                <a id="viewAfterSave" href="#" target="_blank" rel="noopener"
+                   class="btn-primary" style="display:flex; align-items:center; justify-content:center; text-decoration:none;">
+                    View listing &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <a href="/index.html">Motor-Oid</a> &middot; Part of <a href="https://feelfamous.co.uk" target="_blank" rel="noopener">FeelFamous</a><br>
+    <span style="margin-top:6px; display:block;">World domination through kindness. One ember at a time.</span>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://pdnjeynugptnavkdbmxh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkbmpleW51Z3B0bmF2a2RibXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMTEzMDAsImV4cCI6MjA4NDU4NzMwMH0.GawisR01EykMtdauBMxenmHF2NXDMzDOJl8WgzkwFQo';
+
+let sb;
+try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+
+const pathParts = window.location.pathname.replace(/\/$/, '').split('/');
+const slug  = pathParts[pathParts.length - 1];
+const token = new URLSearchParams(window.location.search).get('token') || '';
+const listingUrl = `https://motor-oid.co.uk/listing/${slug}`;
+
+function show(id) {
+    ['loadingState','errorState','editState','successState'].forEach(s => {
+        document.getElementById(s).style.display = s === id ? '' : 'none';
+    });
+}
+
+function showError(title, msg) {
+    document.getElementById('errorTitle').textContent = title;
+    document.getElementById('errorMsg').textContent   = msg;
+    show('errorState');
+}
+
+async function init() {
+    if (!slug || slug === 'edit') {
+        showError('No listing found', 'Check the link you were given and try again.');
+        return;
+    }
+    if (!token) {
+        showError('Missing removal code', 'You need your removal code to edit this listing. Check the saved page or email you received when you listed.');
+        return;
+    }
+    if (!sb) {
+        showError('Connection error', 'Could not connect to the database. Try refreshing.');
+        return;
+    }
+
+    try {
+        const { data, error } = await sb
+            .from('motor_listings')
+            .select('slug, delete_token, vehicle, price, contact_phone, contact_email, listing_headline')
+            .eq('slug', slug)
+            .single();
+
+        if (error || !data) { showError('Listing not found', 'This listing may have been removed, or the link is incorrect.'); return; }
+        if (data.delete_token !== token) { showError('Invalid removal code', 'The code in this link doesn\'t match this listing. Check you\'re using the right link.'); return; }
+
+        prefill(data);
+        show('editState');
+
+    } catch (e) {
+        showError('Something went wrong', 'Could not load listing. Try refreshing the page.');
+    }
+}
+
+function prefill(data) {
+    const v = data.vehicle || {};
+    const headline = data.listing_headline || [v.year, v.make, v.model].filter(Boolean).join(' ') || 'Your listing';
+
+    document.getElementById('editTitle').textContent = 'Edit: ' + headline;
+    document.getElementById('viewListingLink').href  = listingUrl;
+    document.getElementById('viewAfterSave').href    = listingUrl;
+
+    document.getElementById('e_price').value    = data.price        || '';
+    document.getElementById('e_phone').value    = data.contact_phone || '';
+    document.getElementById('e_email').value    = data.contact_email || '';
+    document.getElementById('e_defects').value  = (v.defects || []).join('\n');
+    document.getElementById('e_disclosure').value = v.disclosure_text || '';
+}
+
+async function saveChanges() {
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    showMsg('saveMsg', '', '');
+
+    try {
+        const res = await fetch('/.netlify/functions/update-listing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                slug,
+                token,
+                price:          document.getElementById('e_price').value.trim(),
+                contactPhone:   document.getElementById('e_phone').value.trim(),
+                contactEmail:   document.getElementById('e_email').value.trim(),
+                defects:        document.getElementById('e_defects').value.trim(),
+                disclosureText: document.getElementById('e_disclosure').value.trim(),
+            }),
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Save failed');
+
+        show('successState');
+
+    } catch (err) {
+        showMsg('saveMsg', 'Could not save changes — ' + err.message + '. Try again.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Changes →';
+    }
+}
+
+function showEdit() {
+    show('editState');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.innerHTML = text;
+    el.className = 'msg' + (type ? ' ' + type : '');
+    el.style.display = text ? 'block' : 'none';
+}
+
+init();
+</script>
+</body>
+</html>

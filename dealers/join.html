@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Join the Dealer Village | Motor-Oid</title>
+  <meta name="description" content="List your dealership on Motor-Oid — the transparent used car marketplace. Free directory listing. No middleman.">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep: #111318;
+      --mid: #1c1f27;
+      --card: #22262f;
+      --border: rgba(249,115,22,0.2);
+      --accent: #f97316;
+      --gold: #fbbf24;
+      --silver: #9ca3af;
+      --chrome: #d1d5db;
+      --green: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html { font-size: 18px; scroll-behavior: smooth; }
+    body { font-family: 'Outfit', sans-serif; background: var(--deep); color: #e2e8f0; overflow-x: hidden; }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1a1008 0%, #111318 60%, #0d0e12 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 20px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--silver); font-size: 0.8rem; text-decoration: none;
+      margin-bottom: 16px; position: relative;
+    }
+    .header-back:hover { color: var(--accent); }
+    .header h1 {
+      font-size: 1.8rem; font-weight: 900; color: white;
+      margin-bottom: 6px; position: relative;
+      line-height: 1.1;
+    }
+    .header h1 span { color: var(--accent); }
+    .header p { color: var(--silver); font-size: 0.85rem; position: relative; }
+
+    /* Body */
+    .body { max-width: 580px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    /* Pitch banner */
+    .pitch-banner {
+      background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(249,115,22,0.04));
+      border: 1px solid rgba(249,115,22,0.25);
+      border-radius: 18px; padding: 18px 20px;
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 20px;
+    }
+    .pitch-icon { font-size: 2.4rem; line-height: 1; flex-shrink: 0; }
+    .pitch-title { font-size: 0.95rem; font-weight: 700; color: var(--accent); }
+    .pitch-sub { font-size: 0.78rem; color: var(--silver); margin-top: 3px; line-height: 1.4; }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      font-size: 1rem; font-weight: 800; color: white;
+      margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+    }
+    .card h2 span { color: var(--accent); }
+
+    /* Fields */
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 0.72rem; font-weight: 700;
+      color: var(--silver); text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .field.required label::after { content: ' *'; color: var(--accent); }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 14px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif; font-size: 0.95rem;
+      color: #e2e8f0; outline: none; transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--accent);
+    }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(156,163,175,0.5); }
+    .field select option { background: #1c1f27; color: #e2e8f0; }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    .row { display: flex; gap: 12px; }
+    .row .field { flex: 1; }
+
+    /* Services checkboxes */
+    .services-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .service-check {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 10px 12px;
+      cursor: pointer; transition: all 0.15s; user-select: none;
+    }
+    .service-check:hover { border-color: rgba(249,115,22,0.3); }
+    .service-check.checked {
+      border-color: var(--accent);
+      background: rgba(249,115,22,0.08);
+    }
+    .service-check input { display: none; }
+    .check-box {
+      width: 18px; height: 18px; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 5px; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .service-check.checked .check-box {
+      background: var(--accent); border-color: var(--accent);
+    }
+    .check-icon { color: white; font-size: 0.7rem; display: none; }
+    .service-check.checked .check-icon { display: block; }
+    .service-label { font-size: 0.8rem; color: var(--chrome); }
+
+    /* Tier cards */
+    .tier-card {
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 18px;
+      display: flex; gap: 14px; align-items: flex-start;
+      cursor: pointer; transition: all 0.15s; margin-bottom: 10px;
+    }
+    .tier-card:hover { border-color: rgba(249,115,22,0.3); }
+    .tier-card.selected {
+      border-color: var(--accent);
+      background: rgba(249,115,22,0.06);
+    }
+    .tier-radio {
+      width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50%; margin-top: 3px; flex-shrink: 0; transition: all 0.15s;
+    }
+    .tier-card.selected .tier-radio {
+      border-color: var(--accent); background: var(--accent);
+      box-shadow: inset 0 0 0 4px var(--card);
+    }
+    .tier-name { font-weight: 800; color: white; font-size: 0.95rem; }
+    .tier-price { color: var(--accent); font-weight: 700; font-size: 0.82rem; margin-top: 2px; }
+    .tier-badge {
+      display: inline-block; background: rgba(251,191,36,0.15);
+      color: var(--gold); font-size: 0.68rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px; border: 1px solid rgba(251,191,36,0.3);
+      text-transform: uppercase; letter-spacing: 0.05em; margin-left: 8px;
+    }
+    .tier-desc { color: var(--silver); font-size: 0.78rem; margin-top: 6px; line-height: 1.5; }
+    .tier-features { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .tier-feature {
+      font-size: 0.72rem; color: var(--chrome);
+      background: rgba(255,255,255,0.05); border-radius: 6px; padding: 3px 8px;
+    }
+
+    /* Submit */
+    .submit-btn {
+      width: 100%; padding: 18px;
+      background: linear-gradient(135deg, var(--accent), #ea580c);
+      color: white; border: none; border-radius: 14px;
+      font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 800;
+      cursor: pointer; transition: all 0.15s; min-height: 56px;
+    }
+    .submit-btn:active { transform: scale(0.98); opacity: 0.9; }
+    .submit-note {
+      text-align: center; font-size: 0.72rem; color: var(--silver);
+      margin-top: 12px; line-height: 1.5;
+    }
+
+    /* Success */
+    #successState { display: none; text-align: center; padding: 40px 20px; }
+    #successState.show { display: block; }
+    #formState.hide { display: none; }
+    .success-icon { font-size: 4rem; margin-bottom: 16px; }
+    .success-title { font-size: 1.6rem; font-weight: 900; color: white; margin-bottom: 8px; }
+    .success-sub { color: var(--silver); font-size: 0.88rem; line-height: 1.6; margin-bottom: 24px; }
+    .success-next {
+      background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.25);
+      border-radius: 16px; padding: 20px; text-align: left; margin-bottom: 20px;
+    }
+    .success-next h3 { color: var(--accent); font-size: 0.85rem; font-weight: 800; margin-bottom: 12px; }
+    .success-step {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 10px; font-size: 0.82rem; color: var(--chrome);
+    }
+    .step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); color: white;
+      font-size: 0.7rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .back-btn {
+      display: block; background: transparent; border: 2px solid rgba(249,115,22,0.4);
+      color: var(--accent); border-radius: 12px; padding: 14px;
+      font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700;
+      text-decoration: none; text-align: center; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--accent); background: rgba(249,115,22,0.08); }
+
+    /* Trust strip */
+    .trust-strip {
+      display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; color: var(--silver);
+    }
+    .trust-item span { color: var(--green); font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+<script src="/banner.js"></script>
+
+  <div class="header">
+    <a href="/" class="header-back">← Back to Motor-Oid</a>
+    <h1>🔧 Join the <span>Dealer Village</span></h1>
+    <p>Transparent listings. No middleman. Your customers already here.</p>
+  </div>
+
+  <div class="body">
+
+    <!-- Success State -->
+    <div id="successState">
+      <div class="success-icon">🏁</div>
+      <div class="success-title">You're in the Village</div>
+      <p class="success-sub">Doc will review your details and be in touch within 24 hours. Your listing will appear in the Motor-Oid dealer directory.</p>
+
+      <div class="success-next">
+        <h3>WHAT HAPPENS NEXT</h3>
+        <div class="success-step">
+          <div class="step-num">1</div>
+          <span>Doc reviews your details and confirms via WhatsApp</span>
+        </div>
+        <div class="success-step">
+          <div class="step-num">2</div>
+          <span>Your dealership appears in the Motor-Oid dealer directory</span>
+        </div>
+        <div class="success-step">
+          <div class="step-num">3</div>
+          <span>Founding Dealers get a dedicated hamlet page — Doc contacts you to build it</span>
+        </div>
+        <div class="success-step">
+          <div class="step-num">4</div>
+          <span>Your customers can find you when they search for local trusted dealers</span>
+        </div>
+      </div>
+
+      <a href="/" class="back-btn">← Back to Motor-Oid</a>
+    </div>
+
+    <!-- Form State -->
+    <div id="formState">
+
+      <div class="pitch-banner">
+        <div class="pitch-icon">🤝</div>
+        <div>
+          <div class="pitch-title">Not the middleman — just transparency</div>
+          <div class="pitch-sub">Motor-Oid lists your stock honestly. Buyers come educated. Your reputation does the selling.</div>
+        </div>
+      </div>
+
+      <div class="trust-strip">
+        <div class="trust-item"><span>✓</span> Free to list</div>
+        <div class="trust-item"><span>✓</span> No commission</div>
+        <div class="trust-item"><span>✓</span> Verified badge</div>
+        <div class="trust-item"><span>✓</span> Cancel anytime</div>
+      </div>
+
+      <!-- The Consignment Play -->
+      <div class="card" style="border-color: rgba(251,191,36,0.3); background: linear-gradient(135deg, rgba(251,191,36,0.06), rgba(249,115,22,0.04));">
+        <h2 style="color: var(--gold);">&#128161; The play nobody else is making</h2>
+        <p style="font-size:0.88rem; color:var(--chrome); line-height:1.7; margin-bottom:14px;">
+          Your customer's part-ex is worth £8,000 to you. On the open market, it's worth £11,000 to them. You know it. They don't.
+        </p>
+        <p style="font-size:0.88rem; color:var(--chrome); line-height:1.7; margin-bottom:14px;">
+          Tell them. List it for them right now &mdash; 30 seconds, done. When it sells, they walk back in with £11,000 in their pocket instead of leaving you a car you didn't really want.
+        </p>
+        <p style="font-size:0.88rem; color:var(--chrome); line-height:1.7; margin-bottom:14px;">
+          Bigger deposit. More expensive car. Larger finance deal. And they'll send every friend they've got.
+        </p>
+        <div style="border-top: 1px solid rgba(251,191,36,0.2); margin: 16px 0; padding-top: 16px;">
+          <p style="font-size:1rem; font-weight:800; color:var(--gold); margin-bottom:6px;">&ldquo;Better to lose a sale and gain a customer.&rdquo;</p>
+          <p style="font-size:0.78rem; color:var(--silver); line-height:1.6;">One Motor-Oid credit. Thirty seconds of filming. A customer for life who trusts you because you were the one dealer honest enough to tell them the truth.</p>
+        </div>
+        <div style="background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); border-radius:12px; padding:14px 16px; margin-top:4px;">
+          <p style="font-size:0.78rem; font-weight:700; color:var(--gold); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">How it works</p>
+          <p style="font-size:0.82rem; color:var(--chrome); line-height:1.6;">"I can list your car on Motor-Oid right now &mdash; takes 30 seconds. It goes live with a QR code for your windscreen. You sell it privately, get the real money, then come back and put it toward something you actually want." &nbsp;<span style="color:var(--silver);">That's it. That's the pitch.</span></p>
+        </div>
+      </div>
+      <!-- /The Consignment Play -->
+
+      <!-- Dealership Info -->
+      <div class="card">
+        <h2>🏢 Your <span>Dealership</span></h2>
+
+        <div class="field required">
+          <label>Dealership Name</label>
+          <input type="text" id="dealerName" placeholder="e.g. Beck Evans, First4Car...">
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Trading Name (if different)</label>
+            <input type="text" id="tradingName" placeholder="Optional">
+          </div>
+          <div class="field">
+            <label>Company Reg</label>
+            <input type="text" id="companyReg" placeholder="Optional">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field required">
+            <label>Town / City</label>
+            <input type="text" id="location" placeholder="e.g. Bristol, Manchester...">
+          </div>
+          <div class="field required">
+            <label>Postcode</label>
+            <input type="text" id="postcode" placeholder="e.g. BS1 1AA" style="text-transform:uppercase;">
+          </div>
+        </div>
+
+        <div class="field required">
+          <label>Contact Email</label>
+          <input type="email" id="contactEmail" placeholder="sales@yourgarage.co.uk">
+        </div>
+
+        <div class="field">
+          <label>Contact Phone</label>
+          <input type="tel" id="contactPhone" placeholder="e.g. 0117 123 4567">
+        </div>
+
+        <div class="field">
+          <label>Website</label>
+          <input type="url" id="website" placeholder="https://...">
+        </div>
+
+        <div class="field">
+          <label>Online Booking URL</label>
+          <input type="url" id="bookingUrl" placeholder="Optional — if you take test drive bookings online">
+        </div>
+
+        <div class="field">
+          <label>About Your Dealership (1–2 sentences)</label>
+          <textarea id="about" placeholder="What makes you different? What do your customers say about you?"></textarea>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div class="card">
+        <h2>🔧 <span>Services</span> You Offer</h2>
+        <div class="services-grid" id="servicesGrid">
+          <div class="service-check" onclick="toggleService(this, 'Used Cars')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">🚗 Used Cars</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'New Cars')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">✨ New Cars</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'Part Exchange')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">🔄 Part Exchange</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'Finance')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">💳 Finance</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'MOT & Servicing')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">🔩 MOT & Servicing</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'Bodywork & Paint')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">🎨 Bodywork & Paint</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'Valeting')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">🪣 Valeting</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'Electric & Hybrid')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">⚡ Electric & Hybrid</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'Prestige & Specialist')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">🏆 Prestige & Specialist</span>
+          </div>
+          <div class="service-check" onclick="toggleService(this, 'Commercial Vehicles')">
+            <input type="checkbox"><div class="check-box"><span class="check-icon">✓</span></div>
+            <span class="service-label">🚐 Commercial Vehicles</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tier -->
+      <div class="card">
+        <h2>📋 Choose Your <span>Listing</span></h2>
+
+        <div class="tier-card selected" id="tierFree" onclick="selectTier('free')">
+          <div class="tier-radio"></div>
+          <div>
+            <div class="tier-name">Free Directory Listing</div>
+            <div class="tier-price">Free forever — no catch</div>
+            <div class="tier-desc">Appear in the Motor-Oid dealer directory. Verified badge when confirmed. Buyers can find you by location and service.</div>
+          </div>
+        </div>
+
+        <div class="tier-card" id="tierFounding" onclick="selectTier('founding')">
+          <div class="tier-radio"></div>
+          <div>
+            <div class="tier-name">Founding Dealer <span class="tier-badge">⭐ Founding</span></div>
+            <div class="tier-price">£49/month — Doc contacts you to set up</div>
+            <div class="tier-desc">Everything in free, plus your own Motor-Oid hamlet page and live listings feed embedded on your page.</div>
+            <div class="tier-features">
+              <span class="tier-feature">Your own hamlet page</span>
+              <span class="tier-feature">Live stock feed</span>
+              <span class="tier-feature">Featured in directory</span>
+              <span class="tier-feature">Founding badge</span>
+              <span class="tier-feature">Direct setup with Doc</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="card">
+        <button class="submit-btn" id="submitBtn" onclick="submitJoin()">🔧 Join the Village — Free</button>
+        <p class="submit-note">Doc reviews every application personally. No spam, no selling your data, no algorithm.<br>Your details go directly to Doc via WhatsApp.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let selectedTier = 'free';
+    let selectedServices = new Set();
+
+    function toggleService(el, name) {
+      if (selectedServices.has(name)) {
+        selectedServices.delete(name);
+        el.classList.remove('checked');
+      } else {
+        selectedServices.add(name);
+        el.classList.add('checked');
+      }
+    }
+
+    function selectTier(tier) {
+      selectedTier = tier;
+      document.getElementById('tierFree').classList.toggle('selected', tier === 'free');
+      document.getElementById('tierFounding').classList.toggle('selected', tier === 'founding');
+      document.getElementById('submitBtn').textContent = tier === 'founding'
+        ? '⭐ Request Founding Dealer Setup'
+        : '🔧 Join the Village — Free';
+    }
+
+    function submitJoin() {
+      const name = document.getElementById('dealerName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const location = document.getElementById('location').value.trim();
+      const postcode = document.getElementById('postcode').value.trim();
+
+      if (!name || !email || !location || !postcode) {
+        alert('Please fill in your dealership name, location, postcode, and contact email.');
+        return;
+      }
+
+      const tradingName = document.getElementById('tradingName').value.trim();
+      const companyReg = document.getElementById('companyReg').value.trim();
+      const phone = document.getElementById('contactPhone').value.trim();
+      const website = document.getElementById('website').value.trim();
+      const bookingUrl = document.getElementById('bookingUrl').value.trim();
+      const about = document.getElementById('about').value.trim();
+      const services = [...selectedServices].join(', ') || 'Not specified';
+      const tierLabel = selectedTier === 'founding' ? 'Founding Dealer (£49/mo)' : 'Free Directory Listing';
+
+      const lines = [
+        'Motor-Oid Dealer Registration',
+        '',
+        `Dealership: ${name}`,
+        tradingName ? `Trading As: ${tradingName}` : null,
+        companyReg ? `Company Reg: ${companyReg}` : null,
+        `Location: ${location}, ${postcode}`,
+        `Email: ${email}`,
+        phone ? `Phone: ${phone}` : null,
+        website ? `Website: ${website}` : null,
+        bookingUrl ? `Booking URL: ${bookingUrl}` : null,
+        `Services: ${services}`,
+        `Tier: ${tierLabel}`,
+        about ? `\nAbout:\n${about}` : null,
+      ].filter(Boolean).join('\n');
+
+      window.open(`https://wa.me/447976884254?text=${encodeURIComponent(lines)}`, '_blank');
+
+      document.getElementById('formState').classList.add('hide');
+      document.getElementById('successState').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>

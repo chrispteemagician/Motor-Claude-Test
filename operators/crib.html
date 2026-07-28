@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motor-Oid — Quick Read</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f0f0f;
+    color: #f1f5f9;
+    font-family: 'Outfit', sans-serif;
+    padding: 24px 20px 48px;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap');
+
+  .note {
+    background: #1a1a1a;
+    border-left: 4px solid #f97316;
+    padding: 16px 18px;
+    border-radius: 8px;
+    margin-bottom: 28px;
+    font-size: 15px;
+    color: #94a3b8;
+    font-style: italic;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: #f97316;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .tagline {
+    font-size: 15px;
+    color: #94a3b8;
+    margin-bottom: 32px;
+  }
+
+  .section {
+    margin-bottom: 28px;
+  }
+
+  h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #f97316;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 16px;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+  }
+
+  .math {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0;
+  }
+
+  .math-cell {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .math-cell .amount {
+    font-size: 26px;
+    font-weight: 900;
+    color: #f1f5f9;
+    display: block;
+  }
+
+  .math-cell.profit .amount { color: #fbbf24; }
+
+  .math-cell .label {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 2px;
+    display: block;
+  }
+
+  .steps {
+    list-style: none;
+    counter-reset: steps;
+  }
+
+  .steps li {
+    counter-increment: steps;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+    font-size: 16px;
+  }
+
+  .steps li::before {
+    content: counter(steps);
+    background: #f97316;
+    color: #0f0f0f;
+    font-weight: 900;
+    font-size: 13px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .kindness {
+    background: #1a1a1a;
+    border: 1px solid #94a3b8;
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 15px;
+    color: #94a3b8;
+  }
+
+  .cta {
+    background: #f97316;
+    color: #0f0f0f;
+    font-weight: 900;
+    font-size: 18px;
+    text-align: center;
+    padding: 18px;
+    border-radius: 12px;
+    margin-top: 32px;
+    text-decoration: none;
+    display: block;
+  }
+
+  .url {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #94a3b8;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #222;
+    margin: 28px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="note">
+  Hi. I'm Chris. I'm autistic and I sometimes struggle to explain things when I'm excited. So I made this instead. It'll take you two minutes to read. Honest.
+</div>
+
+<h1>I can list your car on the internet in 30 seconds.</h1>
+<p class="tagline">Professional listing page. QR code for your windscreen. Done before you've finished your tea.</p>
+
+<hr>
+
+<div class="section">
+  <h2>Here's what happens</h2>
+  <ul class="steps">
+    <li>I film a 30-second walk-around of your car on my phone. Front, sides, inside — that's all the app needs.</li>
+    <li>My app (Motor-Oid) reads the video and builds a professional listing page — specs, photos, condition, everything.</li>
+    <li>I show you the page first. You see exactly what buyers will see. You decide if you're happy with it.</li>
+    <li>You say yes — it goes live. QR code on the windscreen. Buyers call you direct. No middleman.</li>
+  </ul>
+</div>
+
+<hr>
+
+<div class="section">
+  <h2>What it costs</h2>
+  <div class="math">
+    <div class="math-cell">
+      <span class="amount">You first</span>
+      <span class="label">See it before it goes live</span>
+    </div>
+    <div class="math-cell">
+      <span class="amount">£25</span>
+      <span class="label">Per car after that</span>
+    </div>
+    <div class="math-cell profit">
+      <span class="amount">Your page</span>
+      <span class="label">Yours to keep. Forever.</span>
+    </div>
+    <div class="math-cell">
+      <span class="amount">QR</span>
+      <span class="label">On the windscreen. Live now.</span>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="section">
+  <h2>What you get</h2>
+  <p>✓ A real web page with your car's full details</p>
+  <p>✓ A QR code to print and stick on the windscreen</p>
+  <p>✓ Buyers call you directly — no portal fees, no middlemen</p>
+  <p>✓ Honest condition report (good for you legally too)</p>
+  <p>✓ Tips on what to fix to get a better price — or what to just disclose</p>
+</div>
+
+<hr>
+
+<div class="section">
+  <h2>One thing to know</h2>
+  <p>Motor-Oid doesn't take a cut of your sale. It's not a portal. Your listing is yours. We just build the page and get out of the way.</p>
+  <p style="color:#94a3b8; font-size:14px; margin-top:8px;">Not the middleman — just transparency.</p>
+</div>
+
+<hr>
+
+<div class="kindness">
+  <strong style="color:#f1f5f9;">If you want to run this as a service</strong> — filming cars for other sellers at £10–£25 a car, you set the rate — there's a bundle for that too. You keep £5–£20 per car depending on what you charge. Your own page on the site. More info at the link below.
+</div>
+
+<a href="https://motor-oid.co.uk" class="cta">See Motor-Oid →</a>
+<p class="url">motor-oid.co.uk</p>
+
+</body>
+</html>

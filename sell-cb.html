@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Your CB Radio | Motor-Oid</title>
+    <meta name="description" content="List your CB radio honestly. eBay said no — we said different. UK-spec, Ofcom-compliant kit only. Free to list this weekend.">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --deep:    #181818;
+            --mid:     #252525;
+            --surface: #2e2e2e;
+            --accent:  #f97316;
+            --silver:  #b0bece;
+            --cream:   #e2e8f0;
+            --green:   #22c55e;
+            --red:     #ef4444;
+            --border:  #3d3d3d;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--deep);
+            color: var(--cream);
+            min-height: 100vh;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+        a { color: var(--accent); text-decoration: none; }
+
+        .back-nav { padding: 14px 20px; border-bottom: 1px solid #2e2e2e; display: flex; align-items: center; }
+        .back-nav a { color: var(--silver); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; min-height: 0; }
+        .back-nav a:hover { color: var(--cream); }
+
+        .hero {
+            padding: 40px 20px 30px;
+            text-align: center;
+            border-bottom: 1px solid #2d2d2d;
+            background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.07) 0%, transparent 65%);
+        }
+        .hero-icon { font-size: 3.5rem; display: block; margin-bottom: 14px; }
+        .hero h1 { font-family: 'Caveat', cursive; font-size: clamp(2.2rem, 7vw, 3.5rem); color: var(--cream); margin-bottom: 8px; line-height: 1.1; }
+        .hero p { color: var(--silver); font-size: 0.95rem; max-width: 480px; margin: 0 auto; }
+        .ebay-banner {
+            margin: 14px auto 0;
+            max-width: 380px;
+            background: rgba(249,115,22,0.08);
+            border: 1px solid rgba(249,115,22,0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            color: var(--silver);
+            line-height: 1.5;
+        }
+        .ebay-banner strong { color: var(--accent); }
+
+        .step-bar {
+            display: flex; justify-content: center; gap: 6px;
+            margin-top: 20px; flex-wrap: wrap;
+        }
+        .step-dot {
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.04em; color: #666; padding: 4px 10px;
+            border: 1px solid #333; border-radius: 100px;
+            transition: all 0.2s;
+        }
+        .step-dot.active { color: var(--accent); border-color: rgba(249,115,22,0.5); background: rgba(249,115,22,0.08); }
+
+        .container { max-width: 580px; margin: 0 auto; padding: 20px; }
+
+        .step-section { display: none; }
+        .step-section.active { display: block; }
+
+        .card {
+            background: var(--mid);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .card-accent {
+            background: rgba(249,115,22,0.06);
+            border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            position: relative;
+        }
+        .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(249,115,22,0.04); }
+        .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
+        .upload-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        .upload-zone h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .upload-zone p { color: var(--silver); font-size: 0.85rem; }
+        .upload-zone .constraints { margin-top: 10px; font-size: 0.78rem; color: #888; }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .photo-thumb {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background: var(--surface);
+        }
+        .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-thumb .remove-btn {
+            position: absolute; top: 4px; right: 4px;
+            background: rgba(0,0,0,0.7); color: #fff;
+            border: none; border-radius: 50%;
+            width: 22px; height: 22px;
+            font-size: 0.7rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 3;
+        }
+
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block; font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--silver); margin-bottom: 6px;
+        }
+        .field input, .field select, .field textarea {
+            width: 100%; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 8px;
+            color: var(--cream); font-size: 1rem;
+            padding: 10px 12px; font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            outline: none; border-color: var(--accent);
+        }
+        .field select option { background: var(--surface); }
+        .field textarea { resize: vertical; min-height: 80px; }
+
+        .condition-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+        .condition-btn {
+            padding: 6px 14px; border-radius: 100px;
+            border: 1px solid var(--border); background: transparent;
+            color: var(--silver); font-size: 0.82rem; cursor: pointer;
+            transition: all 0.15s; font-family: inherit;
+        }
+        .condition-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(249,115,22,0.1); }
+
+        .compliance-box {
+            background: rgba(34,197,94,0.06);
+            border: 1px solid rgba(34,197,94,0.25);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .compliance-box label {
+            display: flex; gap: 12px; cursor: pointer;
+            font-size: 0.88rem; color: var(--cream); line-height: 1.5;
+            text-transform: none; letter-spacing: 0;
+        }
+        .compliance-box input[type="checkbox"] {
+            width: 20px; height: 20px; min-width: 20px;
+            accent-color: var(--green); cursor: pointer;
+            flex-shrink: 0; margin-top: 2px;
+        }
+
+        .w3w-result {
+            display: none; margin-top: 10px;
+            background: rgba(249,115,22,0.06);
+            border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 8px; padding: 10px 14px;
+            align-items: center; gap: 10px;
+        }
+        .w3w-result.visible { display: flex; }
+        .w3w-logo { color: var(--accent); font-weight: 900; font-size: 0.95rem; }
+        .w3w-words { font-weight: 700; font-size: 0.9rem; }
+        .w3w-place { font-size: 0.78rem; color: var(--silver); margin-top: 2px; }
+
+        .btn-primary {
+            display: block; width: 100%; padding: 14px 20px;
+            background: var(--accent); color: #fff;
+            border: none; border-radius: 10px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: opacity 0.15s;
+            text-align: center; text-decoration: none;
+        }
+        .btn-primary:hover { opacity: 0.88; }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .btn-secondary {
+            display: block; width: 100%; padding: 12px 20px;
+            background: transparent; color: var(--silver);
+            border: 1px solid var(--border); border-radius: 10px;
+            font-size: 0.95rem; cursor: pointer;
+            font-family: inherit; transition: border-color 0.15s, color 0.15s;
+            text-align: center;
+        }
+        .btn-secondary:hover { border-color: #666; color: var(--cream); }
+
+        .msg {
+            border-radius: 8px; padding: 10px 14px;
+            margin-top: 10px; font-size: 0.88rem; display: none;
+        }
+        .msg.error { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; display: block; }
+        .msg.info  { background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2); color: var(--silver); display: block; }
+        .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; display: block; }
+
+        .progress-wrap { margin-bottom: 16px; }
+        .progress-bar-bg { background: var(--surface); border-radius: 100px; height: 6px; overflow: hidden; margin-bottom: 6px; }
+        .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width 0.4s; width: 0%; }
+        .progress-label { font-size: 0.8rem; color: var(--silver); text-align: center; }
+
+        .done-hero { text-align: center; padding: 20px 0; }
+        .done-hero .check { font-size: 2.5rem; display: block; margin-bottom: 12px; }
+        .done-hero h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+        .done-hero p { color: var(--silver); font-size: 0.9rem; }
+
+        .listing-url-box {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 8px; padding: 10px 14px;
+            font-family: monospace; font-size: 0.82rem;
+            word-break: break-all; color: var(--accent);
+            margin-bottom: 16px;
+        }
+        #qrCanvas { display: block; margin: 0 auto 8px; }
+
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+        .delete-token-box {
+            background: rgba(249,115,22,0.05);
+            border: 1px dashed rgba(249,115,22,0.25);
+            border-radius: 10px; padding: 16px;
+        }
+
+        .ai-result-row {
+            display: flex; justify-content: space-between;
+            align-items: flex-start; padding: 8px 0;
+            border-bottom: 1px solid var(--border); gap: 10px;
+        }
+        .ai-result-row:last-child { border-bottom: none; }
+        .ai-result-label { font-size: 0.75rem; color: var(--silver); text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; }
+        .ai-result-value { font-size: 0.9rem; font-weight: 600; text-align: right; }
+
+        .price-badge { display: inline-block; margin-top: 10px; background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); border-radius: 100px; padding: 5px 14px; font-size: 0.8rem; color: var(--accent); }
+    </style>
+</head>
+<body>
+<script src="/banner.js"></script>
+
+<nav class="back-nav">
+    <a href="/browse">&#8592; Browse listings</a>
+</nav>
+
+<div class="hero">
+    <span class="hero-icon">📻</span>
+    <h1>List Your CB Radio</h1>
+    <p>Photo it. We identify it. Buyers find it. Honest and done.</p>
+    <div class="ebay-banner">
+        <strong>eBay said no.</strong> We said different.<br>
+        UK CB radios are perfectly legal under Ofcom. Standard kit only — no modifications, no boosters.
+    </div>
+    <span class="price-badge">&#127775; Free this weekend &mdash; no catch</span>
+
+    <div class="step-bar" id="stepBar">
+        <div class="step-dot active" id="dot-1">1. Photos</div>
+        <div class="step-dot" id="dot-2">2. Check it</div>
+        <div class="step-dot" id="dot-3">3. Your info</div>
+        <div class="step-dot" id="dot-4">4. Live</div>
+    </div>
+</div>
+
+<div style="max-width:580px; margin:0 auto; padding:16px 20px 0; display:flex; flex-direction:column; gap:10px;">
+
+    <!-- Radi-Oid: don't know what you've got? -->
+    <a href="https://radi-oid.co.uk" target="_blank" rel="noopener"
+       style="display:flex; align-items:center; gap:14px; background:rgba(217,119,6,0.06); border:1px solid rgba(217,119,6,0.25); border-radius:12px; padding:14px 16px; text-decoration:none; color:inherit;">
+        <span style="font-size:1.8rem; flex-shrink:0;">📻</span>
+        <div>
+            <p style="font-weight:700; font-size:0.9rem; color:#d97706; margin-bottom:2px;">Don&apos;t know what you&apos;ve got?</p>
+            <p style="font-size:0.82rem; color:var(--silver); line-height:1.4;">Radio Ratchybumpo at The Old Spark&apos;s Shack will identify it from a photo. CB, ham, vintage, Bakelite — no radio snobbery. <span style="color:#d97706;">radi-oid.co.uk →</span></p>
+        </div>
+    </a>
+
+    <!-- MeshCB: going digital -->
+    <a href="https://radi-oid.co.uk/meshcore.html" target="_blank" rel="noopener"
+       style="display:flex; align-items:center; gap:14px; background:rgba(34,197,94,0.05); border:1px solid rgba(34,197,94,0.2); border-radius:12px; padding:14px 16px; text-decoration:none; color:inherit;">
+        <span style="font-size:1.8rem; flex-shrink:0;">📡</span>
+        <div>
+            <p style="font-weight:700; font-size:0.9rem; color:#22c55e; margin-bottom:2px;">CB going digital? That&apos;s MeshCB.</p>
+            <p style="font-size:0.82rem; color:var(--silver); line-height:1.4;">LoRa mesh networking. Same spirit as CB — licence-free, community-driven, no infrastructure required. Andy Kirby&apos;s MeshCore is what you build on. <span style="color:#22c55e;">The guide →</span></p>
+        </div>
+    </a>
+
+</div>
+
+<div class="container" id="listingContainer">
+
+    <!-- ── STEP 1: Upload photos ── -->
+    <div class="step-section active" id="step1">
+        <div class="card">
+            <div class="upload-zone" id="uploadZone">
+                <input type="file" id="photoFiles" accept="image/*" multiple>
+                <span class="upload-icon">📷</span>
+                <h3>Photo your radio. Tap here to upload.</h3>
+                <p>Up to 6 photos. Front, back, screen, accessories. More angles = better ID.</p>
+                <p class="constraints">JPG, PNG, WebP &middot; Max 10MB each &middot; Up to 6 photos</p>
+            </div>
+
+            <div class="photo-grid" id="photoGrid" style="display:none;"></div>
+            <div id="photoCount" style="font-size:0.8rem; color:var(--silver); margin-top:8px; display:none;"></div>
+        </div>
+
+        <div class="field">
+            <label for="sellerNotes">Anything else to know? <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+            <textarea id="sellerNotes" rows="2" placeholder="Works perfectly. Bought new in 2019. Comes with original box."></textarea>
+        </div>
+
+        <button class="btn-primary" id="analyseBtn" disabled onclick="startAnalysis()">
+            Identify my radio &rarr;
+        </button>
+        <div id="analyseMsg" class="msg"></div>
+    </div>
+
+    <!-- ── STEP 2: Review AI output ── -->
+    <div class="step-section" id="step2">
+        <div class="card">
+            <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:14px;">Your radio — check the details</p>
+
+            <div class="field">
+                <label for="r_make">Make</label>
+                <input type="text" id="r_make" placeholder="Midland">
+            </div>
+            <div class="field">
+                <label for="r_model">Model</label>
+                <input type="text" id="r_model" placeholder="Alan 100+">
+            </div>
+            <div class="field">
+                <label for="r_band">Band / Type</label>
+                <input type="text" id="r_band" placeholder="27MHz CB">
+            </div>
+            <div class="field">
+                <label for="r_modes">Modes</label>
+                <input type="text" id="r_modes" placeholder="FM / AM / SSB">
+            </div>
+            <div class="field">
+                <label for="r_accessories">What's included</label>
+                <input type="text" id="r_accessories" placeholder="Microphone, bracket, cable">
+            </div>
+
+            <div class="field">
+                <label>Condition</label>
+                <div class="condition-row">
+                    <button class="condition-btn" onclick="setCondition('Excellent')">Excellent</button>
+                    <button class="condition-btn" onclick="setCondition('Good')">Good</button>
+                    <button class="condition-btn" onclick="setCondition('Fair')">Fair</button>
+                    <button class="condition-btn" onclick="setCondition('Poor')">Poor</button>
+                </div>
+                <input type="hidden" id="r_condition" value="">
+            </div>
+
+            <div class="field">
+                <label for="r_description">Description <span style="font-weight:400; text-transform:none;">(edit or keep as-is)</span></label>
+                <textarea id="r_description" rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="card-accent" id="complianceWarning" style="display:none;">
+            <p style="font-size:0.85rem; color:#fca5a5;">&#9888; Our AI flagged a possible compliance concern with this radio. Please only proceed if you are confident this is standard UK-spec, unmodified equipment.</p>
+        </div>
+
+        <div id="step2Msg" class="msg"></div>
+
+        <div style="display:flex; gap:10px;">
+            <button class="btn-secondary" onclick="goStep(1)">&#8592; Back</button>
+            <button class="btn-primary" onclick="goToStep3()">Looks good &#8594;</button>
+        </div>
+    </div>
+
+    <!-- ── STEP 3: Contact details + compliance ── -->
+    <div class="step-section" id="step3">
+        <div class="card">
+            <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:16px;">Your sale details</p>
+
+            <div class="field">
+                <label for="s_price">Asking Price <span style="font-weight:400; text-transform:none; color:var(--cream);">&#163;</span></label>
+                <input type="text" id="s_price" placeholder="45">
+            </div>
+            <div class="field">
+                <label for="s_phone">Contact Phone</label>
+                <input type="tel" id="s_phone" placeholder="07700 900000">
+            </div>
+            <div class="field">
+                <label for="s_email">Contact Email <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+                <input type="email" id="s_email" placeholder="you@email.com">
+            </div>
+
+            <div class="field">
+                <label>Where are you? <span style="font-weight:400; text-transform:none;">(optional &mdash; helps local buyers find you)</span></label>
+                <button type="button" class="btn-secondary" id="w3wBtn" onclick="getW3WLocation()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:1.2rem;">&#127757;</span> Use My Location
+                </button>
+                <div class="w3w-result" id="w3wResult">
+                    <span class="w3w-logo">&#47;&#47;&#47;</span>
+                    <div>
+                        <div class="w3w-words" id="w3wWords"></div>
+                        <div class="w3w-place" id="w3wPlace"></div>
+                    </div>
+                    <button type="button" onclick="clearW3W()" style="background:none;border:none;color:#888;cursor:pointer;font-size:1rem;padding:0;min-height:0;margin-left:auto;">&#10005;</button>
+                </div>
+                <input type="hidden" id="s_w3w" value="">
+                <div id="w3wMsg" class="msg"></div>
+            </div>
+        </div>
+
+        <div class="compliance-box">
+            <label>
+                <input type="checkbox" id="complianceCheck">
+                <span>I confirm this is standard, unmodified UK-spec radio equipment. It has not been modified for extra power or extended frequency range. No linear amplifiers or external boosters are included. I understand that Motor-Oid only lists equipment that is legal to use and sell in the UK.</span>
+            </label>
+        </div>
+
+        <div id="uploadProgress" style="display:none;">
+            <div class="progress-wrap">
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+                <div class="progress-label" id="progressLabel">Saving your listing&hellip;</div>
+            </div>
+        </div>
+
+        <div id="createMsg" class="msg"></div>
+
+        <p style="font-size:0.78rem; color:#888; margin-bottom:12px; line-height:1.5;">Double-check your price and contact details before submitting. You&apos;re responsible for the accuracy of your listing.</p>
+
+        <div style="display:flex; gap:10px;">
+            <button class="btn-secondary" onclick="goStep(2)">&#8592; Back</button>
+            <button class="btn-primary" id="createBtn" onclick="createListing()">List it &#8594;</button>
+        </div>
+    </div>
+
+    <!-- ── STEP 4: Done ── -->
+    <div class="step-section" id="step4">
+        <div class="card">
+            <div class="done-hero">
+                <span class="check">&#9989;</span>
+                <h2>Your listing is live.</h2>
+                <p>Share the link. Buyers can find it on the browse page too.</p>
+            </div>
+
+            <a id="previewBtn" href="#" target="_blank" rel="noopener"
+               class="btn-primary"
+               style="display:block; width:100%; text-align:center; text-decoration:none; font-size:1rem; margin-bottom:20px;">
+                &#128065; View My Listing &rarr;
+            </a>
+
+            <div style="border-top:1px solid rgba(249,115,22,0.15); padding-top:20px; margin-bottom:4px;">
+                <p style="font-size:0.8rem; color:var(--silver); margin-bottom:4px;">Your listing URL:</p>
+                <div class="listing-url-box" id="doneUrl"></div>
+            </div>
+
+            <canvas id="qrCanvas" width="200" height="200"></canvas>
+            <p style="text-align:center; font-size:0.78rem; color:var(--silver); margin-bottom:16px;">Download and share wherever you like</p>
+
+            <div class="action-grid">
+                <button class="btn-primary" onclick="downloadQR()">&#128247; Download QR</button>
+                <button class="btn-secondary" onclick="copyUrl()">&#128203; Copy Link</button>
+            </div>
+
+            <div class="delete-token-box" style="margin-top:20px;">
+                <p style="margin-bottom:6px;"><strong>&#128274; Save this removal code</strong></p>
+                <p style="margin-bottom:8px; font-size:0.8rem; color:var(--silver);">Keep this somewhere safe. You&apos;ll need it to remove your listing.</p>
+                <p id="doneToken" style="font-family:monospace; font-size:0.88rem; word-break:break-all; color:var(--cream);"></p>
+            </div>
+
+            <div style="margin-top:24px; padding:16px; background:rgba(249,115,22,0.07); border:1px solid rgba(249,115,22,0.18); border-radius:12px; text-align:center;">
+                <p style="font-size:0.95rem; font-weight:700; margin-bottom:6px;">&#9749; If this saved you time or got you a sale</p>
+                <p style="font-size:0.82rem; color:var(--silver); margin-bottom:12px;">Buy the fella who built it a coffee. No pressure — just good karma.</p>
+                <a href="https://ko-fi.com/zoom" target="_blank" rel="noopener"
+                   style="display:inline-block; background:var(--accent); color:#fff; font-weight:700; font-size:0.88rem; padding:10px 22px; border-radius:9px; text-decoration:none;">
+                    Buy me a coffee &#8594;
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── Hamlet / Shopfront ── -->
+<div style="max-width:580px; margin:32px auto 24px; padding:0 20px;">
+    <div style="background:var(--mid); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:14px; padding:24px 20px; text-align:center;">
+        <p style="font-size:1.5rem; margin-bottom:10px;">🏪</p>
+        <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:8px; color:var(--cream);">Got a radio shop? Run a shack? Deal in CB kit?</h3>
+        <p style="font-size:0.88rem; color:var(--silver); line-height:1.6; margin-bottom:16px; max-width:400px; margin-left:auto; margin-right:auto;">Get your own Motor-Oid shopfront — your page, your QR code, your community of buyers who know exactly where to find you. Honest listings. Your name on it.</p>
+        <a href="/hamlet/signup.html"
+           style="display:inline-block; padding:12px 24px; background:var(--accent); color:#fff; font-weight:700; font-size:0.9rem; border-radius:10px; text-decoration:none;">
+            Get my shopfront &rarr;
+        </a>
+        <p style="font-size:0.75rem; color:#666; margin-top:10px;">Part of the Motor-Oid Village. World domination through kindness.</p>
+    </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://pdnjeynugptnavkdbmxh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkbmpleW51Z3B0bmF2a2RibXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMTEzMDAsImV4cCI6MjA4NDU4NzMwMH0.GawisR01EykMtdauBMxenmHF2NXDMzDOJl8WgzkwFQo';
+
+let sb;
+try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+
+let photoFiles = [];
+let photoFrames = [];
+let currentCondition = '';
+let geminiResult = null;
+let listingUrl = '';
+let geoLat = null;
+let geoLng = null;
+
+// Silent background geolocation capture
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+        pos => { geoLat = pos.coords.latitude; geoLng = pos.coords.longitude; },
+        () => {}
+    );
+}
+
+// ── Step navigation ──
+function goStep(n) {
+    document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    document.querySelectorAll('.step-dot').forEach((d, i) => {
+        d.classList.toggle('active', i + 1 === n);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'msg ' + (type || '');
+    if (!type) el.style.display = 'none';
+}
+
+// ── Photo upload ──
+const uploadZone = document.getElementById('uploadZone');
+const photoInput = document.getElementById('photoFiles');
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+photoInput.addEventListener('change', e => handleFiles(e.target.files));
+
+function handleFiles(files) {
+    const allowed = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, 6 - photoFiles.length);
+    if (!allowed.length) return;
+
+    allowed.forEach(file => {
+        if (photoFiles.length >= 6) return;
+        photoFiles.push(file);
+        const reader = new FileReader();
+        reader.onload = e => {
+            photoFrames.push({ data: e.target.result, mimeType: file.type });
+            renderPhotoGrid();
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('analyseBtn').disabled = false;
+    showMsg('analyseMsg', '', '');
+}
+
+function renderPhotoGrid() {
+    const grid = document.getElementById('photoGrid');
+    const count = document.getElementById('photoCount');
+    grid.style.display = photoFrames.length ? 'grid' : 'none';
+    count.style.display = photoFrames.length ? 'block' : 'none';
+    count.textContent = photoFrames.length + ' photo' + (photoFrames.length !== 1 ? 's' : '') + ' selected';
+    grid.innerHTML = photoFrames.map((f, i) => `
+        <div class="photo-thumb">
+            <img src="${f.data}" alt="Photo ${i+1}">
+            <button class="remove-btn" onclick="removePhoto(${i})" title="Remove">&#10005;</button>
+        </div>
+    `).join('');
+}
+
+function removePhoto(i) {
+    photoFiles.splice(i, 1);
+    photoFrames.splice(i, 1);
+    renderPhotoGrid();
+    if (!photoFrames.length) document.getElementById('analyseBtn').disabled = true;
+}
+
+// ── Analysis ──
+const CB_JOKES = [
+    'This takes a few seconds… Why did the CB radio cross the road? To get to the other channel.',
+    'Hang tight… What do you call a CB radio that tells jokes? A comedi-ann.',
+    'Still thinking… Why don\'t CB radios ever get lost? They always know their 10-20.',
+    'Almost there… What did the antenna say to the radio? You really pick me up.',
+    'One moment… What\'s a CB radio\'s favourite music? Heavy metal on channel 19.',
+    'Consulting the airwaves… Why was the radio always calm? Outstanding reception.',
+    'Reading the crystals… What do you call a stolen CB? A walkie-talkie-nicked-it.',
+    'Tuning in… How do CB operators say goodbye? Keep the shiny side up and the rubber side down.',
+];
+
+async function startAnalysis() {
+    if (!photoFrames.length) {
+        showMsg('analyseMsg', 'Please add at least one photo.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('analyseBtn');
+    btn.disabled = true;
+    btn.textContent = 'Identifying your radio…';
+
+    let jokeIdx = 0;
+    const msgEl = document.getElementById('analyseMsg');
+    msgEl.textContent = CB_JOKES[0];
+    msgEl.className = 'msg info';
+    msgEl.style.display = '';
+    const jokeTimer = setInterval(() => {
+        jokeIdx = (jokeIdx + 1) % CB_JOKES.length;
+        msgEl.textContent = CB_JOKES[jokeIdx];
+    }, 3500);
+
+    try {
+        const sellerNotes = document.getElementById('sellerNotes').value.trim();
+        const res = await fetch('/.netlify/functions/analyze-cb-radio', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                frames: photoFrames.map(f => ({
+                    data: f.data.replace(/^data:image\/[\w+.-]+;base64,/, ''),
+                    mimeType: f.mimeType,
+                })),
+                sellerNotes: sellerNotes || null,
+            }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Analysis failed');
+        }
+
+        geminiResult = await res.json();
+        populateStep2(geminiResult);
+        showMsg('analyseMsg', '', '');
+        goStep(2);
+
+    } catch (err) {
+        showMsg('analyseMsg', 'Could not identify the radio: ' + err.message, 'error');
+    } finally {
+        clearInterval(jokeTimer);
+        btn.disabled = false;
+        btn.textContent = 'Identify my radio →';
+    }
+}
+
+function populateStep2(r) {
+    document.getElementById('r_make').value        = r.make || '';
+    document.getElementById('r_model').value       = r.model || '';
+    document.getElementById('r_band').value        = r.band || '';
+    document.getElementById('r_modes').value       = r.modes || '';
+    document.getElementById('r_accessories').value = r.accessories || '';
+    document.getElementById('r_description').value = r.description || '';
+    if (r.condition) setCondition(r.condition);
+
+    // Show compliance warning if AI flagged it
+    document.getElementById('complianceWarning').style.display = r.is_uk_cb === false ? 'block' : 'none';
+}
+
+function setCondition(val) {
+    currentCondition = val;
+    document.getElementById('r_condition').value = val;
+    document.querySelectorAll('.condition-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === val);
+    });
+}
+
+function goToStep3() {
+    if (!currentCondition) {
+        showMsg('step2Msg', 'Please select a condition.', 'error');
+        return;
+    }
+    showMsg('step2Msg', '', '');
+    goStep(3);
+}
+
+// ── W3W location ──
+async function getW3WLocation() {
+    if (!navigator.geolocation) {
+        showMsg('w3wMsg', 'Location not supported on this device.', 'error');
+        return;
+    }
+    document.getElementById('w3wBtn').textContent = 'Getting location…';
+    navigator.geolocation.getCurrentPosition(async pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        geoLat = lat; geoLng = lng;
+
+        try {
+            const res = await fetch(`/.netlify/functions/lookup-w3w?lat=${lat}&lng=${lng}`);
+            if (!res.ok) throw new Error('W3W lookup failed');
+            const data = await res.json();
+            if (data.words) {
+                document.getElementById('s_w3w').value = data.words;
+                document.getElementById('w3wWords').textContent = '///' + data.words;
+                document.getElementById('w3wPlace').textContent = data.nearestPlace || '';
+                document.getElementById('w3wResult').classList.add('visible');
+            }
+        } catch (e) {
+            showMsg('w3wMsg', 'Could not get location. Try again.', 'error');
+        } finally {
+            document.getElementById('w3wBtn').textContent = '🌍 Use My Location';
+        }
+    }, () => {
+        showMsg('w3wMsg', 'Location access denied. You can skip this.', 'error');
+        document.getElementById('w3wBtn').textContent = '🌍 Use My Location';
+    });
+}
+
+function clearW3W() {
+    document.getElementById('s_w3w').value = '';
+    document.getElementById('w3wResult').classList.remove('visible');
+}
+
+function setProgress(pct, label) {
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = label;
+}
+
+// ── Create listing ──
+async function createListing() {
+    const price = document.getElementById('s_price').value.trim();
+    const phone = document.getElementById('s_phone').value.trim();
+    const email = document.getElementById('s_email').value.trim();
+    const compliant = document.getElementById('complianceCheck').checked;
+
+    if (!price) { showMsg('createMsg', 'Please enter an asking price.', 'error'); return; }
+    if (!phone && !email) { showMsg('createMsg', 'Please add a phone number or email.', 'error'); return; }
+    if (!compliant) { showMsg('createMsg', 'Please confirm compliance — tick the checkbox above.', 'error'); return; }
+
+    document.getElementById('createBtn').disabled = true;
+    document.getElementById('uploadProgress').style.display = 'block';
+    setProgress(30, 'Saving your listing…');
+
+    const vehicle = {
+        category:     'cbradio',
+        make:         document.getElementById('r_make').value.trim(),
+        model:        document.getElementById('r_model').value.trim(),
+        band:         document.getElementById('r_band').value.trim(),
+        modes:        document.getElementById('r_modes').value.trim(),
+        accessories:  document.getElementById('r_accessories').value.trim(),
+        condition:    currentCondition || document.getElementById('r_condition').value,
+        description:  document.getElementById('r_description').value.trim(),
+        is_uk_cb:     true,
+    };
+
+    const w3w = document.getElementById('s_w3w').value;
+    if (w3w) vehicle.w3w_location = w3w;
+
+    const headline = [vehicle.make, vehicle.model, 'CB Radio'].filter(Boolean).join(' ') + (vehicle.condition ? ' — ' + vehicle.condition : '');
+
+    setProgress(60, 'Almost there…');
+
+    try {
+        const res = await fetch('/.netlify/functions/create-listing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                vehicle,
+                frames: photoFrames.map((f, i) => ({
+                    data: f.data.replace(/^data:image\/[\w+.-]+;base64,/, ''),
+                    label: 'Photo ' + (i + 1),
+                })),
+                price,
+                contactPhone: phone || null,
+                contactEmail: email || null,
+                listingHeadline: headline,
+                lat: geoLat,
+                lng: geoLng,
+            }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Failed to create listing');
+        }
+
+        const data = await res.json();
+        setProgress(100, 'Done!');
+
+        listingUrl = data.url;
+        document.getElementById('doneUrl').textContent = data.url;
+        document.getElementById('doneUrl').href = data.url;
+        document.getElementById('previewBtn').href = data.url;
+        document.getElementById('doneToken').textContent = data.deleteToken;
+
+        QRCode.toCanvas(document.getElementById('qrCanvas'), data.url, {
+            width: 200,
+            color: { dark: '#f97316ff', light: '#0f0f0fff' },
+        }, () => {});
+
+        goStep(4);
+
+    } catch (err) {
+        showMsg('createMsg', 'Error: ' + err.message, 'error');
+        document.getElementById('createBtn').disabled = false;
+        document.getElementById('uploadProgress').style.display = 'none';
+    }
+}
+
+function downloadQR() {
+    const canvas = document.getElementById('qrCanvas');
+    const link = document.createElement('a');
+    link.download = 'motor-oid-cb-listing-qr.png';
+    link.href = canvas.toDataURL();
+    link.click();
+}
+
+function copyUrl() {
+    if (!listingUrl) return;
+    navigator.clipboard?.writeText(listingUrl)
+        .then(() => { const btn = event.target; btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Link', 2000); })
+        .catch(() => { prompt('Copy this URL:', listingUrl); });
+}
+</script>
+</body>
+</html>

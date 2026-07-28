@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Listing | Motor-Oid</title>
+    <meta name="description" content="Vehicle for sale — Motor-Oid The Walkround">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --deep:   #0f0f0f;
+            --mid:    #1a1a1a;
+            --accent: #f97316;
+            --silver: #94a3b8;
+            --cream:  #e2e8f0;
+            --green:  #22c55e;
+            --border: #2d2d2d;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--deep);
+            color: var(--cream);
+            min-height: 100vh;
+        }
+        a { color: var(--accent); text-decoration: none; }
+
+        /* Nav */
+        .back-nav {
+            padding: 14px 20px;
+            border-bottom: 1px solid #1e1e1e;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .back-nav a { color: var(--silver); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; min-height: 0; }
+        .back-nav a:hover { color: var(--cream); }
+
+        /* Loading / error */
+        .centre-msg {
+            text-align: center; padding: 80px 20px;
+        }
+        .centre-msg .icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+        .centre-msg h2 { font-family: 'Caveat', cursive; font-size: 2rem; margin-bottom: 8px; }
+        .centre-msg p { color: var(--silver); }
+
+        /* Hero */
+        .listing-hero {
+            padding: 36px 20px 28px;
+            border-bottom: 1px solid #1e1e1e;
+            background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.07) 0%, transparent 60%);
+        }
+        .price-tag {
+            font-size: clamp(2.2rem, 8vw, 3.2rem);
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .listing-headline {
+            font-family: 'Caveat', cursive;
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            color: var(--cream);
+            line-height: 1.15;
+            margin-bottom: 10px;
+        }
+        .condition-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 100px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .condition-Excellent { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.35); color: var(--green); }
+        .condition-Good      { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); color: var(--accent); }
+        .condition-Fair      { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); color: #fbbf24; }
+        .condition-Poor      { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.3);  color: #ef4444; }
+
+        /* Preview banner */
+        .preview-banner {
+            background: #1a0d00;
+            border-bottom: 2px solid var(--accent);
+            padding: 14px 20px;
+            text-align: center;
+        }
+        .preview-banner-title {
+            font-size: 0.85rem; font-weight: 800; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px;
+        }
+        .preview-banner-sub {
+            font-size: 0.78rem; color: #94a3b8; line-height: 1.4;
+        }
+        .publish-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+            background: #0f0f0f;
+            border-top: 2px solid var(--accent);
+            padding: 14px 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .publish-bar-text { flex: 1; font-size: 0.78rem; color: #94a3b8; }
+        .publish-bar-text strong { color: white; display: block; font-size: 0.88rem; }
+        .publish-btn {
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            color: white; border: none; border-radius: 12px;
+            padding: 14px 22px; font-family: inherit;
+            font-size: 0.95rem; font-weight: 800;
+            cursor: pointer; white-space: nowrap;
+            transition: filter 0.15s;
+        }
+        .publish-btn:hover { filter: brightness(1.1); }
+        .publish-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .publish-content-pad { padding-bottom: 80px; }
+
+        /* Content */
+        .content { max-width: 640px; margin: 0 auto; padding: 24px 20px 60px; }
+
+        .card {
+            background: var(--mid);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 16px;
+        }
+        .card-accent {
+            background: rgba(249,115,22,0.06);
+            border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 16px;
+        }
+        .card h2 {
+            font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--silver); margin-bottom: 14px;
+        }
+
+        /* Video */
+        .video-wrap {
+            width: 100%; border-radius: 10px; overflow: hidden;
+            background: #000; margin-bottom: 0;
+            aspect-ratio: 16/9;
+        }
+        video { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+        /* Photo grid */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .photo-grid img {
+            width: 100%; aspect-ratio: 4/3; object-fit: cover;
+            border-radius: 8px; cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .photo-grid img:hover { transform: scale(1.02); }
+
+        /* Lightbox */
+        .lightbox {
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img { max-width: 94vw; max-height: 88vh; border-radius: 10px; object-fit: contain; }
+        .lightbox-close {
+            position: absolute; top: 16px; right: 20px;
+            font-size: 2rem; color: var(--silver); cursor: pointer; line-height: 1;
+        }
+        .lightbox-label {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.7); color: var(--cream); padding: 6px 16px;
+            border-radius: 100px; font-size: 0.82rem;
+        }
+
+        /* Spec */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .spec-item {
+            background: #111; border: 1px solid var(--border);
+            border-radius: 8px; padding: 12px;
+        }
+        .spec-item .label { font-size: 0.72rem; color: var(--silver); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+        .spec-item .value { font-size: 0.95rem; font-weight: 600; color: var(--cream); }
+
+        /* Features */
+        .features-list {
+            display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .feature-chip {
+            background: #111; border: 1px solid var(--border);
+            border-radius: 100px; padding: 4px 14px;
+            font-size: 0.8rem; color: var(--cream);
+        }
+
+        /* Defects */
+        .defect-list { list-style: none; }
+        .defect-list li {
+            padding: 8px 0; border-bottom: 1px solid #252525;
+            font-size: 0.9rem; color: var(--cream);
+            display: flex; gap: 8px; align-items: flex-start;
+        }
+        .defect-list li:last-child { border-bottom: none; }
+        .defect-list li::before { content: '⚠️'; flex-shrink: 0; margin-top: 1px; }
+
+        /* Contact buttons */
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-contact {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--accent); color: #000; font-weight: 700;
+            padding: 14px 16px; border-radius: 10px; font-size: 1rem;
+            text-decoration: none; min-height: 52px; font-family: 'Outfit', sans-serif;
+            transition: opacity 0.2s; text-align: center;
+        }
+        .btn-contact:hover { opacity: 0.88; color: #000; }
+        .btn-contact.secondary {
+            background: transparent; color: var(--silver);
+            border: 1px solid var(--border); font-weight: 600; font-size: 0.9rem;
+        }
+        .btn-contact.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* QR */
+        #shareQR { border-radius: 10px; display: block; margin: 10px auto; }
+
+        /* Jack CTA */
+        .jack-cta {
+            display: flex; align-items: center; gap: 14px;
+            padding: 18px; background: var(--mid); border: 1px solid var(--border);
+            border-radius: 14px; margin-bottom: 16px; text-decoration: none;
+        }
+        .jack-cta:hover { border-color: var(--accent); }
+        .jack-cta .icon { font-size: 2rem; flex-shrink: 0; }
+        .jack-cta h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+        .jack-cta p { font-size: 0.8rem; color: var(--silver); }
+
+        footer {
+            text-align: center; padding: 36px 20px;
+            border-top: 1px solid #1e1e1e;
+            font-size: 0.8rem;
+        }
+        .powered-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            text-decoration: none; margin-bottom: 10px;
+            padding: 8px 16px; border-radius: 100px;
+            background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.25);
+            transition: background 0.2s;
+        }
+        .powered-badge:hover { background: rgba(249,115,22,0.15); }
+        .powered-badge img { width: 22px; height: 22px; border-radius: 4px; object-fit: cover; }
+        .powered-badge .pb-label { font-weight: 700; color: var(--accent); font-size: 0.85rem; }
+        .powered-badge .pb-cta { color: var(--silver); font-size: 0.78rem; }
+
+        /* Embed modal */
+        .embed-modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.88); align-items: center; justify-content: center; padding: 20px;
+        }
+        .embed-modal-overlay.open { display: flex; }
+        .embed-modal {
+            background: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 16px;
+            padding: 24px; max-width: 520px; width: 100%; position: relative;
+        }
+        .embed-code-box {
+            background: #0d0e12; border: 1px solid #2d2d2d; border-radius: 8px;
+            padding: 14px; font-family: monospace; font-size: 0.72rem;
+            color: #e2e8f0; word-break: break-all; line-height: 1.5; margin-bottom: 12px;
+            user-select: all;
+        }
+
+        /* What3Words */
+        .w3w-card {
+            background: var(--mid);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 16px;
+            text-decoration: none;
+            display: block;
+            transition: border-color 0.2s;
+        }
+        .w3w-card:hover { border-color: #e11f26; }
+        .w3w-address {
+            font-size: 1.3rem; font-weight: 700; color: #e11f26;
+            letter-spacing: 0.02em; margin: 6px 0 4px;
+            font-family: 'Outfit', sans-serif;
+        }
+        .w3w-prefix { opacity: 0.5; }
+
+        /* Honest Disclosure card */
+        .disclosure-card {
+            background: var(--mid);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 16px;
+        }
+        .tl-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 100px; font-size: 0.78rem; font-weight: 700;
+        }
+        .tl-green { background: rgba(34,197,94,0.15);  border: 1px solid #22c55e; color: #22c55e; }
+        .tl-amber { background: rgba(251,191,36,0.12);  border: 1px solid #fbbf24; color: #fbbf24; }
+        .tl-red   { background: rgba(239,68,68,0.12);   border: 1px solid #ef4444; color: #ef4444; }
+
+        /* Print — this is the windscreen printout. Free, always, whether or not the
+           listing has been published live. Keep the QR and Motor-Oid/FeelFamous
+           branding (that's the whole point — it advertises us), drop only the
+           on-screen nav that means nothing on paper, and swap the on-screen
+           "Only you can see this link" preview banner for an honest print-only
+           line — that sentence stops being true the moment this is stuck in a
+           windscreen for the world to read. */
+        #printFreeNote { display: none; }
+        @media print {
+            .back-nav, .jack-cta, .preview-banner { display: none !important; }
+            body { background: #fff; color: #000; }
+            .card, .card-accent { border-color: #ddd; background: #fff; }
+            .listing-hero { background: #fff; }
+            .spec-item, .feature-chip { background: #f5f5f5; border-color: #ddd; }
+            #printFreeNote.is-preview {
+                display: block !important;
+                text-align: center; font-size: 0.8rem; color: #444; line-height: 1.5;
+                border-top: 1px solid #ddd; margin-top: 16px; padding: 16px 20px;
+            }
+        }
+
+        @media (max-width: 440px) {
+            .contact-grid { grid-template-columns: 1fr; }
+            .photo-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+<script src="/banner.js"></script>
+
+<!-- Preview banner — shown by JS when status === 'preview' -->
+<div id="previewBanner" class="preview-banner" style="display:none;">
+    <div class="preview-banner-title">Preview — not live yet</div>
+    <div class="preview-banner-sub">Only you can see this link. The listing won't appear in search until you publish.</div>
+</div>
+
+<nav class="back-nav">
+    <a href="/browse">&#8592; Browse listings</a>
+    <button onclick="window.print()" style="background:none;border:none;cursor:pointer;color:var(--silver);font-size:0.82rem;font-family:'Outfit',sans-serif;min-height:0;padding:0;">&#128247; Print</button>
+</nav>
+
+<!-- Loading state -->
+<div id="loadingState" class="centre-msg">
+    <span class="icon">&#128664;</span>
+    <h2>Loading listing&hellip;</h2>
+</div>
+
+<!-- Error state -->
+<div id="errorState" class="centre-msg" style="display:none;">
+    <span class="icon">&#128683;</span>
+    <h2>Listing not found</h2>
+    <p>This car may have been sold or the listing removed.</p>
+    <p style="margin-top:16px;"><a href="/index.html">&#8592; Back to Motor-Oid</a></p>
+</div>
+
+<!-- Listing content -->
+<div id="listingContent" style="display:none;">
+
+    <div class="listing-hero" id="listingHero">
+        <div class="price-tag" id="listingPrice"></div>
+        <div class="listing-headline" id="listingHeadline"></div>
+        <span class="condition-badge" id="conditionBadge"></span>
+    </div>
+
+    <div class="content">
+
+        <!-- Video walkaround -->
+        <div class="card" id="videoCard" style="display:none;">
+            <h2>&#127909; Walkaround Video</h2>
+            <div class="video-wrap">
+                <video id="listingVideo" controls playsinline preload="metadata"></video>
+            </div>
+        </div>
+
+        <!-- Photos -->
+        <div class="card" id="photosCard" style="display:none;">
+            <h2>&#128247; Photos</h2>
+            <div class="photo-grid" id="photoGrid"></div>
+        </div>
+
+        <!-- Contact -->
+        <div class="card-accent" id="contactCard">
+            <h2 style="color:var(--accent);">Contact the Seller</h2>
+            <div class="contact-grid" id="contactGrid"></div>
+        </div>
+
+        <!-- Spec -->
+        <div class="card" id="specCard">
+            <h2>&#128295; Vehicle Spec</h2>
+            <div class="spec-grid" id="specGrid"></div>
+        </div>
+
+        <!-- Features -->
+        <div class="card" id="featuresCard" style="display:none;">
+            <h2>&#10024; Features &amp; Tech</h2>
+            <div class="features-list" id="featuresList"></div>
+        </div>
+
+        <!-- Defects -->
+        <div class="card" id="defectsCard" style="display:none;">
+            <h2>&#9888; Known Issues</h2>
+            <p style="font-size:0.82rem; color:var(--silver); margin-bottom:10px;">The seller has disclosed these honestly.</p>
+            <ul class="defect-list" id="defectsList"></ul>
+        </div>
+
+        <!-- What3Words location -->
+        <a id="w3wCard" class="w3w-card" href="#" target="_blank" rel="noopener" style="display:none;">
+            <h2 style="margin:0 0 2px;">&#127757; Where is the car?</h2>
+            <div class="w3w-address"><span class="w3w-prefix">///</span><span id="w3wWords"></span></div>
+            <p id="w3wPlace" style="font-size:0.8rem; color:var(--silver); margin-top:2px;"></p>
+            <p style="font-size:0.75rem; color:#555; margin-top:8px;">Tap to open in what3words &mdash; navigate straight to the car</p>
+        </a>
+
+        <!-- Honest Disclosure -->
+        <div class="disclosure-card" id="disclosureDisplayCard" style="display:none;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                <h2 style="margin:0; font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--silver);">&#128737; Honest Disclosure</h2>
+                <span id="disclosureBadge" class="tl-badge"></span>
+            </div>
+            <p id="disclosureDisplayText" style="font-size:0.88rem; line-height:1.75; color:var(--cream);"></p>
+            <p style="font-size:0.72rem; color:var(--silver); margin-top:12px; padding-top:10px; border-top:1px solid #252525;">&#10003; This seller chose honesty. Your kind of person.</p>
+        </div>
+
+        <!-- Spanner Jack CTA -->
+        <a href="/index.html#tools" class="jack-cta">
+            <span class="icon">&#128296;</span>
+            <div>
+                <h3>Get Spanner Jack&apos;s verdict on this car</h3>
+                <p>Paste the listing or MOT history. 30 years under bonnets. Free. Honest.</p>
+            </div>
+        </a>
+
+        <!-- Share QR -->
+        <div class="card" id="shareQRCard" style="text-align:center;">
+            <h2 style="text-align:left;">&#128247; Share This Listing</h2>
+            <canvas id="shareQR" width="160" height="160"></canvas>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+                <button onclick="copyListingUrl()" class="btn-contact secondary" style="flex:1; cursor:pointer; border:1px solid var(--border);">&#128203; Copy Link</button>
+                <button onclick="openEmbedModal()" class="btn-contact secondary" style="flex:1; cursor:pointer; border:1px solid rgba(249,115,22,0.35); color:var(--accent);">&#60;/&#62; Embed</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Print-only honest note — shown instead of the on-screen preview banner when this
+     printout is for a listing that isn't published live yet. Free to print either way. -->
+<p id="printFreeNote">This printout is free, courtesy of Motor-Oid — no charge to print or stick on the windscreen. It isn't in Motor-Oid's live search yet, but scan the QR above and buyers see exactly what's on this page. Want it searchable to every buyer on Motor-Oid too? The seller can publish it at motor-oid.co.uk/sell.</p>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">&#10005;</span>
+    <img id="lightboxImg" src="" alt="">
+    <span class="lightbox-label" id="lightboxLabel"></span>
+</div>
+
+<!-- Embed modal -->
+<div class="embed-modal-overlay" id="embedModal">
+    <div class="embed-modal">
+        <button onclick="closeEmbedModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--silver);font-size:1.5rem;cursor:pointer;line-height:1;min-height:0;padding:0;">&#10005;</button>
+        <p style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--silver);margin-bottom:8px;">&#60;/&#62; Embed on your website</p>
+        <p style="font-size:0.82rem;color:var(--silver);margin-bottom:14px;line-height:1.5;">Paste this anywhere on your site. The listing updates live whenever the seller edits it. Includes a Powered by Motor-Oid badge — your site becomes part of the honest network.</p>
+        <div class="embed-code-box" id="embedCodeBox"></div>
+        <button onclick="copyEmbedCode()" id="copyEmbedBtn" style="width:100%;background:var(--accent);color:#000;font-weight:700;border:none;border-radius:8px;padding:13px;font-size:0.9rem;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:10px;">&#128203; Copy embed code</button>
+        <p style="font-size:0.75rem;color:#4b5563;text-align:center;">Want your dealership logo inside the embed? <a href="mailto:chris@chrisptee.co.uk?subject=Motor-Oid%20Business%20Bundle" style="color:var(--accent);">Business bundle →</a></p>
+    </div>
+</div>
+
+<!-- Publish bar — shown by JS when operator has publish token -->
+<div id="publishBar" class="publish-bar" style="display:none;">
+    <div class="publish-bar-text">
+        <strong>Ready to go live?</strong>
+        Uses 1 credit from your balance.
+    </div>
+    <button class="publish-btn" id="publishBtn" onclick="publishListing()">Publish →</button>
+</div>
+
+<!-- Hard-stop confirm overlay — operator must confirm payment before listing goes live -->
+<div id="hardStopOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:#0f0f0f; overflow-y:auto;">
+    <div style="max-width:520px; margin:0 auto; padding:48px 24px 60px;">
+        <div style="text-align:center; margin-bottom:28px;">
+            <div style="font-size:3.5rem; margin-bottom:16px;">⚠️</div>
+            <h2 style="font-family:'Caveat',cursive; font-size:2.6rem; color:#f97316; margin-bottom:0; line-height:1.1;">This is the moment.</h2>
+        </div>
+        <div style="background:#1a0d00; border:2px solid #f97316; border-radius:16px; padding:28px 24px; margin-bottom:32px; font-family:'Outfit',sans-serif; font-size:1rem; line-height:1.8; color:#e2e8f0;">
+            <p>Once you confirm, this listing is live.</p>
+            <p style="margin-top:6px;">Your seller can see it. Buyers can see it.</p>
+            <p style="margin-top:18px; font-weight:700; font-size:1.05rem; color:#f97316;">Make sure you've been paid.<br>Cash in hand. Check the notes.<br>No dodgy twenties.</p>
+            <p style="margin-top:18px; color:#ef4444; font-weight:800; font-size:1.05rem; letter-spacing:0.02em;">There is no undo.</p>
+        </div>
+        <button onclick="confirmAndPublish()" style="width:100%; background:linear-gradient(135deg,#f97316,#ea580c); color:#fff; font-weight:800; padding:18px 20px; border-radius:12px; border:none; cursor:pointer; font-family:'Outfit',sans-serif; font-size:1rem; margin-bottom:12px; letter-spacing:0.01em;">
+            I've been paid — make it live →
+        </button>
+        <button onclick="document.getElementById('hardStopOverlay').style.display='none'" style="width:100%; background:transparent; color:#94a3b8; font-weight:600; padding:14px 20px; border-radius:12px; border:1px solid #3d3d3d; cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.95rem;">
+            Wait — not yet
+        </button>
+    </div>
+</div>
+
+<footer>
+    <a href="https://motor-oid.co.uk" target="_blank" rel="noopener" class="powered-badge">
+        <img src="/logo.jpg" alt="Motor-Oid">
+        <span class="pb-label">Powered by Motor-Oid</span>
+        <span class="pb-cta">— Get your free listing →</span>
+    </a>
+    <br>
+    <span style="color:#444;font-size:0.75rem;">Part of the <a href="https://feelfamous.co.uk" target="_blank" rel="noopener" style="color:var(--accent);">FeelFamous</a> village &middot; World domination through kindness.</span>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://pdnjeynugptnavkdbmxh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkbmpleW51Z3B0bmF2a2RibXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMTEzMDAsImV4cCI6MjA4NDU4NzMwMH0.GawisR01EykMtdauBMxenmHF2NXDMzDOJl8WgzkwFQo';
+
+let sb;
+try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+
+const slug = window.location.pathname.split('/').pop() || window.location.pathname.split('/').slice(-2)[0];
+const publishToken = new URLSearchParams(window.location.search).get('pt') || '';
+let listingHeadlineGlobal = 'Vehicle listing';
+
+async function loadListing() {
+    if (!slug || !sb) { showError(); return; }
+
+    try {
+        const { data, error } = await sb
+            .from('motor_listings')
+            .select('*')
+            .eq('slug', slug)
+            .in('status', ['active', 'preview'])
+            .single();
+
+        if (error || !data) { showError(); return; }
+
+        if (data.status === 'preview') {
+            const banner = document.getElementById('previewBanner');
+            banner.style.display = 'block';
+
+            const createdAt = new Date(data.created_at);
+            const isExpired = Date.now() > createdAt.getTime() + 48 * 60 * 60 * 1000;
+
+            if (isExpired) {
+                banner.style.background = 'rgba(239,68,68,0.1)';
+                banner.style.borderColor = '#ef4444';
+                banner.querySelector('.preview-banner-title').style.color = '#ef4444';
+                banner.querySelector('.preview-banner-title').textContent = 'Preview expired';
+                banner.querySelector('.preview-banner-sub').textContent = 'This preview has expired (48 hours). The seller will need to create a new listing at motor-oid.co.uk/sell';
+            } else if (publishToken) {
+                document.getElementById('publishBar').style.display = 'flex';
+                document.getElementById('listingContent').classList.add('publish-content-pad');
+            }
+
+            if (!isExpired) {
+                const printNote = document.getElementById('printFreeNote');
+                if (printNote) printNote.classList.add('is-preview');
+            }
+        }
+
+        renderListing(data);
+    } catch (e) {
+        showError();
+    }
+}
+
+function publishListing() {
+    document.getElementById('hardStopOverlay').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function confirmAndPublish() {
+    document.getElementById('hardStopOverlay').style.display = 'none';
+    const btn = document.getElementById('publishBtn');
+    btn.disabled = true;
+    btn.textContent = 'Publishing…';
+
+    try {
+        const res = await fetch('/.netlify/functions/publish-listing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug, publish_token: publishToken }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Publish failed');
+
+        window.location.href = data.url;
+    } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Publish →';
+        alert('Could not publish: ' + e.message);
+    }
+}
+
+function showError() {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+}
+
+function renderListing(data) {
+    const v = data.vehicle || {};
+    const headline = data.listing_headline || [v.year, v.make, v.model].filter(Boolean).join(' ');
+
+    // Update page title
+    document.title = headline + ' | Motor-Oid';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.content = `${headline} — £${data.price || 'POA'}. ${v.mileage || ''} miles. ${v.condition || ''} condition. For sale on Motor-Oid.`;
+
+    listingHeadlineGlobal = headline;
+
+    // Hero
+    document.getElementById('listingPrice').textContent = data.price ? '£' + data.price : 'Price on application';
+    document.getElementById('listingHeadline').textContent = headline;
+    const badge = document.getElementById('conditionBadge');
+    if (v.condition) {
+        badge.textContent = v.condition;
+        badge.className = 'condition-badge condition-' + v.condition;
+    }
+
+    // Video
+    if (data.video_url) {
+        document.getElementById('listingVideo').src = data.video_url;
+        document.getElementById('videoCard').style.display = 'block';
+    }
+
+    // Photos
+    const frames = data.frames || [];
+    if (frames.length > 0) {
+        const grid = document.getElementById('photoGrid');
+        frames.forEach((f, i) => {
+            const img = document.createElement('img');
+            img.src = 'data:image/jpeg;base64,' + f.data;
+            img.alt = f.label || 'Photo ' + (i + 1);
+            img.loading = 'lazy';
+            img.onclick = () => openLightbox(img.src, f.label || '');
+            grid.appendChild(img);
+        });
+        document.getElementById('photosCard').style.display = 'block';
+    }
+
+    // Contact
+    const contactGrid = document.getElementById('contactGrid');
+    if (data.contact_phone) {
+        const a = document.createElement('a');
+        a.href = 'tel:' + data.contact_phone.replace(/\s/g, '');
+        a.className = 'btn-contact';
+        a.innerHTML = '&#128222; Call Seller';
+        contactGrid.appendChild(a);
+    }
+    if (data.contact_email) {
+        const subj = encodeURIComponent('Interested in your ' + headline);
+        const a = document.createElement('a');
+        a.href = `mailto:${data.contact_email}?subject=${subj}`;
+        a.className = 'btn-contact secondary';
+        a.innerHTML = '&#128139; Email Seller';
+        contactGrid.appendChild(a);
+    }
+    if (data.contact_phone) {
+        const a = document.createElement('a');
+        a.href = `https://wa.me/${data.contact_phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hi, I saw your ' + headline + ' on Motor-Oid — is it still available?')}`;
+        a.className = 'btn-contact secondary';
+        a.innerHTML = '&#128172; WhatsApp';
+        a.target = '_blank';
+        a.rel = 'noopener';
+        contactGrid.appendChild(a);
+    }
+
+    // Spec — CB radio vs vehicle
+    const isCB = v.category === 'cbradio';
+    const specItems = isCB
+        ? [
+            { label: 'Make',        value: v.make },
+            { label: 'Model',       value: v.model },
+            { label: 'Band',        value: v.band },
+            { label: 'Modes',       value: v.modes },
+            { label: 'Condition',   value: v.condition },
+            { label: 'Included',    value: v.accessories },
+        ].filter(s => s.value)
+        : [
+            { label: 'Make',         value: v.make },
+            { label: 'Model',        value: v.model },
+            { label: 'Year',         value: v.year },
+            { label: 'Trim',         value: v.trim },
+            { label: 'Colour',       value: v.colour },
+            { label: 'Mileage',      value: v.mileage ? v.mileage + ' miles' : '' },
+            { label: 'Fuel',         value: v.fuel_type },
+            { label: 'Gearbox',      value: v.transmission },
+            { label: 'Body Type',    value: v.body_type },
+            { label: 'Doors',        value: v.doors },
+            { label: 'Interior',     value: v.interior_colour },
+        ].filter(s => s.value);
+
+    const specGrid = document.getElementById('specGrid');
+    specItems.forEach(s => {
+        const el = document.createElement('div');
+        el.className = 'spec-item';
+        el.innerHTML = `<div class="label">${s.label}</div><div class="value">${escHtml(s.value)}</div>`;
+        specGrid.appendChild(el);
+    });
+
+    // CB radio description
+    if (isCB && v.description) {
+        const descCard = document.getElementById('defectsCard');
+        if (descCard) {
+            descCard.style.display = 'block';
+            const heading = descCard.querySelector('p, h3');
+            if (heading) heading.textContent = 'About this radio';
+            const list = document.getElementById('defectsList');
+            if (list) {
+                list.innerHTML = '';
+                const li = document.createElement('li');
+                li.style.listStyle = 'none';
+                li.style.padding = '0';
+                li.textContent = v.description;
+                list.appendChild(li);
+            }
+        }
+    }
+
+    // CB radio compliance badge
+    if (isCB) {
+        const complianceEl = document.createElement('p');
+        complianceEl.style.cssText = 'font-size:0.78rem;color:#22c55e;margin-top:8px;';
+        complianceEl.textContent = '✓ UK-spec, Ofcom-compliant listing. Standard equipment only.';
+        const specGrid = document.getElementById('specGrid');
+        if (specGrid && specGrid.parentNode) specGrid.parentNode.appendChild(complianceEl);
+    }
+
+    // Features
+    const tech = v.tech_features || [];
+    if (tech.length > 0) {
+        const list = document.getElementById('featuresList');
+        tech.forEach(t => {
+            const chip = document.createElement('span');
+            chip.className = 'feature-chip';
+            chip.textContent = t;
+            list.appendChild(chip);
+        });
+        document.getElementById('featuresCard').style.display = 'block';
+    }
+
+    // Defects
+    const defects = v.defects || [];
+    if (defects.length > 0) {
+        const list = document.getElementById('defectsList');
+        defects.forEach(d => {
+            const li = document.createElement('li');
+            li.textContent = d;
+            list.appendChild(li);
+        });
+        document.getElementById('defectsCard').style.display = 'block';
+    }
+
+    // What3Words location
+    if (v.w3w_location && v.w3w_location.words) {
+        const w = v.w3w_location;
+        document.getElementById('w3wWords').textContent = w.words;
+        document.getElementById('w3wPlace').textContent = w.nearestPlace || '';
+        const card = document.getElementById('w3wCard');
+        card.href = `https://what3words.com/${w.words}`;
+        card.style.display = 'block';
+    }
+
+    // Honest Disclosure
+    if (v.disclosure_text && v.traffic_light) {
+        const tl = v.traffic_light;
+        const tlLabels = { green: '🟢 Clear', amber: '🟡 Advisories', red: '🔴 Issues Disclosed' };
+        const badge = document.getElementById('disclosureBadge');
+        badge.textContent = tlLabels[tl] || tl;
+        badge.className = 'tl-badge tl-' + tl;
+        document.getElementById('disclosureDisplayText').textContent = v.disclosure_text;
+        document.getElementById('disclosureDisplayCard').style.display = 'block';
+    }
+
+    // Share QR
+    const pageUrl = window.location.href;
+    QRCode.toCanvas(document.getElementById('shareQR'), pageUrl, {
+        width: 160,
+        color: { dark: '#f97316ff', light: '#0f0f0fff' },
+    }, () => {});
+
+    // Show
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('listingContent').style.display = 'block';
+}
+
+function copyListingUrl() {
+    navigator.clipboard?.writeText(window.location.href)
+        .then(() => { event.target.innerHTML = '&#10003; Copied!'; setTimeout(() => event.target.innerHTML = '&#128203; Copy Link', 2000); })
+        .catch(() => prompt('Copy this link:', window.location.href));
+}
+
+function openLightbox(src, label) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxLabel').textContent = label;
+    document.getElementById('lightbox').classList.add('open');
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+}
+
+function openEmbedModal() {
+    const url = window.location.href;
+    const code = `<iframe\n  src="${url}"\n  width="100%"\n  height="780"\n  frameborder="0"\n  loading="lazy"\n  title="${escHtml(listingHeadlineGlobal)}"\n  style="border-radius:12px; border:1px solid #2d2d2d;"\n></iframe>`;
+    document.getElementById('embedCodeBox').textContent = code;
+    document.getElementById('embedModal').classList.add('open');
+}
+
+function closeEmbedModal() {
+    document.getElementById('embedModal').classList.remove('open');
+}
+
+function copyEmbedCode() {
+    const code = document.getElementById('embedCodeBox').textContent;
+    navigator.clipboard?.writeText(code)
+        .then(() => {
+            const btn = document.getElementById('copyEmbedBtn');
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => { btn.innerHTML = '&#128203; Copy embed code'; }, 2000);
+        })
+        .catch(() => { document.getElementById('embedCodeBox').focus(); document.execCommand('selectAll'); });
+}
+
+function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+loadListing();
+</script>
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Become a Spicy Hustler Operator | Motor-Oid</title>
+  <meta name="description" content="Turn a 30-second video into honest profit. On every vehicle. On any driveway. No markup. The service is what they pay for.">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep: #0f0f0f;
+      --mid: #1c1f27;
+      --card: #181a20;
+      --card-border: rgba(249,115,22,0.15);
+      --accent: #f97316;
+      --gold: #fbbf24;
+      --silver: #94a3b8;
+      --cream: #f1f5f9;
+      --green: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html { font-size: 18px; scroll-behavior: smooth; }
+    body { font-family: 'Outfit', sans-serif; background: var(--deep); color: #e2e8f0; overflow-x: hidden; }
+
+    /* ── HERO ────────────────────────────────────────────── */
+    .hero {
+      background: radial-gradient(ellipse at 50% 0%, #200d00 0%, #0f0f0f 55%, #0a0a0a 100%);
+      padding: 48px 20px 52px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 10%, rgba(249,115,22,0.13) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--silver); font-size: 0.78rem; text-decoration: none;
+      margin-bottom: 28px; position: relative;
+    }
+    .hero-back:hover { color: var(--accent); }
+    .hero-label {
+      display: inline-block;
+      background: rgba(249,115,22,0.15);
+      border: 1px solid rgba(249,115,22,0.35);
+      color: var(--accent);
+      font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 20px;
+      margin-bottom: 20px; position: relative;
+    }
+    .hero h1 {
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 900; color: white;
+      line-height: 1.15; margin-bottom: 16px;
+      position: relative;
+    }
+    .hero h1 .hl { color: var(--accent); }
+    .hero-sub {
+      font-size: 1rem; color: var(--silver);
+      max-width: 520px; margin: 0 auto;
+      line-height: 1.6; position: relative;
+    }
+
+    /* ── LAYOUT ──────────────────────────────────────────── */
+    .body { max-width: 580px; margin: 0 auto; padding: 28px 16px 72px; }
+
+    /* ── CARDS ───────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 26px 22px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 0.72rem; font-weight: 800;
+      color: var(--silver); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 16px;
+    }
+    .card-title span { color: var(--accent); }
+
+    /* ── MATH CARD ───────────────────────────────────────── */
+    .math-card {
+      background: linear-gradient(135deg, #1a0e00, #150c00);
+      border: 2px solid rgba(249,115,22,0.4);
+      border-radius: 20px;
+      padding: 28px 22px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .math-title {
+      font-size: 0.72rem; font-weight: 800;
+      color: var(--accent); text-transform: uppercase;
+      letter-spacing: 0.12em; margin-bottom: 22px;
+    }
+    .math-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 8px; margin-bottom: 16px;
+    }
+    @media (max-width: 420px) {
+      .math-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .math-cell {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 16px 8px;
+    }
+    .math-cell.highlight {
+      background: rgba(249,115,22,0.12);
+      border-color: rgba(249,115,22,0.4);
+    }
+    .math-amount {
+      font-size: 1.5rem; font-weight: 900; color: white;
+      line-height: 1; margin-bottom: 6px;
+    }
+    .math-cell.highlight .math-amount { color: var(--accent); }
+    .math-label {
+      font-size: 0.65rem; color: var(--silver);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      line-height: 1.3;
+    }
+    .math-cell.highlight .math-label { color: rgba(249,115,22,0.8); }
+    .math-footer {
+      font-size: 0.88rem; color: var(--gold);
+      font-weight: 700; letter-spacing: 0.03em;
+    }
+
+    /* ── GRAND SLAM ──────────────────────────────────────── */
+    .slam-card {
+      background: linear-gradient(135deg, #0f130a, #111318);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 20px;
+      padding: 26px 22px;
+      margin-bottom: 16px;
+    }
+    .slam-title {
+      font-size: 0.72rem; font-weight: 800;
+      color: var(--green); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 6px;
+    }
+    .slam-headline {
+      font-size: 1.15rem; font-weight: 900; color: white;
+      margin-bottom: 18px; line-height: 1.2;
+    }
+    .slam-step {
+      display: flex; align-items: flex-start; gap: 14px;
+      margin-bottom: 14px;
+    }
+    .slam-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.35);
+      color: var(--green); font-size: 0.75rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .slam-text {
+      font-size: 0.88rem; color: #cbd5e1; line-height: 1.55;
+    }
+    .slam-text strong { color: white; }
+    .slam-text em {
+      font-family: 'Caveat', cursive;
+      font-size: 1.05rem; font-style: normal;
+      color: var(--gold);
+    }
+    .slam-divider {
+      border: none; border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 18px 0;
+    }
+    .slam-close {
+      font-size: 0.88rem; color: var(--silver); line-height: 1.6;
+    }
+    .slam-close strong { color: var(--green); }
+
+    /* ── PAYMENT OPTIONS ─────────────────────────────────── */
+    .pay-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 400px) { .pay-grid { grid-template-columns: 1fr; } }
+    .pay-option {
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 14px; padding: 18px 14px;
+      text-align: center;
+    }
+    .pay-icon { font-size: 2rem; margin-bottom: 8px; }
+    .pay-name { font-size: 0.85rem; font-weight: 800; color: white; margin-bottom: 4px; }
+    .pay-desc { font-size: 0.72rem; color: var(--silver); line-height: 1.4; }
+
+    /* ── KINDNESS CLAUSE ─────────────────────────────────── */
+    .kindness-card {
+      background: linear-gradient(135deg, #0a0e1a, #0f0f0f);
+      border: 1px solid rgba(148,163,184,0.2);
+      border-left: 3px solid var(--silver);
+      border-radius: 20px; padding: 22px 20px;
+      margin-bottom: 16px;
+    }
+    .kindness-label {
+      font-size: 0.7rem; font-weight: 800;
+      color: var(--silver); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 8px;
+    }
+    .kindness-text {
+      font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;
+    }
+    .kindness-text strong { color: white; }
+
+    /* ── FORM ────────────────────────────────────────────── */
+    /* ── BUNDLE SELECTOR ─────────────────────────────────── */
+    .bundle-option {
+      display: block; cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 14px; padding: 0;
+      transition: border-color 0.15s;
+      background: rgba(255,255,255,0.03);
+    }
+    .bundle-option:has(input:checked) {
+      border-color: var(--accent);
+      background: rgba(249,115,22,0.07);
+    }
+    .bundle-content {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; gap: 12px;
+    }
+    .bundle-main { display: flex; align-items: center; gap: 12px; }
+    .bundle-emoji { font-size: 1.4rem; line-height: 1; }
+    .bundle-name { font-size: 0.95rem; font-weight: 800; color: white; margin-bottom: 2px; }
+    .bundle-desc { font-size: 0.72rem; color: var(--silver); }
+    .bundle-price { font-size: 1.5rem; font-weight: 900; color: var(--accent); white-space: nowrap; }
+
+    .form-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 26px 22px;
+      margin-bottom: 16px;
+    }
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 0.72rem; font-weight: 700;
+      color: var(--silver); text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%; padding: 15px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif; font-size: 1rem;
+      color: #e2e8f0; outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus { border-color: var(--accent); }
+    .field input::placeholder { color: rgba(148,163,184,0.45); }
+
+    /* ── CTA BUTTON ──────────────────────────────────────── */
+    .cta-btn {
+      width: 100%; padding: 20px;
+      background: linear-gradient(135deg, var(--accent), #ea580c);
+      color: white; border: none; border-radius: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem; font-weight: 900;
+      cursor: pointer; transition: all 0.15s;
+      min-height: 60px; letter-spacing: 0.01em;
+    }
+    .cta-btn:hover { filter: brightness(1.1); }
+    .cta-btn:active { transform: scale(0.98); }
+    .cta-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .cta-note {
+      text-align: center; font-size: 0.72rem; color: var(--silver);
+      margin-top: 12px; line-height: 1.5;
+    }
+
+    /* ── ERROR ───────────────────────────────────────────── */
+    .err-msg {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 10px; padding: 12px 14px;
+      font-size: 0.82rem; color: #fca5a5;
+      margin-top: 12px; display: none;
+    }
+
+    /* ── OPEN WINDOW TEASER ──────────────────────────────── */
+    .teaser-card {
+      background: linear-gradient(135deg, #0d0a00, #0f0f0f);
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 20px; padding: 26px 22px;
+      margin-bottom: 16px; text-align: center;
+    }
+    .teaser-label {
+      font-size: 0.7rem; font-weight: 800;
+      color: var(--gold); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 10px;
+    }
+    .teaser-headline {
+      font-size: 1.2rem; font-weight: 900; color: white;
+      margin-bottom: 10px; line-height: 1.25;
+    }
+    .teaser-sub {
+      font-size: 0.82rem; color: var(--silver); line-height: 1.55;
+    }
+    .teaser-sub span { color: var(--gold); font-weight: 700; }
+
+    /* ── TRUST STRIP ─────────────────────────────────────── */
+    .trust-strip {
+      display: flex; justify-content: center;
+      flex-wrap: wrap; gap: 16px; margin-bottom: 20px;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; color: var(--silver);
+    }
+    .trust-item .tick { color: var(--green); }
+  </style>
+</head>
+<body>
+<script src="/banner.js"></script>
+
+<div class="hero">
+  <a href="/" class="hero-back">← Back to Motor-Oid</a>
+  <div class="hero-label">Spicy Hustler Operator</div>
+  <h1>Turn a 30-second video<br>into <span class="hl">honest profit.</span><br>On every vehicle. On any driveway.</h1>
+  <p class="hero-sub">No camera rig. No laptop. Just your phone, a vehicle, and Motor-Oid doing the hard 80%.</p>
+</div>
+
+<div class="body">
+
+  <!-- TRUST STRIP -->
+  <div class="trust-strip">
+    <div class="trust-item"><span class="tick">✓</span> No equipment needed</div>
+    <div class="trust-item"><span class="tick">✓</span> Your own hamlet page</div>
+    <div class="trust-item"><span class="tick">✓</span> £5–£20 profit per vehicle</div>
+    <div class="trust-item"><span class="tick">✓</span> Collect on the spot</div>
+  </div>
+
+  <!-- WHO IS THIS FOR -->
+  <div style="background:linear-gradient(135deg,#0a0f0a,#0f0f0f); border:1px solid rgba(34,197,94,0.15); border-radius:20px; padding:26px 22px; margin-bottom:16px;">
+    <div style="font-size:0.7rem;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Who is this for</div>
+    <p style="font-family:'Caveat',cursive;font-size:1.5rem;color:white;line-height:1.25;margin-bottom:16px;">
+      We're the same people you see at the boot sale.
+    </p>
+    <p style="font-size:0.88rem;color:#94a3b8;line-height:1.7;margin-bottom:14px;">
+      The same faces at the market. Walking past each other in the high street every week.
+      <strong style="color:#e2e8f0;">We all know each other. We just don't know that yet.</strong>
+      Motor-Oid is where we find out.
+    </p>
+    <p style="font-size:0.88rem;color:#94a3b8;line-height:1.7;margin-bottom:14px;">
+      If you know cars — if you're a mechanic, a detailer, a forecourt hand, someone who spots
+      a bodge at 20 paces — you're already an Elder. The skills came first.
+      <strong style="color:#e2e8f0;">The title just catches up.</strong>
+    </p>
+    <p style="font-size:0.88rem;color:#94a3b8;line-height:1.7;margin-bottom:14px;">
+      And bad actors don't last here because they stick out. Not because of rules — because
+      of atmosphere. When everyone in the room knows their cars, the bluffer feels it.
+      We know who's decent. We always did.
+    </p>
+    <div style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+      <p style="font-size:0.82rem;color:#94a3b8;line-height:1.6;">
+        <span style="color:#22c55e;font-weight:800;">✓ Safe space</span> — for autistic, ADHD, and neurodivergent people. For kids. For everyone
+        who's ever felt like the room wasn't built for them. No aggressive chat tools. No pile-ons.
+        <strong style="color:#e2e8f0;">A minimum of £4.95 to join</strong> — not a paywall, a vibe check.
+        Real people only. Stripe holds the details so the space stays honest.
+      </p>
+    </div>
+    <p style="font-size:0.82rem;color:#fbbf24;font-weight:700;">
+      This is the founding price. The people already here are locking it in. It won't always be this.
+    </p>
+  </div>
+
+  <!-- MATH CARD -->
+  <div class="math-card">
+    <div class="math-title">The numbers — no small print</div>
+    <div class="math-grid">
+      <div class="math-cell">
+        <div class="math-amount">£10–£25</div>
+        <div class="math-label">You charge<br>the seller</div>
+      </div>
+      <div class="math-cell">
+        <div class="math-amount">£5</div>
+        <div class="math-label">Credit costs<br>you</div>
+      </div>
+      <div class="math-cell highlight">
+        <div class="math-amount">£5–£20</div>
+        <div class="math-label">You keep.<br>Every vehicle.</div>
+      </div>
+      <div class="math-cell">
+        <div class="math-amount">2 min</div>
+        <div class="math-label">Phone<br>walk-around</div>
+      </div>
+    </div>
+    <div class="math-footer">Standard listing £10. 4K walkround £25. You set the rate — you turned up, that's what they're paying for.</div>
+  </div>
+
+  <!-- HOW THE PITCH WORKS -->
+  <div class="slam-card">
+    <div class="slam-title">How the pitch works</div>
+    <div class="slam-headline">You always show first.<br>From a tenner a car. You set the rate.</div>
+
+    <div class="slam-step">
+      <div class="slam-num">1</div>
+      <div class="slam-text">
+        Walk up to any seller — forecourt, driveway, market car park, doesn't matter.
+        Ask if you can film their vehicle. <em>They watch the page being made, right there, right then.</em>
+      </div>
+    </div>
+    <div class="slam-step">
+      <div class="slam-num">2</div>
+      <div class="slam-text">
+        <strong>Film it. Thirty seconds.</strong> Let them see the listing appear live on Motor-Oid.
+        That's your demo. That's your proof. No pitch needed after that.
+      </div>
+    </div>
+    <div class="slam-step">
+      <div class="slam-num">3</div>
+      <div class="slam-text">
+        Then say it plainly: <em>"Tenner for the standard listing. Twenty-five for the 4K walkround. I came to you, took 30 seconds. Want me to do the rest?"</em>
+        They've already seen what it does. The hard part is done.
+      </div>
+    </div>
+
+    <hr class="slam-divider">
+
+    <div class="slam-close">
+      Your credit cost you £5. Standard listing at £10 — <strong style="color: var(--green);">£5 clear</strong>.<br>
+      4K walkround at £25 — <strong style="color: var(--green);">£20 clear</strong>. Same 30 seconds.<br>
+      Do 10 vehicles at the 4K rate, walk away with <strong style="color: var(--green);">£200 in your pocket.</strong><br>
+      <br>
+      And if your seller's happy? They tip. They join. They tell someone else.<br>
+      <span style="color: var(--silver); font-size: 0.88rem;">They scan your QR — they're in your village now.</span>
+    </div>
+  </div>
+
+  <!-- PAYMENT OPTIONS -->
+  <div class="card">
+    <div class="card-title">Collect your <span>£25</span> on the spot</div>
+    <div class="pay-grid">
+      <div class="pay-option">
+        <div class="pay-icon">📱</div>
+        <div class="pay-name">Stripe Tap-to-Pay</div>
+        <div class="pay-desc">Turn your phone into a card reader. Tap, done. Money in your account.</div>
+      </div>
+      <div class="pay-option">
+        <div class="pay-icon">🖨</div>
+        <div class="pay-name">PayPal QR Code</div>
+        <div class="pay-desc">Print your paypal.me/yourname QR. Stick it on your sign. They scan, you're paid.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZODIACMAN QUOTE -->
+  <div style="background:linear-gradient(135deg,#0d0a1a,#0f0f0f);border:1px solid rgba(249,115,22,0.2);border-left:3px solid var(--accent);border-radius:20px;padding:22px 20px;margin-bottom:16px;">
+    <div style="font-family:'Caveat',cursive;font-size:1.5rem;color:white;line-height:1.3;margin-bottom:8px;">
+      "You'll always have a fiver in your pocket."
+    </div>
+    <div style="font-size:0.75rem;color:var(--silver);text-transform:uppercase;letter-spacing:0.08em;">— Brian Zodiacman</div>
+  </div>
+
+  <!-- FOUNDER BLOCK -->
+  <div style="background:linear-gradient(135deg,#0a0f0d,#0f0f0f);border:1px solid rgba(34,197,94,0.2);border-radius:20px;padding:22px 20px;margin-bottom:16px;">
+    <div style="font-size:0.7rem;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Already a Founder?</div>
+    <p style="font-size:0.9rem;color:#cbd5e1;line-height:1.6;">
+      <strong style="color:white;">One credit a month is included</strong> with your Founder membership. No bundle needed. Your hamlet page and QR code are already live. Just open Motor-Oid and list.
+    </p>
+    <p style="font-size:0.82rem;color:var(--silver);margin-top:8px;line-height:1.5;">
+      Not a Founder yet? <a href="https://www.patreon.com/chrisptee" target="_blank" rel="noopener" style="color:var(--green);font-weight:700;text-decoration:none;">£14.95/month on Patreon →</a>
+    </p>
+  </div>
+
+  <!-- KINDNESS CLAUSE -->
+  <div class="kindness-card">
+    <div class="kindness-label">The Kindness Clause</div>
+    <p class="kindness-text">
+      <strong>Broke but hungry to work?</strong> Your first credit is on us.
+      You repay from your first sale — not before. We back people who show up,
+      not people who can already afford to.
+    </p>
+    <p style="font-size:0.78rem;color:var(--silver);margin-top:14px;font-style:italic;border-top:1px solid rgba(255,255,255,0.07);padding-top:12px;">
+      Dedicated to Brian Zodiacman, who said: "You'll always have a fiver in your pocket."
+    </p>
+  </div>
+
+  <!-- SIGNUP FORM -->
+  <div class="form-card">
+    <div class="card-title">Choose your <span>bundle</span></div>
+
+    <!-- Bundle selector -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+      <label class="bundle-option" id="opt-bundle_1">
+        <input type="radio" name="bundle" value="bundle_1" style="display:none;">
+        <div class="bundle-content">
+          <div class="bundle-main">
+            <span class="bundle-emoji">⭐</span>
+            <div>
+              <div class="bundle-name">1 Credit — First Fiver</div>
+              <div class="bundle-desc">One vehicle. Try it. No commitment.</div>
+            </div>
+          </div>
+          <div class="bundle-price">£5</div>
+        </div>
+      </label>
+      <label class="bundle-option" id="opt-bundle_5">
+        <input type="radio" name="bundle" value="bundle_5" style="display:none;" checked>
+        <div class="bundle-content">
+          <div class="bundle-main">
+            <span class="bundle-emoji">🔥</span>
+            <div>
+              <div class="bundle-name">5 Credits — Hustler</div>
+              <div class="bundle-desc">5 vehicles. £5/credit. Keep up to £100.</div>
+            </div>
+          </div>
+          <div class="bundle-price">£25</div>
+        </div>
+      </label>
+      <label class="bundle-option" id="opt-bundle_10">
+        <input type="radio" name="bundle" value="bundle_10" style="display:none;">
+        <div class="bundle-content">
+          <div class="bundle-main">
+            <span class="bundle-emoji">💰</span>
+            <div>
+              <div class="bundle-name">10 Credits — Earner</div>
+              <div class="bundle-desc">10 vehicles. £5/credit. Keep up to £200.</div>
+            </div>
+          </div>
+          <div class="bundle-price">£50</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" id="operatorName" placeholder="First name is fine" autocomplete="name">
+    </div>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="operatorEmail" placeholder="where we send your hamlet link" autocomplete="email">
+    </div>
+
+    <button class="cta-btn" id="bundleBtn" onclick="startCheckout()">
+      Get Your Bundle →
+    </button>
+
+    <div class="err-msg" id="errMsg"></div>
+
+    <p class="cta-note">
+      Stripe secure checkout. Your hamlet page goes live the moment payment clears.
+    </p>
+  </div>
+
+
+</div><!-- /body -->
+
+<script>
+  // Highlight selected bundle option
+  document.querySelectorAll('input[name="bundle"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      document.querySelectorAll('.bundle-option').forEach(function(opt) {
+        opt.style.borderColor = '';
+      });
+    });
+  });
+
+  // Default: select bundle_5
+  (function() {
+    var def = document.querySelector('input[value="bundle_5"]');
+    if (def) def.checked = true;
+  })();
+
+  async function startCheckout() {
+    const nameInput = document.getElementById('operatorName');
+    const emailInput = document.getElementById('operatorEmail');
+    const btn = document.getElementById('bundleBtn');
+    const err = document.getElementById('errMsg');
+
+    err.style.display = 'none';
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const bundleRadio = document.querySelector('input[name="bundle"]:checked');
+    const bundleType = bundleRadio ? bundleRadio.value : 'bundle_5';
+
+    if (!name) {
+      showErr('Your name is needed so we can set up your hamlet.');
+      nameInput.focus();
+      return;
+    }
+    if (!email || !email.includes('@')) {
+      showErr('A valid email is needed — your hamlet link goes there.');
+      emailInput.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Opening checkout…';
+
+    try {
+      const res = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: bundleType,
+          operator_email: email,
+          operator_name: name
+        })
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Checkout failed — try again in a moment.');
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned.');
+      }
+    } catch (e) {
+      showErr(e.message || 'Something went wrong. Try again.');
+      btn.disabled = false;
+      btn.textContent = 'Get Your Bundle →';
+    }
+
+    function showErr(msg) {
+      err.textContent = msg;
+      err.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Village Stall | Motor-Oid</title>
+  <meta name="description" content="A Motor-Oid village stall — honest listings from a real person.">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --deep:    #0f0f0f;
+      --mid:     #181818;
+      --surface: #252525;
+      --accent:  #f97316;
+      --silver:  #b0bece;
+      --cream:   #e2e8f0;
+      --green:   #22c55e;
+      --amber:   #fbbf24;
+      --red:     #ef4444;
+      --border:  #3d3d3d;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--deep);
+      color: var(--cream);
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; }
+
+    /* ── Nav ── */
+    .top-nav {
+      padding: 14px 20px;
+      border-bottom: 1px solid #222;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15,15,15,0.96);
+      backdrop-filter: blur(8px);
+    }
+    .top-nav .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1rem; color: var(--cream);
+      text-decoration: none;
+    }
+    .top-nav .brand img { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; }
+    .top-nav .brand span { color: var(--accent); }
+    .top-nav .browse-link {
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--silver); text-decoration: none;
+    }
+    .top-nav .browse-link:hover { color: var(--cream); }
+
+    /* ── States ── */
+    .state-center {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 60vh; text-align: center; padding: 40px 20px;
+      gap: 16px;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(249,115,22,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .state-label { color: var(--silver); font-size: 0.88rem; }
+    .err-title {
+      font-family: 'Caveat', cursive;
+      font-size: 2rem; color: var(--accent);
+    }
+
+    /* ── Profile hero ── */
+    .profile-hero {
+      background: linear-gradient(160deg, #1a0e00 0%, #0f0f0f 55%);
+      border-bottom: 1px solid rgba(249,115,22,0.15);
+      padding: 36px 20px 30px;
+      position: relative; overflow: hidden;
+    }
+    .profile-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .profile-inner { max-width: 680px; margin: 0 auto; position: relative; }
+    .profile-back {
+      display: inline-flex; align-items: center; gap: 5px;
+      color: var(--silver); font-size: 0.78rem; text-decoration: none;
+      margin-bottom: 20px;
+    }
+    .profile-back:hover { color: var(--accent); }
+    .profile-label {
+      display: inline-block;
+      background: rgba(249,115,22,0.12);
+      border: 1px solid rgba(249,115,22,0.3);
+      color: var(--accent);
+      font-size: 0.68rem; font-weight: 800;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 3px 12px; border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .profile-name {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 700; color: white;
+      line-height: 1.1; margin-bottom: 8px;
+    }
+    .profile-stats {
+      display: flex; align-items: center; gap: 16px;
+      flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .stat {
+      font-size: 0.8rem; color: var(--silver);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .stat strong { color: var(--cream); }
+    .stat .dot { width: 4px; height: 4px; border-radius: 50%; background: #333; }
+    .founder-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(251,191,36,0.1);
+      border: 1px solid rgba(251,191,36,0.3);
+      color: #fbbf24;
+      font-size: 0.72rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .profile-actions {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .btn-hamlet {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg, var(--accent), #ea580c);
+      color: white; font-weight: 800; font-size: 0.85rem;
+      padding: 10px 18px; border-radius: 12px;
+      text-decoration: none; transition: filter 0.15s;
+    }
+    .btn-hamlet:hover { filter: brightness(1.1); color: white; }
+    .btn-share {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--silver); font-weight: 700; font-size: 0.85rem;
+      padding: 10px 18px; border-radius: 12px;
+      cursor: pointer; transition: border-color 0.15s;
+      font-family: 'Outfit', sans-serif;
+    }
+    .btn-share:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Listing grid ── */
+    .grid-section { max-width: 880px; margin: 0 auto; padding: 28px 16px; }
+    .section-heading {
+      font-size: 0.72rem; font-weight: 800;
+      color: var(--silver); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 18px;
+    }
+    .section-heading span { color: var(--accent); }
+    .listing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 480px) {
+      .listing-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    }
+
+    /* Cards — matches browse.html exactly */
+    .listing-card {
+      background: var(--mid);
+      border: 1px solid #222;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      text-decoration: none; color: inherit;
+      transition: border-color 0.15s, transform 0.1s;
+    }
+    .listing-card:hover { border-color: var(--border); transform: translateY(-1px); }
+    .card-thumb {
+      position: relative; aspect-ratio: 4/3;
+      background: #111; overflow: hidden;
+    }
+    .card-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+    }
+    .no-photo {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: #333;
+    }
+    .condition-badge {
+      position: absolute; top: 8px; left: 8px;
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 3px 7px; border-radius: 6px;
+    }
+    .cond-exc { background: rgba(34,197,94,0.2);  color: #86efac; }
+    .cond-good{ background: rgba(59,130,246,0.2);  color: #93c5fd; }
+    .cond-fair{ background: rgba(251,191,36,0.2);  color: #fde68a; }
+    .cond-poor{ background: rgba(239,68,68,0.2);   color: #fca5a5; }
+    .traffic-light-dot {
+      position: absolute; bottom: 8px; left: 8px;
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .tl-green { background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,0.7); }
+    .tl-amber { background: var(--amber); box-shadow: 0 0 6px rgba(251,191,36,0.7); }
+    .tl-red   { background: var(--red);   box-shadow: 0 0 6px rgba(239,68,68,0.7); }
+    .card-body { padding: 10px 11px 12px; flex: 1; display: flex; flex-direction: column; }
+    .card-price {
+      font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+      font-weight: 800; color: var(--accent);
+      line-height: 1; margin-bottom: 4px;
+    }
+    .card-headline {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(0.95rem, 3vw, 1.15rem);
+      color: var(--cream); line-height: 1.2;
+      margin-bottom: 6px; flex: 1;
+    }
+    .card-meta {
+      font-size: 0.72rem; color: #666;
+      display: flex; align-items: center; gap: 4px;
+      margin-top: auto;
+    }
+
+    /* Skeleton */
+    .skeleton-card {
+      background: var(--mid); border: 1px solid #222;
+      border-radius: 14px; overflow: hidden;
+    }
+    .skeleton-thumb {
+      aspect-ratio: 4/3;
+      background: linear-gradient(90deg, #1e1e1e 25%, #282828 50%, #1e1e1e 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton-body { padding: 10px 11px 12px; }
+    .skeleton-line {
+      height: 14px; border-radius: 6px; margin-bottom: 8px;
+      background: linear-gradient(90deg, #222 25%, #2c2c2c 50%, #222 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton-line.short { width: 55%; }
+    .skeleton-line.tall { height: 20px; }
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    .empty-state {
+      text-align: center; padding: 48px 20px;
+      grid-column: 1 / -1;
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .empty-state h3 {
+      font-family: 'Caveat', cursive;
+      font-size: 1.6rem; margin-bottom: 8px;
+    }
+    .empty-state p { color: var(--silver); font-size: 0.88rem; }
+
+    /* ── Philosophy section ── */
+    .philosophy {
+      border-top: 1px solid #1e1e1e;
+      padding: 48px 20px;
+    }
+    .phil-inner {
+      max-width: 580px; margin: 0 auto;
+    }
+    .phil-headline {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(1.8rem, 6vw, 2.4rem);
+      font-weight: 700; color: white;
+      line-height: 1.15; margin-bottom: 20px;
+    }
+    .phil-body {
+      font-size: 0.95rem; color: #94a3b8;
+      line-height: 1.75; margin-bottom: 16px;
+    }
+    .phil-body strong { color: var(--cream); }
+    .phil-quote {
+      border-left: 3px solid var(--accent);
+      padding: 14px 18px;
+      background: rgba(249,115,22,0.05);
+      border-radius: 0 10px 10px 0;
+      margin: 24px 0;
+      font-family: 'Caveat', cursive;
+      font-size: 1.3rem; color: var(--cream);
+      line-height: 1.4;
+    }
+    .safe-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: var(--green);
+      font-size: 0.72rem; font-weight: 800;
+      padding: 4px 12px; border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    /* ── QR section ── */
+    .qr-section {
+      max-width: 580px; margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+    .qr-card {
+      background: var(--mid);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px 20px;
+      display: flex; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+    }
+    #qrCanvas { flex-shrink: 0; border-radius: 8px; overflow: hidden; }
+    .qr-text h4 {
+      font-size: 0.95rem; font-weight: 800; color: white;
+      margin-bottom: 6px;
+    }
+    .qr-text p { font-size: 0.8rem; color: var(--silver); line-height: 1.5; }
+    .qr-url {
+      font-size: 0.72rem; color: var(--accent);
+      word-break: break-all; margin-top: 6px;
+      font-weight: 700;
+    }
+
+    /* ── Join CTA ── */
+    .join-section {
+      border-top: 1px solid #1e1e1e;
+      padding: 48px 20px 60px;
+      text-align: center;
+    }
+    .join-inner { max-width: 520px; margin: 0 auto; }
+    .join-label {
+      display: inline-block;
+      background: rgba(249,115,22,0.12);
+      border: 1px solid rgba(249,115,22,0.3);
+      color: var(--accent);
+      font-size: 0.68rem; font-weight: 800;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 3px 12px; border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .join-headline {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 700; color: white;
+      line-height: 1.2; margin-bottom: 12px;
+    }
+    .join-sub {
+      font-size: 0.88rem; color: var(--silver);
+      line-height: 1.6; margin-bottom: 28px;
+    }
+    .join-sub strong { color: var(--amber); }
+    .join-tiers {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-bottom: 20px;
+    }
+    @media (max-width: 400px) { .join-tiers { grid-template-columns: 1fr; } }
+    .tier-card {
+      background: var(--mid);
+      border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 20px 16px;
+      text-align: left;
+      text-decoration: none; color: inherit;
+      display: block;
+      transition: border-color 0.15s;
+    }
+    .tier-card:hover { border-color: var(--accent); }
+    .tier-card.founder { border-color: rgba(249,115,22,0.4); background: rgba(249,115,22,0.05); }
+    .tier-emoji { font-size: 1.5rem; margin-bottom: 8px; }
+    .tier-name { font-size: 0.95rem; font-weight: 800; color: white; margin-bottom: 4px; }
+    .tier-price {
+      font-size: 1.4rem; font-weight: 900;
+      color: var(--accent); margin-bottom: 6px;
+      line-height: 1;
+    }
+    .tier-price small {
+      font-size: 0.7rem; color: var(--silver);
+      font-weight: 400;
+    }
+    .tier-desc { font-size: 0.75rem; color: var(--silver); line-height: 1.5; }
+    .founding-note {
+      font-size: 0.78rem; color: var(--silver);
+      line-height: 1.55;
+    }
+    .founding-note strong { color: var(--amber); }
+  </style>
+</head>
+<body>
+
+<script src="/banner.js"></script>
+
+<nav class="top-nav">
+  <a class="brand" href="/">
+    <img src="/logo.jpg" alt="Motor-Oid">
+    Motor<span>-Oid</span>
+  </a>
+  <a class="browse-link" href="/browse">← Browse all listings</a>
+</nav>
+
+<div id="loadingState" class="state-center">
+  <div class="spinner"></div>
+  <p class="state-label">Loading stall…</p>
+</div>
+
+<div id="errorState" class="state-center" style="display:none;">
+  <h2 class="err-title">Stall not found</h2>
+  <p class="state-label">This stall doesn't exist yet — or the link might be off.</p>
+  <a href="/browse" style="margin-top:8px; font-size:0.85rem;">Browse all listings →</a>
+</div>
+
+<div id="stallContent" style="display:none;">
+
+  <!-- Profile hero -->
+  <div class="profile-hero">
+    <div class="profile-inner">
+      <a href="/browse" class="profile-back">← Browse all listings</a>
+      <div class="profile-label">Village Stall</div>
+      <h1 class="profile-name" id="stallName">—</h1>
+      <div class="profile-stats">
+        <div class="stat"><strong id="listingCount">0</strong>&nbsp;active listings</div>
+        <div class="stat"><div class="dot"></div></div>
+        <div class="stat" id="totalStat" style="display:none;"><strong id="totalCount">0</strong>&nbsp;vehicles listed all time</div>
+        <div class="founder-badge" id="grandfatherBadge" style="display:none;">🔒 Founding price locked</div>
+      </div>
+      <div class="profile-actions">
+        <a id="hamletBtn" href="#" class="btn-hamlet" style="display:none;">🏚 Visit their hamlet →</a>
+        <button class="btn-share" id="shareBtn" onclick="shareStall()">📋 Copy stall link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listings -->
+  <div class="grid-section">
+    <div class="section-heading"><span>Live</span> listings</div>
+    <div class="listing-grid" id="listingGrid">
+      <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line tall"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line tall"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line tall"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+    </div>
+  </div>
+
+  <!-- Philosophy -->
+  <div class="philosophy">
+    <div class="phil-inner">
+      <div class="safe-tag">✓ Safe space — neurodivergent &amp; kids welcome</div>
+      <h2 class="phil-headline">We already know each other.</h2>
+      <p class="phil-body">
+        We're the same people you see at the boot sale. The same faces at the market.
+        Walking past each other in the high street every week.
+        <strong>We all know each other. We just don't know that yet.</strong>
+      </p>
+      <div class="phil-quote">
+        "We're all trying to find each other's balloon."
+      </div>
+      <p class="phil-body">
+        And here's the thing — we already know who's decent. We know who to look out for.
+        We know when someone's messing us around. <strong>Those skills don't switch off just because it's online.</strong>
+        Bad actors don't last here because they stick out. Not because of rules — because of atmosphere.
+        When everyone in the room knows their cars, the bluffer feels it.
+      </p>
+      <p class="phil-body">
+        This is a safe space — for people who are autistic, ADHD, neurodivergent, for kids,
+        for anyone who's ever felt like the room wasn't built for them.
+        No aggressive chat tools. No pile-ons. A minimum of £3 to join — not a paywall,
+        a vibe check. Real people only. <strong>Stripe holds the details so the space stays honest.</strong>
+      </p>
+      <p class="phil-body">
+        If you know cars — if you're a mechanic, a detailer, a careful buyer,
+        someone who spots a bodge job at 20 paces — this is your village.
+        You just haven't walked through the door yet.
+      </p>
+    </div>
+  </div>
+
+  <!-- QR -->
+  <div class="qr-section">
+    <div class="qr-card">
+      <div id="qrCanvas"></div>
+      <div class="qr-text">
+        <h4>Share this stall</h4>
+        <p>Print it. WhatsApp it. Stick it on the windscreen.<br>
+        Anyone who scans this lands here.</p>
+        <div class="qr-url" id="qrUrl"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Join CTA -->
+  <div class="join-section">
+    <div class="join-inner">
+      <div class="join-label">Join the village</div>
+      <h2 class="join-headline">Your stall is waiting.</h2>
+      <p class="join-sub">
+        If you know cars, you belong here.
+        <strong>This is the founding price. The people already here are locking it in.</strong>
+      </p>
+      <div class="join-tiers">
+        <a href="https://www.patreon.com/chrisptee" target="_blank" rel="noopener" class="tier-card">
+          <div class="tier-emoji">🏡</div>
+          <div class="tier-name">Villager</div>
+          <div class="tier-price">£3 <small>/mo</small></div>
+          <div class="tier-desc">List your own vehicles for £15. 2 passes a month to gift. Your stall in the village.</div>
+        </a>
+        <a href="/operators/join" class="tier-card founder">
+          <div class="tier-emoji">🏛️</div>
+          <div class="tier-name">Founder</div>
+          <div class="tier-price">£15 <small>/mo</small></div>
+          <div class="tier-desc">Your own hamlet page. Put your knowledge on the map. Amazon links, your website, your craft. All yours.</div>
+        </a>
+      </div>
+      <p class="founding-note">
+        <strong>Founding price means founding price.</strong>
+        Join now and that's the rate you pay, for life.
+        The ecosystem is self-sustaining — built on kindness, funded by people who believe in it.
+        You're looking at one of the first stalls in the village.
+      </p>
+    </div>
+  </div>
+
+</div><!-- /stallContent -->
+
+<script>
+const SUPABASE_URL = 'https://pdnjeynugptnavkdbmxh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkbmpleW51Z3B0bmF2a2RibXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMTEzMDAsImV4cCI6MjA4NDU4NzMwMH0.GawisR01EykMtdauBMxenmHF2NXDMzDOJl8WgzkwFQo';
+
+let sb;
+try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+
+const stallSlug = window.location.pathname.split('/stall/')[1]?.replace(/\/$/, '');
+
+// Seller-submitted listing fields are rendered below via innerHTML — escape them so a
+// crafted listing can't run script on this public stall page.
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function conditionClass(c) {
+  if (!c) return '';
+  const l = c.toLowerCase();
+  if (l.includes('excell') || l === 'mint') return 'cond-exc';
+  if (l.includes('good'))  return 'cond-good';
+  if (l.includes('fair'))  return 'cond-fair';
+  if (l.includes('poor') || l.includes('project')) return 'cond-poor';
+  return '';
+}
+function trafficLightClass(v) {
+  if (!v) return '';
+  const l = v.toLowerCase();
+  if (l === 'green')  return 'tl-green';
+  if (l === 'amber')  return 'tl-amber';
+  if (l === 'red')    return 'tl-red';
+  return '';
+}
+
+function cardHtml(listing) {
+  const v = listing.vehicle || {};
+  const slug = listing.slug;
+  const price = listing.price || v.asking_price || '';
+  // Seller-submitted fields — escaped before use, this is a public unauthenticated listing feed.
+  const headline = escapeHtml(listing.listing_headline || v.listing_headline
+    || [v.year, v.make, v.model].filter(Boolean).join(' ')
+    || 'Vehicle for sale');
+  const cClass = conditionClass(v.condition || '');
+  const tlClass = trafficLightClass(v.traffic_light);
+  const make = escapeHtml(v.make || ''); const model = escapeHtml(v.model || ''); const year = escapeHtml(v.year || '');
+
+  const frames = listing.frames || [];
+  let thumbHtml = '<div class="no-photo">' + (v.category === 'cbradio' ? '📻' : '🚗') + '</div>';
+  if (frames.length > 0 && frames[0] && frames[0].data) {
+    thumbHtml = '<img src="data:image/jpeg;base64,' + frames[0].data + '" alt="' + headline + '" loading="lazy">';
+  }
+
+  const badgeHtml = cClass ? '<span class="condition-badge ' + cClass + '">' + escapeHtml(v.condition||'') + '</span>' : '';
+  const tlHtml    = tlClass ? '<span class="traffic-light-dot ' + tlClass + '"></span>' : '';
+  const metaParts = [make, model, year].filter(Boolean);
+  const metaHtml  = metaParts.length ? '<div class="card-meta">' + metaParts.join(' · ') + '</div>' : '';
+
+  return '<a class="listing-card" href="/listing/' + slug + '">' +
+    '<div class="card-thumb">' + thumbHtml + badgeHtml + tlHtml + '</div>' +
+    '<div class="card-body">' +
+      (price ? '<div class="card-price">£' + price.toString().replace(/^£/, '') + '</div>' : '') +
+      '<div class="card-headline">' + headline + '</div>' +
+      metaHtml +
+    '</div>' +
+  '</a>';
+}
+
+function shareStall() {
+  const url = window.location.href;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById('shareBtn');
+      btn.textContent = '✓ Copied';
+      setTimeout(() => { btn.textContent = '📋 Copy stall link'; }, 2000);
+    });
+  }
+}
+
+async function loadStall() {
+  if (!stallSlug || !sb) { showError(); return; }
+
+  try {
+    // Operator profile
+    const { data: op, error: opErr } = await sb
+      .from('motor_operators')
+      .select('display_name, hamlet_slug, hamlet_provisioned, listing_count, grandfathered')
+      .eq('hamlet_slug', stallSlug)
+      .eq('active', true)
+      .maybeSingle();
+
+    if (opErr || !op) { showError(); return; }
+
+    // Their listings
+    const { data: listings, error: lErr } = await sb
+      .from('motor_listings')
+      .select('slug, vehicle, frames, price, listing_headline, created_at')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
+
+    if (lErr) throw lErr;
+
+    const stallListings = (listings || []).filter(l =>
+      ((l.vehicle || {}).operator_slug) === stallSlug
+    );
+
+    // Populate profile
+    document.getElementById('stallName').textContent = op.display_name;
+    document.getElementById('listingCount').textContent = stallListings.length;
+    if (op.listing_count) {
+      document.getElementById('totalCount').textContent = op.listing_count;
+      document.getElementById('totalStat').style.display = 'flex';
+    }
+    if (op.grandfathered) {
+      document.getElementById('grandfatherBadge').style.display = 'inline-flex';
+    }
+    if (op.hamlet_provisioned && op.hamlet_slug) {
+      const hamletBtn = document.getElementById('hamletBtn');
+      hamletBtn.href = '/hamlet/' + op.hamlet_slug;
+      hamletBtn.style.display = 'inline-flex';
+    }
+
+    // Page title
+    document.title = op.display_name + ' | Motor-Oid Village';
+
+    // Listings
+    const grid = document.getElementById('listingGrid');
+    if (stallListings.length === 0) {
+      grid.innerHTML = '<div class="empty-state"><div class="icon">🚗</div><h3>Nothing listed yet</h3><p>Check back soon — listings will appear here.</p></div>';
+    } else {
+      grid.innerHTML = stallListings.map(cardHtml).join('');
+    }
+
+    // QR code
+    const stallUrl = 'https://motor-oid.co.uk/stall/' + stallSlug;
+    document.getElementById('qrUrl').textContent = stallUrl;
+    try {
+      new QRCode(document.getElementById('qrCanvas'), {
+        text: stallUrl,
+        width: 96, height: 96,
+        colorDark: '#f97316',
+        colorLight: '#181818',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } catch(e) {}
+
+    // Show content
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('stallContent').style.display = 'block';
+
+  } catch(e) {
+    console.error(e);
+    showError();
+  }
+}
+
+function showError() {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display = 'flex';
+}
+
+loadStall();
+</script>
+</body>
+</html>

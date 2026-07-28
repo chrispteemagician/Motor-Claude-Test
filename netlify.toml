@@ -1,0 +1,167 @@
+[build]
+  publish = "."
+  command = "npm install"
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_API_KEY,SUPABASE_SERVICE_KEY"
+
+[functions]
+  directory = "functions"
+
+[functions."process-vehicle-video"]
+  timeout = 30
+
+[functions."create-listing"]
+  timeout = 20
+
+[functions."create-checkout-session"]
+  timeout = 15
+
+[functions."verify-checkout"]
+  timeout = 10
+
+[functions."generate-disclosure"]
+  timeout = 20
+
+[functions."value-vehicle"]
+  timeout = 15
+
+[functions."get-pending-previews"]
+  timeout = 10
+
+[functions."lookup-dvla"]
+  timeout = 10
+
+# Patreon OAuth callback
+[[redirects]]
+  from = "/auth/patreon"
+  to = "/index.html"
+  status = 200
+
+# Operator pages
+[[redirects]]
+  from = "/operators/join"
+  to = "/operators/join.html"
+  status = 200
+
+[[redirects]]
+  from = "/operators/dashboard"
+  to = "/operators/dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/operators/crib"
+  to = "/operators/crib.html"
+  status = 200
+
+[[redirects]]
+  from = "/operators"
+  to = "/operators/join.html"
+  status = 200
+
+# Dealer pages
+[[redirects]]
+  from = "/dealers/join"
+  to = "/dealers/join.html"
+  status = 200
+
+[[redirects]]
+  from = "/dealers"
+  to = "/dealers/index.html"
+  status = 200
+
+# Hamlet (Garage) pages
+[[redirects]]
+  from = "/hamlet/signup"
+  to = "/hamlet/signup.html"
+  status = 200
+
+[[redirects]]
+  from = "/hamlet/edit"
+  to = "/hamlet/edit.html"
+  status = 200
+
+# Community/fan hamlets — explicit no-trailing-slash -> trailing-slash redirects.
+# Without these, "/hamlet/green-party" (no trailing slash) falls through to the
+# "/hamlet/*" catch-all below instead of finding hamlet/green-party/index.html,
+# landing on the garage directory instead of the actual hamlet page. Caught live
+# 2026-07-26 when a shared link/typed URL without the trailing slash showed the
+# "Loading garage..." directory page instead of Green Party Village.
+[[redirects]]
+  from = "/hamlet/gr-autos"
+  to = "/hamlet/gr-autos/"
+  status = 301
+
+[[redirects]]
+  from = "/hamlet/skinner-brothers"
+  to = "/hamlet/skinner-brothers/"
+  status = 301
+
+[[redirects]]
+  from = "/hamlet/green-party"
+  to = "/hamlet/green-party/"
+  status = 301
+
+[[redirects]]
+  from = "/hamlet/ravers"
+  to = "/hamlet/ravers/"
+  status = 301
+
+[[redirects]]
+  from = "/hamlet/*"
+  to = "/hamlet/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/edit/*"
+  to = "/edit.html"
+  status = 200
+
+[[redirects]]
+  from = "/listing/*"
+  to = "/listing.html"
+  status = 200
+
+[[redirects]]
+  from = "/stall/*"
+  to = "/stall/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/browse"
+  to = "/browse.html"
+  status = 200
+
+[[redirects]]
+  from = "/sell"
+  to = "/sell.html"
+  status = 200
+
+[[redirects]]
+  from = "/story"
+  to = "/story.html"
+  status = 200
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Allow listing pages to be embedded as iframes on dealer sites (embed feature)
+# CSP frame-ancestors takes precedence over X-Frame-Options in modern browsers
+[[headers]]
+  for = "/listing.html"
+  [headers.values]
+    Content-Security-Policy = "frame-ancestors *"

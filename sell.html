@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Your Car | Motor-Oid The Walkround</title>
+    <meta name="description" content="30-second walkround. List your car. Print the QR. Stick it on the windscreen. Done.">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --deep:    #181818;
+            --mid:     #252525;
+            --surface: #2e2e2e;
+            --accent:  #f97316;
+            --silver:  #b0bece;
+            --cream:   #e2e8f0;
+            --green:   #22c55e;
+            --red:     #ef4444;
+            --border:  #3d3d3d;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--deep);
+            color: var(--cream);
+            min-height: 100vh;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+        a { color: var(--accent); text-decoration: none; }
+
+        /* Nav */
+        .back-nav {
+            padding: 14px 20px;
+            border-bottom: 1px solid #2e2e2e;
+            display: flex; align-items: center;
+        }
+        .back-nav a { color: var(--silver); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; min-height: 0; }
+        .back-nav a:hover { color: var(--cream); }
+
+        /* Hero */
+        .hero {
+            padding: 52px 20px 36px;
+            text-align: center;
+            border-bottom: 1px solid #2d2d2d;
+            background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.07) 0%, transparent 65%);
+        }
+        .hero-icon { display: block; margin: 0 auto 18px; width: 110px; height: 110px; object-fit: cover; border-radius: 18px; }
+        .hero h1 {
+            font-family: 'Caveat', cursive;
+            font-size: clamp(2.6rem, 8vw, 4rem);
+            color: var(--cream);
+            margin-bottom: 8px;
+            line-height: 1.1;
+        }
+        .hero p { color: var(--silver); font-size: 1rem; max-width: 480px; margin: 0 auto; }
+        .price-badge {
+            display: inline-block;
+            margin-top: 18px;
+            background: rgba(249,115,22,0.15);
+            border: 1px solid rgba(249,115,22,0.35);
+            color: var(--accent);
+            padding: 5px 18px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* Steps */
+        .step-bar {
+            display: flex;
+            gap: 0;
+            padding: 0 20px;
+            max-width: 580px;
+            margin: 28px auto 0;
+        }
+        .step-dot {
+            flex: 1;
+            text-align: center;
+            font-size: 0.72rem;
+            color: #777;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #2d2d2d;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .step-dot.active { color: var(--accent); border-color: var(--accent); }
+        .step-dot.done   { color: var(--green);  border-color: var(--green); }
+
+        /* Container */
+        .container { max-width: 580px; margin: 0 auto; padding: 28px 20px 80px; }
+
+        /* Cards */
+        .card {
+            background: var(--mid);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .card-accent {
+            background: rgba(249,115,22,0.06);
+            border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* Instructions */
+        .film-tip {
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid #383838;
+            font-size: 0.9rem;
+        }
+        .film-tip:last-child { border-bottom: none; padding-bottom: 0; }
+        .film-tip .icon { font-size: 1.3rem; flex-shrink: 0; width: 28px; text-align: center; margin-top: 1px; }
+        .film-tip .text { color: var(--cream); }
+        .film-tip .text strong { color: var(--accent); }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2px dashed #3d3d3d;
+            border-radius: 12px;
+            padding: 36px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            position: relative;
+        }
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: var(--accent);
+            background: rgba(249,115,22,0.04);
+        }
+        .upload-zone input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+        }
+        .upload-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        .upload-zone h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .upload-zone p { color: var(--silver); font-size: 0.85rem; }
+        .upload-zone .constraints { margin-top: 10px; font-size: 0.78rem; color: #888; }
+
+        /* Video preview */
+        .video-preview {
+            width: 100%; border-radius: 10px; margin-top: 16px;
+            background: #000; display: block; max-height: 280px; object-fit: contain;
+        }
+        .file-info {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 12px; padding: 10px 14px;
+            background: #1e1e1e; border: 1px solid var(--border); border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        .file-info .name { color: var(--cream); font-weight: 600; }
+        .file-info .size { color: var(--silver); }
+
+        /* Frame grid */
+        .frame-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .frame-thumb {
+            aspect-ratio: 4/3;
+            border-radius: 6px;
+            object-fit: cover;
+            width: 100%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .frame-thumb.selected { border-color: var(--accent); }
+        .frame-thumb.excluded { opacity: 0.35; border-color: #333; }
+
+        /* Forms */
+        label { font-weight: 600; font-size: 0.88rem; display: block; margin-bottom: 5px; color: var(--silver); text-transform: uppercase; letter-spacing: 0.04em; }
+        input[type="text"], input[type="tel"], input[type="email"], input[type="number"], select, textarea {
+            width: 100%; background: #1e1e1e; border: 1px solid var(--border); color: var(--cream);
+            border-radius: 8px; padding: 11px 14px; font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem; transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); outline: none; }
+        .field { margin-bottom: 16px; }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .uncertain { border-color: rgba(249,115,22,0.5) !important; }
+        .uncertain-note { font-size: 0.75rem; color: var(--accent); margin-top: 3px; }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%; background: var(--accent); color: #000; font-weight: 700;
+            padding: 14px; border-radius: 10px; border: none; cursor: pointer;
+            font-family: 'Outfit', sans-serif; font-size: 1rem; min-height: 48px;
+            transition: opacity 0.2s; letter-spacing: 0.01em;
+        }
+        .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-secondary {
+            background: transparent; color: var(--silver); font-weight: 600;
+            padding: 11px 20px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer;
+            font-family: 'Outfit', sans-serif; font-size: 0.9rem; min-height: 48px;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Progress */
+        .progress-wrap { margin: 16px 0; }
+        .progress-bar-bg {
+            background: #2d2d2d; border: 1px solid var(--border);
+            border-radius: 100px; height: 6px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; background: var(--accent); border-radius: 100px;
+            transition: width 0.4s ease; width: 0%;
+        }
+        .progress-label { font-size: 0.8rem; color: var(--silver); margin-top: 6px; text-align: center; }
+
+        /* Step sections */
+        .step-section { display: none; }
+        .step-section.active { display: block; }
+
+        /* Condition badges */
+        .condition-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px; }
+        .condition-btn {
+            padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);
+            background: #1e1e1e; color: var(--silver); font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.2s; font-weight: 600;
+        }
+        .condition-btn.active { background: rgba(249,115,22,0.15); border-color: var(--accent); color: var(--accent); }
+
+        /* Done card */
+        .done-hero { text-align: center; padding: 28px 0 20px; }
+        .done-hero .check { font-size: 3.5rem; display: block; margin-bottom: 12px; }
+        .done-hero h2 { font-family: 'Caveat', cursive; font-size: 2.4rem; color: var(--accent); margin-bottom: 6px; }
+        .done-hero p { color: var(--silver); font-size: 0.95rem; }
+
+        .listing-url-box {
+            background: #1e1e1e; border: 1px solid var(--border); border-radius: 10px;
+            padding: 14px 16px; margin: 16px 0; word-break: break-all;
+            font-size: 0.9rem; color: var(--accent); font-weight: 700;
+        }
+        .delete-token-box {
+            background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 10px; padding: 14px 16px; margin: 12px 0; font-size: 0.82rem;
+        }
+        .delete-token-box strong { color: var(--red); }
+
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+
+        /* QR */
+        #qrCanvas { border-radius: 10px; display: block; margin: 16px auto; }
+
+        /* Social hooks */
+        .hook-list { list-style: none; margin-top: 8px; }
+        .hook-list li {
+            padding: 10px 14px; background: #1e1e1e; border: 1px solid var(--border);
+            border-radius: 8px; margin-bottom: 8px; font-size: 0.88rem; color: var(--cream);
+            cursor: pointer; transition: border-color 0.2s;
+        }
+        .hook-list li:hover { border-color: var(--accent); }
+
+        /* MOT history card */
+        .mot-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 100px; font-size: 0.78rem; font-weight: 700;
+        }
+        .mot-pass { background: rgba(34,197,94,0.15); border: 1px solid var(--green); color: var(--green); }
+        .mot-fail { background: rgba(239,68,68,0.12); border: 1px solid var(--red); color: var(--red); }
+        .mot-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #383838; font-size: 0.88rem; }
+        .mot-row:last-child { border-bottom: none; }
+        .mot-row .label { color: var(--silver); }
+        .mot-row .value { color: var(--cream); font-weight: 600; }
+        .mot-defect { padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 5px; }
+        .mot-advisory { background: rgba(249,115,22,0.08); border-left: 3px solid var(--accent); color: #e2a06a; }
+        .mot-minor   { background: rgba(249,115,22,0.05); border-left: 3px solid #f9a316; color: #e2a06a; }
+        .mot-fail-item { background: rgba(239,68,68,0.08); border-left: 3px solid var(--red); color: #f87171; }
+        .mot-history-toggle { font-size: 0.78rem; color: var(--silver); cursor: pointer; text-decoration: underline; margin-top: 10px; display: inline-block; }
+        .mot-history-list { margin-top: 10px; display: none; }
+        .mot-history-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #2e2e2e; font-size: 0.8rem; }
+        .mot-history-item .h-date { color: var(--silver); }
+        .mot-history-item .h-miles { color: var(--cream); }
+        .mot-history-item .h-result { font-weight: 700; }
+        .mot-history-item .h-result.pass { color: var(--green); }
+        .mot-history-item .h-result.fail { color: var(--red); }
+
+        /* W3W */
+        .w3w-result {
+            display: none; align-items: center; gap: 10px;
+            background: #1e1e1e; border: 1px solid #3d3d3d; border-radius: 8px;
+            padding: 11px 14px; margin-top: 8px;
+        }
+        .w3w-result.show { display: flex; }
+        .w3w-words {
+            font-size: 1.1rem; font-weight: 700; color: #e11f26; letter-spacing: 0.02em; flex: 1;
+        }
+        .w3w-place { font-size: 0.78rem; color: var(--silver); margin-top: 2px; }
+        .w3w-logo { font-size: 1.3rem; flex-shrink: 0; }
+
+        /* Traffic light badge */
+        .tl-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .tl-green { background: rgba(34,197,94,0.15);  border: 1px solid var(--green); color: var(--green); }
+        .tl-amber { background: rgba(251,191,36,0.12);  border: 1px solid #fbbf24;     color: #fbbf24; }
+        .tl-red   { background: rgba(239,68,68,0.12);   border: 1px solid var(--red);  color: var(--red); }
+
+        /* Msg */
+        .msg { padding: 11px 15px; border-radius: 8px; font-size: 0.88rem; margin-top: 10px; display: none; }
+        .msg.error   { background: rgba(239,68,68,0.1);  border: 1px solid var(--red);   color: var(--red); }
+        .msg.success { background: rgba(34,197,94,0.1);  border: 1px solid var(--green); color: var(--green); }
+        .msg.info    { background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.3); color: var(--accent); }
+
+        footer {
+            text-align: center; padding: 40px 20px 24px;
+            border-top: 1px solid #2d2d2d;
+            color: #666; font-size: 0.8rem;
+        }
+        footer a { color: var(--accent); }
+
+        @media (max-width: 420px) {
+            .field-row { grid-template-columns: 1fr; }
+            .frame-grid { grid-template-columns: repeat(3, 1fr); }
+            .action-grid { grid-template-columns: 1fr; }
+            .condition-row { grid-template-columns: repeat(2, 1fr); }
+            .val-price-grid { grid-template-columns: 1fr; }
+            .val-action-grid { grid-template-columns: 1fr; }
+            .history-row { grid-template-columns: 1fr; }
+        }
+
+        /* ── Preview modal ── */
+        .preview-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: var(--deep); overflow-y: auto;
+            display: none;
+        }
+        .preview-overlay.show { display: block; }
+        .preview-top-bar {
+            position: sticky; top: 0; z-index: 10;
+            background: rgba(24,24,24,0.97); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(249,115,22,0.15);
+            padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .preview-body { max-width: 580px; margin: 0 auto; padding: 24px 20px 140px; }
+        .preview-publish-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(24,24,24,0.97); backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(249,115,22,0.2);
+            padding: 14px 20px;
+        }
+        .preview-publish-inner { max-width: 580px; margin: 0 auto; }
+        .prev-photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 16px 0; }
+        .prev-photo-wrap { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; }
+        .prev-photo { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px; }
+        .wm-label {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-22deg);
+            font-family: 'Outfit', sans-serif; font-weight: 900;
+            font-size: clamp(0.55rem, 2.2vw, 0.82rem); letter-spacing: 0.16em; white-space: nowrap;
+            color: rgba(255,255,255,0.95); text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+            background: rgba(249,115,22,0.3); padding: 3px 10px; border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.35); pointer-events: none;
+        }
+        .prev-spec-card { background: var(--mid); border: 1px solid var(--border); border-radius: 12px; padding: 4px 16px; margin-bottom: 12px; }
+        .prev-spec-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #2e2e2e; font-size: 0.88rem; }
+        .prev-spec-row:last-child { border-bottom: none; }
+        .prev-spec-row span:first-child { color: var(--silver); }
+        .prev-spec-row span:last-child  { color: var(--cream); font-weight: 600; }
+        .prev-card { background: var(--mid); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+        .prev-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 8px; }
+
+        /* ── Valuation step ── */
+        .val-section { max-width: 580px; margin: 0 auto; padding: 28px 20px 60px; }
+        .val-price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+        .val-price-card { background: var(--mid); border: 1px solid var(--border); border-radius: 14px; padding: 20px 16px; text-align: center; }
+        .val-price-card.highlight { background: rgba(249,115,22,0.06); border-color: rgba(249,115,22,0.3); }
+        .val-price-label { font-size: 0.72rem; color: var(--silver); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; margin-bottom: 6px; }
+        .val-price-value { font-family: 'Caveat', cursive; font-size: 2rem; color: var(--accent); line-height: 1.1; }
+        .val-price-note { font-size: 0.74rem; color: var(--silver); margin-top: 4px; }
+        .val-fix-tip { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #2e2e2e; font-size: 0.88rem; }
+        .val-fix-tip:last-child { border-bottom: none; }
+        .val-fix-fix { color: var(--cream); flex: 1; }
+        .val-fix-add { color: var(--green); font-weight: 700; white-space: nowrap; font-size: 0.82rem; }
+        .history-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+        .history-btn { padding: 10px 4px; border-radius: 8px; border: 1px solid var(--border); background: #1e1e1e; color: var(--silver); font-family: 'Outfit', sans-serif; font-size: 0.85rem; cursor: pointer; text-align: center; transition: all 0.2s; font-weight: 600; }
+        .history-btn.active { background: rgba(249,115,22,0.15); border-color: var(--accent); color: var(--accent); }
+        .voice-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.25); color: var(--accent); padding: 10px 18px; border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 8px; min-height: 44px; }
+        .voice-btn:hover { background: rgba(249,115,22,0.15); }
+        .voice-btn.recording { background: rgba(239,68,68,0.15); border-color: var(--red); color: var(--red); }
+        .voice-btn.recording .voice-pulse { animation: pulse 1s infinite; display: inline-block; }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+        .reg-found { display: none; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.25); border-radius: 8px; padding: 10px 14px; margin-top: 8px; font-size: 0.88rem; align-items: center; gap: 8px; }
+        .reg-found.show { display: flex; }
+        .market-note { background: var(--mid); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 0.88rem; color: var(--silver); font-style: italic; margin-top: 12px; }
+        .val-action-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<!-- shared banner — date-aware: free weekend → pricing tiers -->
+<script src="/banner.js"></script>
+
+<nav class="back-nav">
+    <a href="/index.html">&#8592; Motor-Oid</a>
+</nav>
+
+<div class="hero">
+    <img src="/logo.jpg" alt="Motor-Oid" class="hero-icon">
+    <h1>The Walkround</h1>
+    <p>30-second walkround. List your car. Print the QR. Stick it on the windscreen.</p>
+    <p style="margin-top:12px; font-size:0.9rem; color:var(--silver);">Spanner Jack reads the car. <strong style="color:var(--cream);">You make sure he's right.</strong></p>
+    <span class="price-badge">&#127775; Free this weekend &mdash; no catch &mdash; just film it and go</span>
+
+    <div class="step-bar" id="stepBar">
+        <div class="step-dot active" id="dot-1">1. Film</div>
+        <div class="step-dot" id="dot-2">2. Check it</div>
+        <div class="step-dot" id="dot-3">3. Your info</div>
+        <div class="step-dot" id="dot-4">4. Live</div>
+    </div>
+</div>
+
+<div class="container" id="listingContainer">
+
+    <!-- ── STEP 1: Upload ── -->
+    <div class="step-section active" id="step1">
+
+        <div class="card" id="emailGateCard">
+            <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:12px;">First — where do we send your listing?</p>
+            <div class="field" style="margin-bottom:0;">
+                <label for="gateEmail">Your email address</label>
+                <input type="email" id="gateEmail" placeholder="you@email.com" oninput="checkGate()" autocomplete="email">
+                <p style="font-size:0.75rem; color:#888; margin-top:5px;">You'll get a link to your listing. No spam. Preview lasts 48 hours.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="upload-zone" id="uploadZone">
+                <input type="file" id="videoFile" accept="video/*">
+                <span class="upload-icon">&#127909;</span>
+                <h3>Film your car. Tap here to upload.</h3>
+                <p>30 seconds. Walk round it. Talk if you want. Spanner Jack does the rest.</p>
+                <p class="constraints">MP4, MOV, or WebM &middot; Max 250MB &middot; Max 30 seconds</p>
+            </div>
+
+            <video id="videoPreview" class="video-preview" style="display:none;" controls muted playsinline></video>
+
+            <div class="file-info" id="fileInfo" style="display:none;">
+                <span class="name" id="fileName"></span>
+                <span class="size" id="fileSize"></span>
+            </div>
+
+            <div id="frameSection" style="display:none; margin-top:20px;">
+                <p style="font-size:0.82rem; color:var(--silver); margin-bottom:8px;">Frames extracted &mdash; Gemini will analyse these</p>
+                <div class="frame-grid" id="frameGrid"></div>
+            </div>
+
+            <div id="uploadMsg" class="msg"></div>
+        </div>
+
+        <details style="margin-bottom:16px;">
+            <summary style="font-size:0.82rem; color:var(--silver); cursor:pointer; padding:6px 0; list-style:none; display:flex; align-items:center; gap:6px;">
+                <span style="color:var(--accent);">&#9654;</span> How to film it for best results
+            </summary>
+            <div class="card-accent" style="margin-top:8px;">
+                <div class="film-tip"><span class="icon" style="color:var(--accent);font-size:1rem;">—</span><div class="text"><strong>Film sideways</strong> &mdash; turn your phone horizontal. Portrait frames look odd on sale pages.</div></div>
+                <div class="film-tip"><span class="icon" style="color:var(--accent);font-size:1rem;">—</span><div class="text"><strong>Walk slowly</strong> &mdash; front, driver side, rear, passenger side, then inside: dash, seats, boot.</div></div>
+                <div class="film-tip"><span class="icon" style="color:var(--accent);font-size:1rem;">—</span><div class="text"><strong>Silent is fine</strong> &mdash; or talk us through what&apos;s special. Gemini listens too.</div></div>
+                <div class="film-tip" style="border:none; padding-bottom:0;"><span class="icon" style="color:var(--accent);font-size:1rem;">—</span><div class="text"><strong>Good light helps</strong> &mdash; outdoors or bright garage. Dark shots produce blurry frames.</div></div>
+            </div>
+        </details>
+
+        <div class="field">
+            <label for="regPlate">Registration plate <span style="font-weight:400; text-transform:none;">(optional &mdash; fetches MOT history)</span></label>
+            <input type="text" id="regPlate" placeholder="AB12 CDE" maxlength="8" style="text-transform:uppercase; letter-spacing:0.1em; font-weight:700;">
+        </div>
+
+        <div class="field">
+            <label for="sellerNotes">Anything the camera can&apos;t see? <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+            <textarea id="sellerNotes" rows="2" placeholder="Full service history. New brakes March 2024. One owner from new."></textarea>
+        </div>
+
+        <button class="btn-primary" id="analyseBtn" disabled onclick="startAnalysis()">
+            Go &mdash; Spanner Jack, do your thing &#8594;
+        </button>
+
+        <div id="analyseMsg" class="msg"></div>
+    </div>
+
+    <!-- ── STEP 2: Review Gemini output ── -->
+    <div class="step-section" id="step2">
+        <div class="card">
+            <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:6px;">This is your 20%.</p>
+            <p style="font-size:0.88rem; color:var(--silver); margin-bottom:8px;">Spanner Jack did the grunt work. Now check every field and correct anything wrong. Your name is on this listing &mdash; not his. That&apos;s how it should be.</p>
+            <p style="font-size:0.8rem; color:#888; margin-bottom:16px;">We helped with the hard bits. The common sense is yours.</p>
+
+            <div class="field-row">
+                <div class="field">
+                    <label for="r_make">Make</label>
+                    <input type="text" id="r_make" placeholder="Ford">
+                </div>
+                <div class="field">
+                    <label for="r_model">Model</label>
+                    <input type="text" id="r_model" placeholder="Focus">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="r_year">Year</label>
+                    <input type="text" id="r_year" placeholder="2019">
+                </div>
+                <div class="field">
+                    <label for="r_trim">Trim / Variant</label>
+                    <input type="text" id="r_trim" placeholder="ST-Line">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="r_colour">Colour</label>
+                    <input type="text" id="r_colour" placeholder="Magnetic Grey">
+                </div>
+                <div class="field">
+                    <label for="r_mileage">Mileage</label>
+                    <input type="text" id="r_mileage" placeholder="54,000">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="r_fuel">Fuel</label>
+                    <select id="r_fuel">
+                        <option value="">— select —</option>
+                        <option>Petrol</option>
+                        <option>Diesel</option>
+                        <option>Hybrid</option>
+                        <option>Electric</option>
+                        <option>Plug-in Hybrid</option>
+                        <option>LPG</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="r_gearbox">Gearbox</label>
+                    <select id="r_gearbox">
+                        <option value="">— select —</option>
+                        <option>Manual</option>
+                        <option>Automatic</option>
+                        <option>Semi-automatic</option>
+                        <option>CVT</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="r_bodytype">Body Type</label>
+                    <select id="r_bodytype">
+                        <option value="">— select —</option>
+                        <option>Hatchback</option>
+                        <option>Saloon</option>
+                        <option>Estate</option>
+                        <option>SUV</option>
+                        <option>Coupe</option>
+                        <option>Convertible</option>
+                        <option>MPV / People Carrier</option>
+                        <option>Van</option>
+                        <option>Pickup</option>
+                        <option>Campervan</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="r_doors">Doors</label>
+                    <select id="r_doors">
+                        <option value="">—</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="r_tech">Features &amp; Tech <span style="font-weight:400; text-transform:none; font-size:0.8rem;">(comma-separated)</span></label>
+                <input type="text" id="r_tech" placeholder="Sat-nav, heated seats, parking sensors, Apple CarPlay">
+            </div>
+
+            <div class="field">
+                <label>Condition</label>
+                <div class="condition-row">
+                    <button class="condition-btn" onclick="setCondition('Excellent')">&#127775; Excellent</button>
+                    <button class="condition-btn" onclick="setCondition('Good')">&#128077; Good</button>
+                    <button class="condition-btn" onclick="setCondition('Fair')">&#128076; Fair</button>
+                    <button class="condition-btn" onclick="setCondition('Poor')">&#128544; Poor</button>
+                </div>
+                <input type="hidden" id="r_condition" value="">
+            </div>
+
+            <div class="field">
+                <label for="r_defects">Known defects <span style="font-weight:400; text-transform:none;">(be honest &mdash; it builds trust)</span></label>
+                <textarea id="r_defects" rows="2" placeholder="Small dent on rear bumper. Rear wiper doesn't park correctly."></textarea>
+            </div>
+        </div>
+
+        <div id="disclosureCard" class="card" style="display:none;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent);">&#128737; Honest Disclosure</p>
+                <span id="trafficLightBadge" class="tl-badge"></span>
+            </div>
+            <p id="trafficReason" style="font-size:0.78rem; color:var(--silver); margin-bottom:12px;"></p>
+            <textarea id="disclosureText" rows="5" style="font-size:0.88rem;" placeholder="Spanner Jack is writing your disclosure&hellip;"></textarea>
+            <p style="font-size:0.75rem; color:var(--silver); margin-top:6px;">This appears on your listing. Edit if needed &mdash; Spanner Jack wrote the first draft.</p>
+            <p style="font-size:0.75rem; color:#888; margin-top:4px;">Buyers can see if this is empty. Honest sellers find their people faster.</p>
+            <button class="btn-secondary" style="margin-top:10px; padding:8px 16px; font-size:0.8rem;" onclick="generateDisclosure(true)">&#8635; Regenerate</button>
+        </div>
+        <div id="disclosureMsg" class="msg"></div>
+
+        <div class="card" id="motCard" style="display:none;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent);">MOT History</p>
+                <span id="motLatestBadge"></span>
+            </div>
+            <div id="motSummaryRows"></div>
+            <div id="motLatestDefects" style="margin-top:10px;"></div>
+            <span class="mot-history-toggle" id="motToggle" onclick="toggleMotHistory()" style="display:none;">Show full history</span>
+            <div class="mot-history-list" id="motHistoryList"></div>
+        </div>
+
+        <div class="card" id="frameReviewCard" style="display:none;">
+            <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:4px;">Photos for your listing</p>
+            <p style="font-size:0.8rem; color:var(--silver); margin-bottom:12px;">Tap a photo to exclude it. Grey = excluded.</p>
+            <div class="frame-grid" id="frameReviewGrid"></div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+            <button class="btn-secondary" onclick="goStep(1)">&#8592; Back</button>
+            <button class="btn-primary" onclick="goStep(3)">Looks good &#8594;</button>
+        </div>
+    </div>
+
+    <!-- ── STEP 3: Seller details ── -->
+    <div class="step-section" id="step3">
+        <div class="card">
+            <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:16px;">Your sale details</p>
+
+            <div class="field">
+                <label for="s_price">Asking Price <span style="font-weight:400; text-transform:none; color:var(--cream);">&#163;</span></label>
+                <input type="text" id="s_price" placeholder="4,500">
+            </div>
+            <div class="field">
+                <label for="s_phone">Contact Phone</label>
+                <input type="tel" id="s_phone" placeholder="07700 900000">
+            </div>
+            <div class="field">
+                <label for="s_email">Contact Email <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+                <input type="email" id="s_email" placeholder="you@email.com">
+            </div>
+
+            <div class="field">
+                <label>Where is the car? <span style="font-weight:400; text-transform:none;">(optional &mdash; buyers navigate here)</span></label>
+                <button type="button" class="btn-secondary" id="w3wBtn" onclick="getW3WLocation()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:1.2rem;">&#127757;</span> Use My Location &mdash; get a what3words address
+                </button>
+                <div class="w3w-result" id="w3wResult">
+                    <span class="w3w-logo">&#47;&#47;&#47;</span>
+                    <div>
+                        <div class="w3w-words" id="w3wWords"></div>
+                        <div class="w3w-place" id="w3wPlace"></div>
+                    </div>
+                    <button type="button" onclick="clearW3W()" style="background:none;border:none;color:#888;cursor:pointer;font-size:1rem;padding:0;min-height:0;">&#10005;</button>
+                </div>
+                <input type="hidden" id="s_w3w" value="">
+                <div id="w3wMsg" class="msg"></div>
+            </div>
+        </div>
+
+        <div class="card" id="hooksCard" style="display:none;">
+            <p style="font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:4px;">Social captions</p>
+            <p style="font-size:0.8rem; color:var(--silver); margin-bottom:8px;">Gemini wrote these. Tap one to copy.</p>
+            <ul class="hook-list" id="hookList"></ul>
+        </div>
+
+        <div id="uploadProgress" style="display:none;">
+            <div class="progress-wrap">
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+                <div class="progress-label" id="progressLabel">Uploading video&hellip;</div>
+            </div>
+        </div>
+
+        <div id="createMsg" class="msg"></div>
+
+        <p style="font-size:0.78rem; color:#888; margin-bottom:12px; line-height:1.5;">Almost there &mdash; double-check your price and contact details are correct. Once it&apos;s live, buyers will see exactly what you&apos;ve entered. You&apos;re responsible for the accuracy of your listing.</p>
+
+        <div style="display:flex; gap:10px;">
+            <button class="btn-secondary" onclick="goStep(2)">&#8592; Back</button>
+            <button class="btn-primary" id="createBtn" onclick="showPreviewModal()">Preview &amp; Publish &#8594;</button>
+        </div>
+    </div>
+
+    <!-- ── STEP 4: Done ── -->
+    <div class="step-section" id="step4">
+        <div class="card">
+            <div class="done-hero">
+                <span class="check">&#9989;</span>
+                <h2>Your listing is ready.</h2>
+                <p>Check it over before you share it. Looks exactly like buyers will see it.</p>
+            </div>
+
+            <!-- Preview button — big, first thing they see -->
+            <a id="previewBtn" href="#" target="_blank" rel="noopener"
+               class="btn-primary"
+               style="display:block; width:100%; text-align:center; text-decoration:none; font-size:1rem; margin-bottom:20px;">
+                &#128065; View My Listing &rarr;
+            </a>
+
+            <!-- Publish live step — shown for direct sellers once they've seen the free preview -->
+            <div id="publishLiveBox" style="display:none; background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.25); border-radius:14px; padding:16px; margin-bottom:20px; text-align:center;">
+                <p style="font-size:0.95rem; color:var(--cream); margin-bottom:6px;">That's exactly what buyers will see. The QR and the printout below are free, right now — print one and stick it on the windscreen today if you like.</p>
+                <p style="font-size:0.82rem; color:var(--silver); margin-bottom:14px;">What publishing adds: it's not in Motor-Oid's search yet, so only someone with the link or QR can find it. Publishing puts it in front of every buyer searching Motor-Oid and gives you your own searchable selling page.</p>
+                <button class="btn-primary" id="publishLiveBtn" onclick="publishLiveNow()" style="width:100%;">&#128640; Publish live &mdash; <span id="publishLivePrice">£15/£25</span> &rarr;</button>
+            </div>
+            <div id="publishedBox" style="display:none; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); border-radius:14px; padding:16px; margin-bottom:20px; text-align:center;">
+                <p style="font-size:0.95rem; color:#4ade80; font-weight:700;">&#9989; You're live. Buyers can find this now.</p>
+            </div>
+            <!-- Shown only for high-value listings — a scaled thank-you, not the default ask -->
+            <div id="bigTicketBox" style="display:none; background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.25); border-radius:14px; padding:16px; margin-bottom:20px; text-align:center;">
+                <p style="font-size:0.88rem; color:var(--silver); line-height:1.5;">This one's worth a lot more than £25 to you if it sells. £15/£25 stays the same for every listing, big or small — that's on purpose. But if this one goes well and you want to say thanks properly, that's entirely up to you and entirely optional.</p>
+                <a href="https://buymeacoffee.com/chrispteemagician" target="_blank" rel="noopener" style="display:inline-block; margin-top:10px; color:var(--accent); font-weight:700; text-decoration:underline; font-size:0.85rem;">Say thanks &rarr;</a>
+            </div>
+
+            <!-- Divider -->
+            <div style="border-top:1px solid rgba(249,115,22,0.15); padding-top:20px; margin-bottom:4px;">
+                <p style="font-size:0.8rem; color:var(--silver); margin-bottom:4px;">Your listing URL:</p>
+                <div class="listing-url-box" id="doneUrl"></div>
+            </div>
+
+            <canvas id="qrCanvas" width="200" height="200"></canvas>
+            <p style="text-align:center; font-size:0.78rem; color:var(--silver); margin-bottom:16px;">Print &amp; stick on the windscreen — buyers scan it from the pavement</p>
+
+            <div class="action-grid">
+                <button class="btn-primary" onclick="downloadQR()">&#128247; Download QR</button>
+                <button class="btn-secondary" onclick="copyUrl()">&#128203; Copy Link</button>
+            </div>
+            <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="printListingFlyer()">&#128424;&#65039; Print windscreen page &mdash; free</button>
+            <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="downloadListingHTML()">&#128190; Save page to phone</button>
+            <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="openEditPage()">&#9998; Edit listing &mdash; change price, contact or defects</button>
+
+            <div class="delete-token-box" style="margin-top:20px;">
+                <p style="margin-bottom:6px;"><strong>&#128274; Save this removal code</strong></p>
+                <p style="margin-bottom:8px; font-size:0.8rem; color:var(--silver);">Keep this somewhere safe. You&apos;ll need it to remove or edit your listing.</p>
+                <p id="doneToken" style="font-family:monospace; font-size:0.88rem; word-break:break-all; color:var(--cream);"></p>
+            </div>
+
+            <div style="border-top:1px solid rgba(249,115,22,0.12); margin-top:24px; padding-top:20px; text-align:center;">
+                <p style="font-size:0.95rem; color:var(--cream); font-weight:700; margin-bottom:6px;">Building the listing, the QR and the windscreen printout are always free.</p>
+                <p style="font-size:0.85rem; color:var(--silver); margin-bottom:6px;">Haven&apos;t got any money? Don&apos;t worry — print it out, stick it in the window, and give it a go. It links straight back to Motor-Oid either way.</p>
+                <p style="font-size:0.85rem; color:var(--silver); margin-bottom:16px;">If it helps sell your car, maybe buy Spanner Jack a coffee when you can.</p>
+                <a href="https://buymeacoffee.com/chrispteemagician" target="_blank" rel="noopener" class="btn-primary" style="display:inline-flex; width:auto; margin-bottom:16px;">&#9749; Buy Spanner Jack a coffee</a>
+                <p style="font-size:0.82rem; color:var(--silver); margin-bottom:16px;">Got feedback that would make this better? <strong style="color:var(--cream);">Email it to <a href="mailto:chris@chrisptee.co.uk?subject=Motor-Oid%20feedback" style="color:var(--accent);">chris@chrisptee.co.uk</a></strong>.</p>
+            </div>
+
+            <div style="text-align:center; margin-top:4px;">
+                <a href="/index.html" style="color:var(--silver); font-size:0.85rem;">&#8592; Back to Motor-Oid</a>
+            </div>
+
+            <!-- ── Coming after beta ── -->
+            <div style="border-top:1px solid rgba(249,115,22,0.12); margin-top:28px; padding-top:24px;">
+                <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#888; text-align:center; margin-bottom:4px;">Coming after beta</p>
+                <h3 style="font-family:'Caveat',cursive; font-size:1.8rem; color:var(--cream); text-align:center; margin-bottom:20px; line-height:1.1;">Spanner Jack&apos;s getting an upgrade.</h3>
+
+                <div style="display:flex; flex-direction:column; gap:10px;">
+
+                    <div class="card" style="padding:16px 18px;">
+                        <p style="font-weight:700; color:var(--cream); margin-bottom:2px;">&#127911; Engine Ears</p>
+                        <p style="font-size:0.85rem; color:var(--silver);">Spanner Jack listens to the engine during the walkround. Flags what to fix, what to disclose.</p>
+                    </div>
+
+                    <div class="card" style="padding:16px 18px;">
+                        <p style="font-weight:700; color:var(--cream); margin-bottom:2px;">&#128161; Smart Tips</p>
+                        <p style="font-size:0.85rem; color:var(--silver);">Contextual advice that saves you money before you sell. Windscreen chip? Claim it on insurance first. Bald tyres? £80 fix, £300 back on the price.</p>
+                    </div>
+
+                    <div class="card" style="padding:16px 18px;">
+                        <p style="font-weight:700; color:var(--cream); margin-bottom:2px;">&#128247; Got photos already?</p>
+                        <p style="font-size:0.85rem; color:var(--silver);">Upload 6&ndash;10 photos instead of a video. Same Gemini analysis, listing live instantly.</p>
+                    </div>
+
+                    <div class="card" style="padding:16px 18px;">
+                        <p style="font-weight:700; color:var(--cream); margin-bottom:2px;">&#128205; Local noticeboard</p>
+                        <p style="font-size:0.85rem; color:var(--silver);">Location-aware listings. Your car shown to buyers near you. Your page, your sale, no middleman.</p>
+                    </div>
+
+                    <div class="card" style="padding:16px 18px;">
+                        <p style="font-weight:700; color:var(--cream); margin-bottom:2px;">&#128296; Local garage referral</p>
+                        <p style="font-size:0.85rem; color:var(--silver);">Spanner Jack spots an issue and recommends the nearest hamlet garage. Fix it, sell it for more.</p>
+                    </div>
+
+                    <div class="card" style="padding:16px 18px;">
+                        <p style="font-weight:700; color:var(--cream); margin-bottom:2px;">&#127381; Referral kudos</p>
+                        <p style="font-size:0.85rem; color:var(--silver);">Share your listing link. Someone joins Motor-Oid. You earn credits. No pyramid, just thanks.</p>
+                    </div>
+
+                    <div class="card-accent" style="padding:16px 18px;">
+                        <p style="font-weight:700; color:var(--accent); margin-bottom:2px;">&#127909; Showroom Spec — premium add-on</p>
+                        <p style="font-size:0.85rem; color:var(--silver); margin-bottom:6px;">Gimbal shots. Up to 1 minute of footage. YouTube embed on your listing. For the car that deserves the full treatment.</p>
+                        <p style="font-size:0.8rem; font-style:italic; color:#666;">&ldquo;I ain&apos;t got no time for that!&rdquo; &mdash; fair. The 30-second version already works. This one&apos;s for when you want to show off.</p>
+                    </div>
+
+                </div>
+            </div>
+            <!-- ── /Coming after beta ── -->
+
+        </div>
+    </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- VALUATION — independent, no plate needed                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="valuationSection" style="border-top:1px solid #2d2d2d;">
+<div class="val-section">
+
+    <div style="text-align:center; margin-bottom:32px;">
+        <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:16px;">Also available — independent of the walkabout</p>
+        <h2 style="font-family:'Caveat',cursive; font-size:clamp(2rem,8vw,3.2rem); color:var(--cream); margin-bottom:10px; line-height:1.1;">What&apos;s it worth?</h2>
+        <p style="color:var(--silver); font-size:0.95rem; max-width:420px; margin:0 auto 8px;">Tell Spanner Jack about it. He&apos;ll give you a straight number &mdash; and flag anything worth fixing before you sell.</p>
+        <p style="color:#888; font-size:0.82rem;">No number plate? No problem &mdash; just fill in make, model, year below.</p>
+    </div>
+
+    <!-- Reg lookup -->
+    <div class="field">
+        <label for="v0_reg">Registration plate <span style="font-weight:400; text-transform:none;">(optional &mdash; fills in the details automatically. No plate? Skip it.)</span></label>
+        <input type="text" id="v0_reg" placeholder="AB12 CDE" maxlength="8" style="text-transform:uppercase; letter-spacing:0.1em; font-weight:700;" oninput="onV0RegInput(this.value)">
+        <div class="reg-found" id="v0RegFound">
+            <span style="color:var(--green); font-size:1.1rem;">&#10003;</span>
+            <span id="v0RegText" style="color:var(--cream); font-weight:700;"></span>
+        </div>
+        <div id="v0RegMsg" class="msg"></div>
+    </div>
+
+    <!-- Make / Model / Year -->
+    <div class="field-row">
+        <div class="field"><label for="v0_make">Make</label><input type="text" id="v0_make" placeholder="Ford"></div>
+        <div class="field"><label for="v0_model">Model</label><input type="text" id="v0_model" placeholder="Focus"></div>
+    </div>
+    <div class="field" style="max-width:160px;">
+        <label for="v0_year">Year</label>
+        <input type="text" id="v0_year" placeholder="2019">
+    </div>
+
+    <!-- Condition -->
+    <div class="field">
+        <label>Condition</label>
+        <div class="condition-row" id="v0ConditionRow">
+            <button class="condition-btn" onclick="setV0Condition('Excellent')">&#127775; Excellent</button>
+            <button class="condition-btn" onclick="setV0Condition('Good')">&#128077; Good</button>
+            <button class="condition-btn" onclick="setV0Condition('Fair')">&#128076; Fair</button>
+            <button class="condition-btn" onclick="setV0Condition('Poor')">&#128544; Poor</button>
+        </div>
+        <input type="hidden" id="v0_condition" value="">
+    </div>
+
+    <!-- Mileage -->
+    <div class="field">
+        <label for="v0_mileage">Mileage <span style="font-weight:400; text-transform:none;">(rough is fine)</span></label>
+        <input type="text" id="v0_mileage" placeholder="e.g. 75,000">
+    </div>
+
+    <!-- Service history -->
+    <div class="field">
+        <label>Service history</label>
+        <div class="history-row">
+            <button class="history-btn" onclick="setV0History('Full')">Full history</button>
+            <button class="history-btn" onclick="setV0History('Partial')">Some history</button>
+            <button class="history-btn" onclick="setV0History('None')">No history</button>
+        </div>
+        <input type="hidden" id="v0_history" value="">
+    </div>
+
+    <!-- Positives + issues + voice -->
+    <div class="field">
+        <label for="v0_positives">Anything right with it? <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+        <textarea id="v0_positives" rows="3" placeholder="New tyres, just serviced, full dealer history, recent MOT, new clutch..."></textarea>
+    </div>
+
+    <div class="field">
+        <label for="v0_issues">Anything wrong with it? <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+        <textarea id="v0_issues" rows="3" placeholder="Cracked bumper, slight rust on driver sill, passenger window slow..."></textarea>
+        <button type="button" class="voice-btn" id="voiceBtn" onclick="toggleVoice()">
+            <span id="voiceIcon" class="voice-pulse">&#127908;</span>&nbsp;<span id="voiceLabel">Just talk instead</span>
+        </button>
+    </div>
+
+    <button class="btn-primary" id="valuationBtn" onclick="getValuation()">Get My Valuation &rarr;</button>
+    <div id="valuationMsg" class="msg"></div>
+
+    <!-- ── Valuation result ── -->
+    <div id="valuationResult" style="display:none;">
+        <div style="border-top:1px solid #2e2e2e; margin:28px 0 20px;"></div>
+        <p style="font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--silver); margin-bottom:4px;">Spanner Jack&apos;s estimate</p>
+        <h3 id="valVehicleTitle" style="font-family:'Caveat',cursive; font-size:2rem; color:var(--cream); margin-bottom:16px;"></h3>
+
+        <div class="val-price-grid">
+            <div class="val-price-card">
+                <div class="val-price-label">As it stands</div>
+                <div class="val-price-value" id="valRealistic"></div>
+                <div class="val-price-note">Realistic private sale</div>
+            </div>
+            <div class="val-price-card highlight">
+                <div class="val-price-label">Best case</div>
+                <div class="val-price-value" id="valBestCase"></div>
+                <div class="val-price-note" id="valBestNote"></div>
+            </div>
+        </div>
+
+        <div id="valFixTips" style="display:none;">
+            <div class="card">
+                <p style="font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); margin-bottom:10px;">Worth fixing first?</p>
+                <div id="valFixList"></div>
+            </div>
+        </div>
+
+        <div class="market-note" id="valMarketNote"></div>
+
+        <p style="font-size:0.78rem; color:#888; text-align:center; margin-top:12px; line-height:1.5;">Spanner Jack does the hard bits. Prices vary by location, presentation, and who&#39;s buying.<br>The common sense is yours &mdash; check it feels right before you list.</p>
+
+        <div id="valNotWorth" style="display:none;" class="card">
+            <p style="color:#f87171; font-weight:700; margin-bottom:4px;">Honest answer: this might not be worth listing privately.</p>
+            <p style="font-size:0.85rem; color:var(--silver);">At this value, a scrapper or part-exchange may net you more after the hassle. But if you want to try, go for it.</p>
+        </div>
+
+        <div class="val-action-grid">
+            <button class="btn-secondary" onclick="resetValuation()">Start over</button>
+            <button class="btn-primary" onclick="proceedToListing()">Create My Listing &rarr;</button>
+        </div>
+    </div>
+
+</div>
+</div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PREVIEW MODAL                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="previewModal" class="preview-overlay">
+
+    <div class="preview-top-bar">
+        <button onclick="closePreview()" class="btn-secondary" style="padding:8px 16px; font-size:0.85rem; min-height:0; width:auto;">&#8592; Back to edit</button>
+        <span style="font-size:0.8rem; color:var(--silver); text-align:right;">This is what buyers will see</span>
+    </div>
+
+    <div class="preview-body" id="previewBody"></div>
+
+    <div class="preview-publish-bar">
+        <div class="preview-publish-inner">
+            <p style="font-size:0.75rem; color:#888; text-align:center; margin-bottom:8px;">Your 20% &mdash; happy with everything above? Then publish it.</p>
+            <button class="btn-primary" onclick="confirmPublish()">Looks good &mdash; publish it &#8594;</button>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <a href="/index.html">Motor-Oid</a> &middot; Part of <a href="https://feelfamous.co.uk" target="_blank" rel="noopener">FeelFamous</a><br>
+    <span style="margin-top:6px; display:block;">World domination through kindness. One ember at a time.</span>
+</footer>
+
+<script>
+const PAYMENT_ENABLED = true; // set true to require Stripe payment before listing creation
+const operatorSlug = new URLSearchParams(window.location.search).get('operator') || '';
+
+function isMotorPatreonMember() {
+    const tier = localStorage.getItem('motorPatreonTier');
+    const expiry = Number(localStorage.getItem('motorPatreonExpiry') || 0);
+    return !!tier && Date.now() < expiry;
+}
+
+// ─── Step 0 — Valuation ───────────────────────────────────────────────────────
+
+let v0RegTimer      = null;
+let v0Condition     = '';
+let v0History       = '';
+let voiceRec        = null;
+let isRecording     = false;
+
+function onV0RegInput(val) {
+    clearTimeout(v0RegTimer);
+    const clean = val.replace(/\s+/g, '').toUpperCase();
+    document.getElementById('v0RegFound').classList.remove('show');
+    if (clean.length >= 2) {
+        v0RegTimer = setTimeout(() => lookupV0Reg(clean), 900);
+    }
+}
+
+async function lookupV0Reg(reg) {
+    showMsg('v0RegMsg', 'Looking up&hellip;', 'info');
+    try {
+        const res = await fetch(`/.netlify/functions/lookup-mot?reg=${encodeURIComponent(reg)}`);
+        if (!res.ok) throw new Error('not found');
+        const data = await res.json();
+        motData = data; // cache so Step 1 skips duplicate lookup
+
+        const make = data.make  || '';
+        const model = data.model || '';
+        const year  = data.firstUsedDate ? data.firstUsedDate.substring(0, 4) : '';
+
+        document.getElementById('v0_make').value  = make;
+        document.getElementById('v0_model').value = model;
+        document.getElementById('v0_year').value  = year;
+
+        const label = [year, make, model].filter(Boolean).join(' ');
+        document.getElementById('v0RegText').textContent = label;
+        document.getElementById('v0RegFound').classList.add('show');
+        showMsg('v0RegMsg', '', '');
+    } catch (e) {
+        showMsg('v0RegMsg', 'Reg not found &mdash; fill in make/model/year below.', 'info');
+    }
+}
+
+function setV0Condition(val) {
+    v0Condition = val;
+    document.getElementById('v0_condition').value = val;
+    document.querySelectorAll('#v0ConditionRow .condition-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim().includes(val));
+    });
+}
+
+function setV0History(val) {
+    v0History = val;
+    document.getElementById('v0_history').value = val;
+    document.querySelectorAll('.history-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim() === val || (val === 'Partial' && btn.textContent.includes('Some')) || (val === 'Full' && btn.textContent.includes('Full')) || (val === 'None' && btn.textContent.includes('No history')));
+    });
+}
+
+function toggleVoice() {
+    if (isRecording) { stopVoice(); return; }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { document.getElementById('v0_issues').focus(); return; }
+
+    voiceRec = new SR();
+    voiceRec.lang = 'en-GB';
+    voiceRec.continuous = true;
+    voiceRec.interimResults = false;
+
+    voiceRec.onresult = (e) => {
+        const text = Array.from(e.results).map(r => r[0].transcript).join(' ');
+        const ta = document.getElementById('v0_issues');
+        ta.value = (ta.value ? ta.value.trimEnd() + ' ' : '') + text;
+    };
+    voiceRec.onerror = stopVoice;
+    voiceRec.onend   = () => { if (isRecording) { try { voiceRec.start(); } catch(e) {} } };
+
+    voiceRec.start();
+    isRecording = true;
+    document.getElementById('voiceBtn').classList.add('recording');
+    document.getElementById('voiceIcon').textContent = '⏹';
+    document.getElementById('voiceLabel').textContent = 'Tap to stop';
+}
+
+function stopVoice() {
+    if (voiceRec) { try { voiceRec.stop(); } catch(e) {} }
+    isRecording = false;
+    const btn = document.getElementById('voiceBtn');
+    if (btn) {
+        btn.classList.remove('recording');
+        document.getElementById('voiceIcon').textContent = '🌈' || '🌈';
+    }
+    const iconEl = document.getElementById('voiceIcon');
+    if (iconEl) iconEl.textContent = '🎤';
+    const labelEl = document.getElementById('voiceLabel');
+    if (labelEl) labelEl.textContent = 'Just talk instead';
+}
+
+async function getValuation() {
+    const make  = document.getElementById('v0_make').value.trim();
+    const model = document.getElementById('v0_model').value.trim();
+    const year  = document.getElementById('v0_year').value.trim();
+
+    if (!make || !model || !year) {
+        showMsg('valuationMsg', 'Please fill in make, model and year (or enter your reg above).', 'error');
+        return;
+    }
+
+    stopVoice();
+    const btn = document.getElementById('valuationBtn');
+    btn.disabled = true;
+    btn.textContent = 'Spanner Jack is thinking…';
+    showMsg('valuationMsg', '', '');
+    document.getElementById('valuationResult').style.display = 'none';
+
+    try {
+        const res = await fetch('/.netlify/functions/value-vehicle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                make,
+                model,
+                year,
+                mileage:         document.getElementById('v0_mileage').value.trim(),
+                condition:       v0Condition,
+                service_history: v0History,
+                selling_points:  document.getElementById('v0_positives').value.trim(),
+                known_issues:    document.getElementById('v0_issues').value.trim(),
+            }),
+        });
+        if (!res.ok) throw new Error('Valuation failed');
+        renderValuation(await res.json());
+    } catch (err) {
+        showMsg('valuationMsg', 'Could not get a valuation &mdash; check your connection and try again.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Get My Valuation →';
+    }
+}
+
+function renderValuation(data) {
+    document.getElementById('valVehicleTitle').textContent = data.vehicle_title || '';
+    document.getElementById('valRealistic').textContent   = data.realistic_range || '—';
+    document.getElementById('valBestCase').textContent    = data.best_case_range  || '—';
+    document.getElementById('valBestNote').textContent    = data.best_case_note   || '';
+    document.getElementById('valMarketNote').textContent  = data.market_note      || '';
+
+    const tips = data.fix_tips || [];
+    const tipsWrap = document.getElementById('valFixTips');
+    if (tips.length > 0) {
+        document.getElementById('valFixList').innerHTML = tips.map(t =>
+            `<div class="val-fix-tip"><span class="val-fix-fix">🔧 ${t.fix}</span><span class="val-fix-add">${t.value_add}</span></div>`
+        ).join('');
+        tipsWrap.style.display = 'block';
+    } else {
+        tipsWrap.style.display = 'none';
+    }
+
+    document.getElementById('valNotWorth').style.display = data.worth_listing === false ? 'block' : 'none';
+    document.getElementById('valuationResult').style.display = 'block';
+    document.getElementById('valuationResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetValuation() {
+    document.getElementById('valuationResult').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function proceedToListing() {
+    // Pre-fill reg in step 1
+    const reg = document.getElementById('v0_reg').value.trim();
+    if (reg) document.getElementById('regPlate').value = reg;
+
+    // Store step 0 data to prefill step 2 after Gemini analysis
+    window._v0Prefill = {
+        mileage:   document.getElementById('v0_mileage').value.trim(),
+        condition: v0Condition,
+        defects:   document.getElementById('v0_issues').value.trim(),
+    };
+
+    showListingFlow();
+}
+
+function showListingFlow() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SUPABASE_URL = 'https://pdnjeynugptnavkdbmxh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkbmpleW51Z3B0bmF2a2RibXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMTEzMDAsImV4cCI6MjA4NDU4NzMwMH0.GawisR01EykMtdauBMxenmHF2NXDMzDOJl8WgzkwFQo';
+
+let sb;
+try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+
+let sellerEmail      = '';
+let videoFile        = null;
+let extractedFrames  = [];
+let geminiResult     = null;
+let motData          = null;
+let selectedFrames   = [];
+let currentCondition = '';
+let currentStep      = 1;
+let listingUrl       = '';
+let listingIsLive    = false;
+let disclosureData   = null;
+let w3wLocation      = null;
+let geoLat           = null;
+let geoLng           = null;
+
+// ─── Email gate — required before analysis ───────────────────────────────────
+
+function checkGate() {
+    sellerEmail = (document.getElementById('gateEmail').value || '').trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sellerEmail);
+    document.getElementById('analyseBtn').disabled = !(emailOk && videoFile);
+}
+
+// ─── Silent geolocation capture (for browse.html distance sorting) ────────────
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+        pos => { geoLat = pos.coords.latitude; geoLng = pos.coords.longitude; },
+        () => {}, // silently ignore denial
+        { timeout: 6000, maximumAge: 300000 }
+    );
+}
+
+// ─── File selection ───────────────────────────────────────────────────────────
+
+document.getElementById('videoFile').addEventListener('change', handleFileSelect);
+
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) processFile(f);
+});
+
+function handleFileSelect(e) {
+    const f = e.target.files[0];
+    if (f) processFile(f);
+}
+
+async function processFile(f) {
+    showMsg('uploadMsg', '', '');
+
+    if (!f.type.startsWith('video/')) {
+        return showMsg('uploadMsg', 'Please choose a video file.', 'error');
+    }
+    if (f.size > 250 * 1024 * 1024) {
+        return showMsg('uploadMsg', 'Video is over 250MB — please trim it first.', 'error');
+    }
+
+    videoFile = f;
+
+    document.getElementById('fileName').textContent = f.name;
+    document.getElementById('fileSize').textContent = (f.size / (1024 * 1024)).toFixed(1) + ' MB';
+    document.getElementById('fileInfo').style.display = 'flex';
+
+    const url = URL.createObjectURL(f);
+    const preview = document.getElementById('videoPreview');
+    preview.src = url;
+    preview.style.display = 'block';
+
+    // Check duration
+    preview.onloadedmetadata = async () => {
+        if (preview.duration > 40) {
+            showMsg('uploadMsg', `Video is ${Math.round(preview.duration)}s — trim to under 30 seconds for best results.`, 'info');
+        }
+        // Extract frames
+        showMsg('uploadMsg', 'Extracting frames&hellip;', 'info');
+        try {
+            extractedFrames = await extractFrames(f, 12);
+            renderFrameGrid('frameGrid', extractedFrames);
+            document.getElementById('frameSection').style.display = 'block';
+            showMsg('uploadMsg', '', '');
+            checkGate();
+        } catch (err) {
+            showMsg('uploadMsg', 'Could not extract frames — try a different video format.', 'error');
+        }
+    };
+}
+
+// ─── Frame extraction ─────────────────────────────────────────────────────────
+
+function extractFrames(file, count) {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.muted = true;
+        video.preload = 'metadata';
+        video.crossOrigin = 'anonymous';
+
+        video.onerror = () => reject(new Error('video error'));
+
+        video.onloadedmetadata = () => {
+            const duration = Math.min(video.duration, 148);
+            const canvas = document.createElement('canvas');
+            const maxW = 480;
+            const scale = maxW / video.videoWidth;
+            canvas.width = maxW;
+            canvas.height = Math.round(video.videoHeight * scale);
+            const ctx = canvas.getContext('2d');
+            const frames = [];
+
+            // Spread timestamps, skip first/last 2s
+            const start = 2;
+            const end = duration - 2;
+            const step = (end - start) / (count - 1);
+            const timestamps = Array.from({ length: count }, (_, i) => start + i * step);
+
+            let idx = 0;
+
+            function next() {
+                if (idx >= timestamps.length) {
+                    URL.revokeObjectURL(video.src);
+                    resolve(frames);
+                    return;
+                }
+                video.currentTime = timestamps[idx];
+            }
+
+            video.onseeked = () => {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                frames.push({
+                    timestamp: Math.round(timestamps[idx]),
+                    data: canvas.toDataURL('image/jpeg', 0.65).split(',')[1],
+                });
+                idx++;
+                next();
+            };
+
+            next();
+        };
+
+        video.load();
+    });
+}
+
+function renderFrameGrid(gridId, frames) {
+    const grid = document.getElementById(gridId);
+    grid.innerHTML = '';
+    selectedFrames = frames.map((_, i) => i); // all selected by default
+    frames.forEach((f, i) => {
+        const img = document.createElement('img');
+        img.className = 'frame-thumb selected';
+        img.src = 'data:image/jpeg;base64,' + f.data;
+        img.title = `Frame at ${f.timestamp}s`;
+        img.dataset.index = i;
+        img.onclick = () => toggleFrame(img, i, gridId);
+        grid.appendChild(img);
+    });
+}
+
+function toggleFrame(img, idx, gridId) {
+    const pos = selectedFrames.indexOf(idx);
+    if (pos === -1) {
+        selectedFrames.push(idx);
+        img.className = 'frame-thumb selected';
+    } else {
+        selectedFrames.splice(pos, 1);
+        img.className = 'frame-thumb excluded';
+    }
+}
+
+// ─── Analysis ─────────────────────────────────────────────────────────────────
+
+async function startAnalysis() {
+    if (!videoFile || extractedFrames.length === 0) return;
+
+    document.getElementById('analyseBtn').disabled = true;
+    showMsg('analyseMsg', 'Spanner Jack is reading the frames&hellip;', 'info');
+
+    const reg = document.getElementById('regPlate').value.replace(/\s+/g, '').trim();
+
+    try {
+        const geminiPromise = fetch('/.netlify/functions/process-vehicle-video', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                frames: extractedFrames,
+                sellerNotes: document.getElementById('sellerNotes').value.trim() || null,
+            }),
+        });
+
+        const motPromise = reg
+            ? fetch(`/.netlify/functions/lookup-mot?reg=${encodeURIComponent(reg)}`).catch(() => null)
+            : Promise.resolve(null);
+
+        const [geminiRes, motRes] = await Promise.all([geminiPromise, motPromise]);
+
+        if (!geminiRes.ok) {
+            const err = await geminiRes.json();
+            throw new Error(err.error || 'Analysis failed');
+        }
+
+        geminiResult = await geminiRes.json();
+
+        if (motRes && motRes.ok) {
+            motData = await motRes.json();
+        }
+
+        populateReviewForm(geminiResult);
+        if (motData) renderMotHistory(motData);
+        prefillAndFireValuation(geminiResult.vehicle || {});
+        goStep(2);
+
+    } catch (err) {
+        showMsg('analyseMsg', 'Analysis failed: ' + err.message, 'error');
+        document.getElementById('analyseBtn').disabled = false;
+    }
+}
+
+function renderMotHistory(data) {
+    const tests = data.motTests || [];
+    const latest = tests[0];
+    if (!latest) return;
+
+    const card = document.getElementById('motCard');
+    const passed = latest.testResult === 'PASSED';
+
+    document.getElementById('motLatestBadge').innerHTML =
+        `<span class="mot-badge ${passed ? 'mot-pass' : 'mot-fail'}">${passed ? '✓ PASSED' : '✗ FAILED'}</span>`;
+
+    const expiry = latest.expiryDate ? new Date(latest.expiryDate).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) : '—';
+    const tested = new Date(latest.completedDate).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+    const miles  = latest.odometerValue ? parseInt(latest.odometerValue).toLocaleString() + ' mi' : '—';
+
+    document.getElementById('motSummaryRows').innerHTML = `
+        <div class="mot-row"><span class="label">Valid until</span><span class="value">${expiry}</span></div>
+        <div class="mot-row"><span class="label">Last tested</span><span class="value">${tested}</span></div>
+        <div class="mot-row"><span class="label">Mileage at test</span><span class="value">${miles}</span></div>
+        <div class="mot-row"><span class="label">Tests on record</span><span class="value">${tests.length}</span></div>
+    `;
+
+    const defects = latest.defects || [];
+    if (defects.length > 0) {
+        document.getElementById('motLatestDefects').innerHTML =
+            `<p style="font-size:0.78rem;color:var(--silver);margin-bottom:6px;">Latest test notes:</p>` +
+            defects.map(d => `<div class="mot-defect mot-${d.type.toLowerCase()}">${d.text}</div>`).join('');
+    }
+
+    if (tests.length > 1) {
+        const historyHtml = tests.slice(1).map(t => {
+            const d = new Date(t.completedDate).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+            const m = t.odometerValue ? parseInt(t.odometerValue).toLocaleString() + ' mi' : '—';
+            const pass = t.testResult === 'PASSED';
+            return `<div class="mot-history-item">
+                <span class="h-date">${d}</span>
+                <span class="h-miles">${m}</span>
+                <span class="h-result ${pass ? 'pass' : 'fail'}">${pass ? 'PASS' : 'FAIL'}</span>
+            </div>`;
+        }).join('');
+        document.getElementById('motHistoryList').innerHTML = historyHtml;
+        document.getElementById('motToggle').style.display = 'inline-block';
+    }
+
+    card.style.display = 'block';
+}
+
+function toggleMotHistory() {
+    const list = document.getElementById('motHistoryList');
+    const toggle = document.getElementById('motToggle');
+    const open = list.style.display === 'block';
+    list.style.display = open ? 'none' : 'block';
+    toggle.textContent = open ? 'Show full history' : 'Hide history';
+}
+
+async function generateDisclosure(manual) {
+    const declaredDefects = document.getElementById('r_defects').value.trim();
+    if (!motData && !declaredDefects && !manual) return;
+
+    const card = document.getElementById('disclosureCard');
+    const msgEl = document.getElementById('disclosureMsg');
+    const textarea = document.getElementById('disclosureText');
+
+    card.style.display = 'block';
+    textarea.value = '';
+    textarea.placeholder = 'Spanner Jack is writing your disclosure…';
+    showMsg('disclosureMsg', 'Spanner Jack is reading the history…', 'info');
+
+    const vehicle = {
+        make:  document.getElementById('r_make').value.trim(),
+        model: document.getElementById('r_model').value.trim(),
+        year:  document.getElementById('r_year').value.trim(),
+    };
+
+    try {
+        const res = await fetch('/.netlify/functions/generate-disclosure', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ motData: motData || null, declaredDefects, vehicle }),
+        });
+
+        if (!res.ok) throw new Error('Disclosure generation failed');
+        const data = await res.json();
+
+        disclosureData = data;
+        textarea.value = data.disclosureText;
+        textarea.placeholder = '';
+
+        const badge = document.getElementById('trafficLightBadge');
+        const tl = data.trafficLight;
+        const tlLabels = { green: '🟢 Clear', amber: '🟡 Advisories', red: '🔴 Issues Disclosed' };
+        badge.textContent = tlLabels[tl] || tl;
+        badge.className = 'tl-badge tl-' + tl;
+
+        document.getElementById('trafficReason').textContent = data.trafficReason;
+        showMsg('disclosureMsg', '', '');
+
+    } catch (err) {
+        showMsg('disclosureMsg', 'Could not generate disclosure — you can type it manually.', 'error');
+        card.style.display = 'block';
+    }
+}
+
+function populateReviewForm(result) {
+    const v = result.vehicle || {};
+    const uncertain = v.uncertain_fields || [];
+
+    const fields = {
+        r_make:    v.make        || '',
+        r_model:   v.model       || '',
+        r_year:    v.year        || '',
+        r_trim:    v.trim        || '',
+        r_colour:  v.colour      || '',
+        r_mileage: v.mileage     || '',
+        r_fuel:    v.fuel_type   || '',
+        r_gearbox: v.transmission|| '',
+        r_bodytype:v.body_type   || '',
+        r_doors:   v.doors       || '',
+        r_tech:    (v.tech_features || []).join(', '),
+        r_defects: (v.defects    || []).join('\n'),
+    };
+
+    for (const [id, val] of Object.entries(fields)) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.tagName === 'SELECT') {
+            // Try to match option text
+            for (const opt of el.options) {
+                if (opt.text.toLowerCase().includes(val.toLowerCase()) || opt.value.toLowerCase() === val.toLowerCase()) {
+                    opt.selected = true;
+                    break;
+                }
+            }
+        } else {
+            el.value = val;
+        }
+        // Highlight uncertain
+        const fieldName = id.replace('r_', '');
+        if (uncertain.some(u => u.toLowerCase().includes(fieldName))) {
+            el.classList.add('uncertain');
+            const note = document.createElement('p');
+            note.className = 'uncertain-note';
+            note.textContent = 'Gemini wasn\'t sure — please check this';
+            el.parentNode.appendChild(note);
+        }
+    }
+
+    if (v.condition) setCondition(v.condition);
+
+    // Pre-fill asking price from window sticker or dealer printout
+    if (v.asking_price) {
+        const priceEl = document.getElementById('s_price');
+        if (priceEl && !priceEl.value) {
+            priceEl.value = v.asking_price.replace(/[£,\s]/g, '');
+        }
+    }
+
+    // Frame labels from Gemini
+    const frameLabels = result.frame_labels || [];
+    const includedIndices = frameLabels.filter(f => f.include !== false).map(f => f.index);
+    selectedFrames = includedIndices.length > 0 ? includedIndices : extractedFrames.map((_, i) => i);
+    renderFrameGrid('frameReviewGrid', extractedFrames);
+    // Apply Gemini's include/exclude suggestions
+    frameLabels.forEach(fl => {
+        if (fl.include === false) {
+            const img = document.querySelector(`#frameReviewGrid img[data-index="${fl.index}"]`);
+            if (img) {
+                img.className = 'frame-thumb excluded';
+                const pos = selectedFrames.indexOf(fl.index);
+                if (pos !== -1) selectedFrames.splice(pos, 1);
+            }
+        }
+    });
+    document.getElementById('frameReviewCard').style.display = 'block';
+
+    // Social hooks
+    const hooks = result.social_hooks || [];
+    if (hooks.length > 0) {
+        const list = document.getElementById('hookList');
+        list.innerHTML = '';
+        hooks.forEach(hook => {
+            const li = document.createElement('li');
+            li.textContent = hook;
+            li.onclick = () => { navigator.clipboard?.writeText(hook); li.textContent = '✓ Copied!'; setTimeout(() => li.textContent = hook, 2000); };
+            list.appendChild(li);
+        });
+        document.getElementById('hooksCard').style.display = 'block';
+    }
+
+    // Apply Step 0 prefill for any fields Gemini left empty
+    if (window._v0Prefill) {
+        const p = window._v0Prefill;
+        if (p.mileage && !document.getElementById('r_mileage').value) {
+            document.getElementById('r_mileage').value = p.mileage;
+        }
+        if (p.condition && !currentCondition) setCondition(p.condition);
+        if (p.defects && !document.getElementById('r_defects').value) {
+            document.getElementById('r_defects').value = p.defects;
+        }
+    }
+}
+
+function setCondition(val) {
+    currentCondition = val;
+    document.getElementById('r_condition').value = val;
+    document.querySelectorAll('.condition-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(val));
+    });
+}
+
+// ─── Create listing (now routes through Stripe payment) ───────────────────────
+
+async function createListing() {
+    const price  = document.getElementById('s_price').value.trim();
+    const phone  = document.getElementById('s_phone').value.trim();
+    const email  = document.getElementById('s_email').value.trim();
+
+    if (!price) { showMsg('createMsg', 'Please enter an asking price.', 'error'); return; }
+    if (!phone && !email) { showMsg('createMsg', 'Please add at least a phone number or email.', 'error'); return; }
+
+    document.getElementById('createBtn').disabled = true;
+    document.getElementById('uploadProgress').style.display = 'block';
+    setProgress(10, 'Uploading video to storage…');
+
+    let videoUrl = null;
+    let videoStoragePath = null;
+
+    // Upload video to Supabase Storage first (before Stripe redirect)
+    if (videoFile && sb) {
+        try {
+            const ext = videoFile.name.split('.').pop() || 'mp4';
+            const slug = Math.random().toString(36).substring(2, 10);
+            videoStoragePath = `${slug}-${Date.now()}.${ext}`;
+
+            const { data, error } = await sb.storage
+                .from('motor-videos')
+                .upload(videoStoragePath, videoFile, { contentType: videoFile.type || 'video/mp4', upsert: false });
+
+            if (error) {
+                console.warn('Video upload warning:', error.message);
+            } else {
+                const { data: { publicUrl } } = sb.storage.from('motor-videos').getPublicUrl(videoStoragePath);
+                videoUrl = publicUrl;
+            }
+        } catch (e) {
+            console.warn('Video upload failed, continuing without video:', e.message);
+        }
+    }
+
+    setProgress(45, 'Saving your details…');
+
+    // Collect vehicle data from review form
+    const vehicle = {
+        make:         document.getElementById('r_make').value.trim(),
+        model:        document.getElementById('r_model').value.trim(),
+        year:         document.getElementById('r_year').value.trim(),
+        trim:         document.getElementById('r_trim').value.trim(),
+        colour:       document.getElementById('r_colour').value.trim(),
+        mileage:      document.getElementById('r_mileage').value.trim(),
+        fuel_type:    document.getElementById('r_fuel').value,
+        transmission: document.getElementById('r_gearbox').value,
+        body_type:    document.getElementById('r_bodytype').value,
+        doors:        document.getElementById('r_doors').value,
+        tech_features: document.getElementById('r_tech').value.split(',').map(s => s.trim()).filter(Boolean),
+        condition:    currentCondition || document.getElementById('r_condition').value,
+        defects:      document.getElementById('r_defects').value.split('\n').map(s => s.trim()).filter(Boolean),
+    };
+
+    const framesToSend = selectedFrames
+        .sort((a, b) => a - b)
+        .map(i => extractedFrames[i])
+        .filter(Boolean);
+
+    const hooks = geminiResult?.social_hooks || [];
+    const headline = geminiResult?.listing_headline || `${vehicle.year} ${vehicle.make} ${vehicle.model}`.trim();
+
+    const payload = {
+        vehicle,
+        frames: framesToSend,
+        videoUrl,
+        videoStoragePath,
+        price,
+        contactPhone: phone,
+        contactEmail: email,
+        socialHooks: hooks,
+        listingHeadline: headline,
+        motHistory: motData || null,
+        disclosureText: disclosureData ? document.getElementById('disclosureText').value.trim() : null,
+        trafficLight: disclosureData ? disclosureData.trafficLight : null,
+        w3wLocation: w3wLocation || null,
+        is_preview: true, // every listing starts as a free preview now — see "Publish live" step below
+        operator_slug: operatorSlug || null,
+        lat: geoLat,
+        lng: geoLng,
+    };
+
+    // Always build the listing first, free — nobody pays before they've seen what they're getting.
+    setProgress(75, 'Building your listing…');
+
+    let created;
+    try {
+        const res = await fetch('/.netlify/functions/create-listing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Failed to create listing');
+        }
+        created = await res.json(); // { slug, url, deleteToken, publishToken }
+    } catch (err) {
+        showMsg('createMsg', 'Error: ' + err.message, 'error');
+        document.getElementById('createBtn').disabled = false;
+        document.getElementById('uploadProgress').style.display = 'none';
+        return;
+    }
+
+    setProgress(100, 'Done!');
+    listingUrl = created.url;
+    document.getElementById('doneUrl').textContent = created.url;
+    document.getElementById('doneUrl').href = created.url;
+    document.getElementById('previewBtn').href = created.url;
+    document.getElementById('doneToken').textContent = created.deleteToken;
+
+    QRCode.toCanvas(document.getElementById('qrCanvas'), created.url, {
+        width: 200,
+        color: { dark: '#f97316ff', light: '#0f0f0fff' },
+    }, () => {});
+
+    goStep(4);
+
+    if (operatorSlug) {
+        // Operators pre-paid via credit bundles — they publish it themselves once the seller's
+        // happy, no Stripe involved. Give them the pt= link, exactly as before.
+        const displayUrl = created.publishToken ? created.url + '?pt=' + created.publishToken : created.url;
+        listingUrl = displayUrl;
+        document.getElementById('doneUrl').textContent = displayUrl;
+        document.getElementById('doneUrl').href = displayUrl;
+        document.getElementById('previewBtn').href = displayUrl;
+
+        const doneHero = document.querySelector('#step4 .done-hero');
+        if (doneHero) {
+            doneHero.querySelector('h2').textContent = 'Preview ready.';
+            doneHero.querySelector('p').textContent = 'Show the seller. When they\'re happy, tap "View Preview" and hit Publish.';
+        }
+        const previewBtn = document.getElementById('previewBtn');
+        if (previewBtn) previewBtn.textContent = '👁 Show Seller the Preview →';
+        return;
+    }
+
+    // Direct seller.
+    if (!PAYMENT_ENABLED) {
+        // Free/testing mode — publish immediately, no charge, same as it's always worked in test mode.
+        try {
+            const pubRes = await fetch('/.netlify/functions/publish-listing', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slug: created.slug, publish_token: created.publishToken }),
+            });
+            const pubData = await pubRes.json();
+            if (pubRes.ok) {
+                listingUrl = pubData.url;
+                listingIsLive = true;
+                document.getElementById('doneUrl').textContent = pubData.url;
+                document.getElementById('doneUrl').href = pubData.url;
+                document.getElementById('previewBtn').href = pubData.url;
+            }
+        } catch (e) { /* leave as preview — non-fatal in test mode */ }
+        return;
+    }
+
+    // Payment live. The listing already exists and works right now, watermarked "Preview — not
+    // live yet". Save what's needed to publish it — never in a shareable URL, only this browser's
+    // localStorage — and ask for the fee now they've actually seen the result.
+    try {
+        localStorage.setItem('motoroid_publish_pending', JSON.stringify({ slug: created.slug, publishToken: created.publishToken, price: Number(price) || 0 }));
+    } catch (e) { /* localStorage full — the publish button below fails gracefully with a clear error */ }
+
+    showPublishLiveStep();
+}
+
+function showPublishLiveStep() {
+    const doneHero = document.querySelector('#step4 .done-hero');
+    if (doneHero) {
+        doneHero.querySelector('h2').textContent = 'Here\'s your listing.';
+        doneHero.querySelector('p').textContent = 'Free to build, free to look at. Publishing it live is the only paid step.';
+    }
+    const priceEl = document.getElementById('publishLivePrice');
+    if (priceEl) priceEl.textContent = isMotorPatreonMember() ? '£15' : '£25';
+    const box = document.getElementById('publishLiveBox');
+    if (box) box.style.display = 'block';
+}
+
+async function publishLiveNow() {
+    const btn = document.getElementById('publishLiveBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Opening payment…'; }
+    try {
+        const res = await fetch('/.netlify/functions/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product: isMotorPatreonMember() ? 'member_listing' : 'nonmember_listing' }),
+        });
+        const data = await res.json();
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            throw new Error(data.error || 'No checkout URL returned');
+        }
+    } catch (err) {
+        if (btn) { btn.disabled = false; btn.innerHTML = '&#128640; Publish live &mdash; <span id="publishLivePrice">' + (isMotorPatreonMember() ? '£15' : '£25') + '</span> &rarr;'; }
+        showMsg('createMsg', 'Payment setup failed: ' + err.message + ' — please try again or contact chris@chrisptee.co.uk', 'error');
+    }
+}
+
+// ─── Finish publish after Stripe payment returns ───────────────────────────────
+
+async function finishPublishAfterPayment(sessionId) {
+    const pendingRaw = localStorage.getItem('motoroid_publish_pending');
+    if (!pendingRaw) {
+        showMsg('createMsg', 'Payment received but we couldn\'t find which listing to publish in this browser. Email chris@chrisptee.co.uk with your Stripe receipt and the preview link and we\'ll publish it for you.', 'error');
+        return;
+    }
+
+    // Stay on step3 (where createMsg/uploadProgress live) until publish actually succeeds —
+    // the caller already did goStep(3) before calling this.
+    document.getElementById('uploadProgress').style.display = 'block';
+    setProgress(50, 'Verifying payment…');
+
+    try {
+        const verifyRes = await fetch(`/.netlify/functions/verify-checkout?session_id=${encodeURIComponent(sessionId)}`);
+        const verifyData = await verifyRes.json();
+        if (!verifyData.paid) {
+            showMsg('createMsg', 'Payment not confirmed. If you were charged, contact chris@chrisptee.co.uk.', 'error');
+            document.getElementById('uploadProgress').style.display = 'none';
+            return;
+        }
+    } catch (err) {
+        showMsg('createMsg', 'Could not verify payment — contact chris@chrisptee.co.uk with your receipt.', 'error');
+        document.getElementById('uploadProgress').style.display = 'none';
+        return;
+    }
+
+    setProgress(85, 'Publishing your listing…');
+
+    try {
+        const { slug, publishToken, price: pendingPrice } = JSON.parse(pendingRaw);
+        const res = await fetch('/.netlify/functions/publish-listing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug, publish_token: publishToken }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Failed to publish listing');
+        }
+
+        const data = await res.json();
+        localStorage.removeItem('motoroid_publish_pending');
+        setProgress(100, 'Done!');
+
+        listingUrl = data.url;
+        listingIsLive = true;
+        document.getElementById('doneUrl').textContent = data.url;
+        document.getElementById('doneUrl').href = data.url;
+        document.getElementById('previewBtn').href = data.url;
+
+        QRCode.toCanvas(document.getElementById('qrCanvas'), data.url, {
+            width: 200,
+            color: { dark: '#f97316ff', light: '#0f0f0fff' },
+        }, () => {});
+
+        document.getElementById('uploadProgress').style.display = 'none';
+        goStep(4);
+        const publishBox = document.getElementById('publishLiveBox');
+        if (publishBox) publishBox.style.display = 'none';
+        const publishedBox = document.getElementById('publishedBox');
+        if (publishedBox) publishedBox.style.display = 'block';
+        if (pendingPrice >= 20000) {
+            const bigTicketBox = document.getElementById('bigTicketBox');
+            if (bigTicketBox) bigTicketBox.style.display = 'block';
+        }
+        const doneHero = document.querySelector('#step4 .done-hero');
+        if (doneHero) {
+            doneHero.querySelector('h2').textContent = 'You\'re live.';
+            doneHero.querySelector('p').textContent = 'Buyers can find this now. Print the QR for the windscreen.';
+        }
+
+    } catch (err) {
+        showMsg('createMsg', 'Publish failed: ' + err.message + '. Payment went through — email chris@chrisptee.co.uk with your receipt and we\'ll sort it.', 'error');
+        document.getElementById('uploadProgress').style.display = 'none';
+    }
+}
+
+// ─── QR / copy ────────────────────────────────────────────────────────────────
+
+function downloadQR() {
+    const canvas = document.getElementById('qrCanvas');
+    const link = document.createElement('a');
+    link.download = 'motor-oid-listing-qr.png';
+    link.href = canvas.toDataURL();
+    link.click();
+}
+
+function copyUrl() {
+    if (!listingUrl) return;
+    navigator.clipboard?.writeText(listingUrl)
+        .then(() => { const btn = event.target; btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Link', 2000); })
+        .catch(() => { prompt('Copy this URL:', listingUrl); });
+}
+
+function openEditPage() {
+    const slug  = listingUrl.split('/').pop();
+    const token = document.getElementById('doneToken').textContent.trim();
+    window.open(`/edit/${slug}?token=${encodeURIComponent(token)}`, '_blank');
+}
+
+function buildListingFlyerHTML() {
+    const v = {
+        make:      document.getElementById('r_make').value,
+        model:     document.getElementById('r_model').value,
+        year:      document.getElementById('r_year').value,
+        trim:      document.getElementById('r_trim').value,
+        colour:    document.getElementById('r_colour').value,
+        mileage:   document.getElementById('r_mileage').value,
+        fuel:      document.getElementById('r_fuel').value,
+        gearbox:   document.getElementById('r_gearbox').value,
+        body:      document.getElementById('r_bodytype').value,
+        doors:     document.getElementById('r_doors').value,
+        tech:      document.getElementById('r_tech').value,
+        condition: currentCondition,
+        defects:   document.getElementById('r_defects').value,
+        price:     document.getElementById('s_price').value,
+        phone:     document.getElementById('s_phone').value,
+        email:     document.getElementById('s_email').value,
+    };
+    const headline = `${v.year} ${v.make} ${v.model} ${v.trim}`.trim();
+    const token = document.getElementById('doneToken').textContent;
+    const url = listingUrl || window.location.href;
+    const qrDataUrl = document.getElementById('qrCanvas').toDataURL();
+
+    const photoImgs = selectedFrames.sort((a,b)=>a-b).map(i => extractedFrames[i]).filter(Boolean)
+        .map(f => `<img src="data:image/jpeg;base64,${f.data}" style="width:48%;border-radius:8px;margin:4px;">`).join('');
+
+    const specs = [
+        v.fuel && `<tr><td>Fuel</td><td>${v.fuel}</td></tr>`,
+        v.gearbox && `<tr><td>Gearbox</td><td>${v.gearbox}</td></tr>`,
+        v.body && `<tr><td>Body</td><td>${v.body}</td></tr>`,
+        v.doors && `<tr><td>Doors</td><td>${v.doors}</td></tr>`,
+        v.mileage && `<tr><td>Mileage</td><td>${v.mileage}</td></tr>`,
+        v.colour && `<tr><td>Colour</td><td>${v.colour}</td></tr>`,
+        v.condition && `<tr><td>Condition</td><td>${v.condition}</td></tr>`,
+    ].filter(Boolean).join('');
+
+    // Light, print-first theme — this is the windscreen page, so it needs to work
+    // as ink on paper, not a dark-mode screen. Still fine to view on a phone.
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${headline}</title>
+<style>
+body{font-family:sans-serif;background:#fff;color:#111;margin:0;padding:20px;font-size:16px;}
+h1{color:#c2410c;font-size:1.8rem;margin-bottom:4px;}
+.price{font-size:2rem;font-weight:700;color:#c2410c;margin:12px 0;}
+.photos{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
+.photos img{width:calc(50% - 4px);border-radius:8px;object-fit:cover;}
+table{width:100%;border-collapse:collapse;margin:16px 0;}
+td{padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:0.9rem;}
+td:first-child{color:#6b7280;width:40%;}
+.tech{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:0.9rem;}
+.defects{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:0.9rem;}
+.contact{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:16px 0;}
+.contact a{color:#c2410c;font-size:1.1rem;font-weight:700;text-decoration:none;}
+.token{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin:16px 0;font-size:0.8rem;}
+.qr{text-align:center;margin:16px 0;}
+.qr img{width:180px;border-radius:10px;}
+.free-note{background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:12px 16px;margin:16px 0;font-size:0.82rem;color:#374151;line-height:1.5;}
+footer{text-align:center;color:#9ca3af;font-size:0.75rem;margin-top:32px;}
+</style></head><body>
+<div style="text-align:center;margin-bottom:16px;"><img src="https://motor-oid.co.uk/logo.jpg" alt="Motor-Oid" style="width:90px;height:90px;object-fit:cover;border-radius:14px;"></div>
+<h1>${headline}</h1>
+<div class="price">£${v.price}</div>
+<div class="photos">${photoImgs}</div>
+<table>${specs}</table>
+${v.tech ? `<div class="tech"><strong style="color:#c2410c;">Features:</strong> ${v.tech}</div>` : ''}
+${v.defects ? `<div class="defects"><strong style="color:#dc2626;">Known defects:</strong><br>${v.defects.replace(/\n/g,'<br>')}</div>` : ''}
+<div class="contact">
+  <p style="margin:0 0 8px;font-size:0.85rem;color:#6b7280;">Contact the seller</p>
+  ${v.phone ? `<a href="tel:${v.phone}">📞 ${v.phone}</a><br>` : ''}
+  ${v.email ? `<a href="mailto:${v.email}" style="font-size:0.95rem;">✉️ ${v.email}</a>` : ''}
+</div>
+${url ? `<div class="qr"><p style="color:#6b7280;font-size:0.85rem;margin-bottom:8px;">Full listing — photos, video, more detail:</p><img src="${qrDataUrl}"><br><a href="${url}" style="color:#c2410c;font-size:0.8rem;">${url}</a></div>` : ''}
+<div class="free-note">This page is free to print, no charge — courtesy of Motor-Oid. ${listingIsLive ? 'This listing is live and searchable on Motor-Oid too.' : "It isn't in Motor-Oid's live search yet, so buyers find it by scanning this QR, not by searching."} Haven't got any money? Don't worry — print it and stick it in the window anyway. If it helps sell the car, <a href="https://buymeacoffee.com/chrispteemagician" style="color:#c2410c;">buy Spanner Jack a coffee</a> when you can.</div>
+${token ? `<div class="token"><strong style="color:#dc2626;">🔒 Removal code — keep this safe:</strong><br><span style="font-family:monospace;">${token}</span></div>` : ''}
+<footer>Generated by Motor-Oid · motor-oid.co.uk · Part of FeelFamous</footer>
+</body></html>`;
+
+    return { html, headline };
+}
+
+function downloadListingHTML() {
+    const { html, headline } = buildListingFlyerHTML();
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${headline.replace(/\s+/g,'-').toLowerCase() || 'motor-oid-listing'}.html`;
+    a.click();
+}
+
+function printListingFlyer() {
+    const { html } = buildListingFlyerHTML();
+    const win = window.open('', '_blank');
+    if (!win) {
+        showMsg('createMsg', 'Please allow pop-ups to print the windscreen page.', 'error');
+        return;
+    }
+    win.document.write(html);
+    win.document.close();
+    win.onload = () => win.print();
+}
+
+// ─── What3Words ───────────────────────────────────────────────────────────────
+
+function getW3WLocation() {
+    if (!navigator.geolocation) {
+        showMsg('w3wMsg', 'Location not supported on this device.', 'error');
+        return;
+    }
+    const btn = document.getElementById('w3wBtn');
+    btn.textContent = 'Getting location…';
+    btn.disabled = true;
+    showMsg('w3wMsg', '', '');
+
+    navigator.geolocation.getCurrentPosition(async pos => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        try {
+            const res = await fetch(`/.netlify/functions/lookup-w3w?lat=${lat}&lng=${lng}`);
+            if (!res.ok) throw new Error('W3W lookup failed');
+            const data = await res.json();
+
+            w3wLocation = data;
+            document.getElementById('s_w3w').value = data.words;
+            document.getElementById('w3wWords').textContent = data.words;
+            document.getElementById('w3wPlace').textContent = data.nearestPlace || '';
+            document.getElementById('w3wResult').classList.add('show');
+            btn.style.display = 'none';
+
+        } catch (err) {
+            showMsg('w3wMsg', 'Could not get location — try again.', 'error');
+            btn.textContent = '🌍 Use My Location — get a what3words address';
+            btn.disabled = false;
+        }
+    }, () => {
+        showMsg('w3wMsg', 'Location permission denied.', 'error');
+        btn.textContent = '🌍 Use My Location — get a what3words address';
+        btn.disabled = false;
+    }, { timeout: 10000 });
+}
+
+function clearW3W() {
+    w3wLocation = null;
+    document.getElementById('s_w3w').value = '';
+    document.getElementById('w3wResult').classList.remove('show');
+    const btn = document.getElementById('w3wBtn');
+    btn.style.display = '';
+    btn.innerHTML = '<span style="font-size:1.2rem;">&#127757;</span> Use My Location &mdash; get a what3words address';
+    btn.disabled = false;
+}
+
+// ─── Auto-fill + fire valuation from Gemini video analysis ───────────────────
+
+async function prefillAndFireValuation(v) {
+    // Fill valuation form from Gemini's video read — no user input needed
+    if (v.make)      document.getElementById('v0_make').value  = v.make;
+    if (v.model)     document.getElementById('v0_model').value = v.model;
+    if (v.year)      document.getElementById('v0_year').value  = v.year;
+    if (v.mileage)   document.getElementById('v0_mileage').value = v.mileage;
+    if (v.condition) setV0Condition(v.condition.split(' ')[0]); // "Good condition" → "Good"
+
+    const defects = (v.defects || []).join('. ');
+    if (defects) document.getElementById('v0_issues').value = defects;
+
+    const positives = (v.tech_features || []).join(', ');
+    if (positives) document.getElementById('v0_positives').value = positives;
+
+    // Only fire if we have enough to work with
+    if (!v.make || !v.model || !v.year) return;
+
+    // Small delay so the form fields are painted before the API call starts
+    await new Promise(r => setTimeout(r, 300));
+    getValuation();
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function goStep(n) {
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById('step' + i).classList.toggle('active', i === n);
+        const dot = document.getElementById('dot-' + i);
+        dot.classList.remove('active', 'done');
+        if (i === n)     dot.classList.add('active');
+        else if (i < n)  dot.classList.add('done');
+    }
+    currentStep = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (n === 2 && !disclosureData) {
+        setTimeout(() => generateDisclosure(false), 400);
+    }
+    if (n === 3 && sellerEmail) {
+        const emailField = document.getElementById('s_email');
+        if (!emailField.value) emailField.value = sellerEmail;
+    }
+}
+
+function setProgress(pct, label) {
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = label;
+}
+
+function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.innerHTML = text;
+    el.className = 'msg' + (type ? ' ' + type : '');
+    el.style.display = text ? 'block' : 'none';
+}
+
+// ─── Preview modal ────────────────────────────────────────────────────────────
+
+function showPreviewModal() {
+    const price = document.getElementById('s_price').value.trim();
+    const phone = document.getElementById('s_phone').value.trim();
+    const email = document.getElementById('s_email').value.trim();
+
+    if (!price)             { showMsg('createMsg', 'Please enter an asking price.', 'error'); return; }
+    if (!phone && !email)   { showMsg('createMsg', 'Please add at least a phone number or email.', 'error'); return; }
+
+    const v = {
+        make:      document.getElementById('r_make').value,
+        model:     document.getElementById('r_model').value,
+        year:      document.getElementById('r_year').value,
+        trim:      document.getElementById('r_trim').value,
+        colour:    document.getElementById('r_colour').value,
+        mileage:   document.getElementById('r_mileage').value,
+        fuel:      document.getElementById('r_fuel').value,
+        gearbox:   document.getElementById('r_gearbox').value,
+        body:      document.getElementById('r_bodytype').value,
+        doors:     document.getElementById('r_doors').value,
+        tech:      document.getElementById('r_tech').value,
+        condition: currentCondition,
+        defects:   document.getElementById('r_defects').value.trim(),
+    };
+
+    const headline = (geminiResult && geminiResult.listing_headline)
+        || [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ')
+        || 'Your Listing';
+
+    const disclosure = disclosureData ? document.getElementById('disclosureText').value.trim() : '';
+    const tl = disclosureData ? disclosureData.trafficLight : null;
+    const tlLabels  = { green: '🟢 Clear', amber: '🟡 Advisories', red: '🔴 Issues Disclosed' };
+
+    const photos = selectedFrames.slice().sort((a,b) => a-b).slice(0,8)
+        .map(i => extractedFrames[i]).filter(Boolean);
+
+    const photoHtml = photos.length > 0
+        ? `<div class="prev-photo-grid">${photos.map(f =>
+            `<div class="prev-photo-wrap"><img src="data:image/jpeg;base64,${f.data}" class="prev-photo" loading="lazy"><span class="wm-label">MOTOR-OID PREVIEW</span></div>`).join('')}</div>`
+        : '';
+
+    const specRows = [
+        v.mileage   && `<div class="prev-spec-row"><span>Mileage</span><span>${v.mileage}</span></div>`,
+        v.fuel      && `<div class="prev-spec-row"><span>Fuel</span><span>${v.fuel}</span></div>`,
+        v.gearbox   && `<div class="prev-spec-row"><span>Gearbox</span><span>${v.gearbox}</span></div>`,
+        v.body      && `<div class="prev-spec-row"><span>Body</span><span>${v.body}</span></div>`,
+        v.doors     && `<div class="prev-spec-row"><span>Doors</span><span>${v.doors}</span></div>`,
+        v.colour    && `<div class="prev-spec-row"><span>Colour</span><span>${v.colour}</span></div>`,
+        v.condition && `<div class="prev-spec-row"><span>Condition</span><span>${v.condition}</span></div>`,
+    ].filter(Boolean).join('');
+
+    const w3wHtml = w3wLocation
+        ? `<div class="prev-card"><p class="prev-label">Location</p>
+           <span style="color:#e11f26; font-weight:700;">/// ${w3wLocation.words}</span>
+           ${w3wLocation.nearestPlace ? `<span style="color:var(--silver); font-size:0.8rem; margin-left:8px;">${w3wLocation.nearestPlace}</span>` : ''}</div>`
+        : '';
+
+    document.getElementById('previewBody').innerHTML = `
+        <div style="margin-bottom:20px;">
+            <h2 style="font-family:'Caveat',cursive; font-size:clamp(1.9rem,7vw,2.8rem); color:var(--cream); line-height:1.1; margin-bottom:8px;">${headline}</h2>
+            <div style="font-family:'Caveat',cursive; font-size:2.8rem; color:var(--accent); font-weight:700;">&#163;${price}</div>
+        </div>
+
+        ${photoHtml}
+
+        ${specRows ? `<div class="prev-spec-card">${specRows}</div>` : ''}
+
+        ${v.tech ? `<div class="prev-card"><p class="prev-label">Features &amp; Tech</p><p style="font-size:0.9rem; color:var(--cream);">${v.tech}</p></div>` : ''}
+
+        ${v.defects ? `<div class="prev-card" style="background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.2);">
+            <p class="prev-label" style="color:#f87171;">Known Defects</p>
+            <p style="font-size:0.88rem; color:#f87171;">${v.defects.replace(/\n/g,'<br>')}</p>
+        </div>` : ''}
+
+        ${disclosure ? `<div class="prev-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <p class="prev-label" style="margin-bottom:0;">&#128737; Honest Disclosure</p>
+                ${tl ? `<span class="tl-badge tl-${tl}">${tlLabels[tl] || tl}</span>` : ''}
+            </div>
+            <p style="font-size:0.88rem; color:var(--silver);">${disclosure}</p>
+        </div>` : ''}
+
+        ${w3wHtml}
+
+        <div class="prev-card">
+            <p class="prev-label">Contact the Seller</p>
+            ${phone ? `<p style="font-size:1.1rem; font-weight:700; color:var(--accent);">&#128222; ${phone}</p>` : ''}
+            ${email ? `<p style="font-size:0.9rem; color:var(--silver); margin-top:4px;">&#9993;&#65039; ${email}</p>` : ''}
+        </div>
+    `;
+
+    const modal = document.getElementById('previewModal');
+    modal.classList.add('show');
+    modal.scrollTop = 0;
+}
+
+function closePreview() {
+    document.getElementById('previewModal').classList.remove('show');
+}
+
+function confirmPublish() {
+    closePreview();
+    createListing();
+}
+
+// ─── Handle return from Stripe ─────────────────────────────────────────────────
+
+(function() {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('stripe_success') === '1') {
+        const sessionId = params.get('session_id');
+        showListingFlow();
+        goStep(3);
+        showMsg('createMsg', '&#10003; Payment received — publishing your listing now…', 'info');
+        document.getElementById('uploadProgress').style.display = 'block';
+        if (sessionId) {
+            finishPublishAfterPayment(sessionId);
+        } else {
+            showMsg('createMsg', 'Payment received but session ID missing. Contact chris@chrisptee.co.uk.', 'error');
+        }
+
+    } else if (params.get('stripe_cancelled') === '1') {
+        showListingFlow();
+        goStep(3);
+        showMsg('createMsg', 'Payment cancelled — your details are still here. Try again when ready.', 'info');
+        document.getElementById('createBtn').disabled = false;
+
+    } else if (params.get('fivepack_paid') === '1') {
+        showListingFlow();
+        const banner = document.createElement('div');
+        banner.className = 'msg info';
+        banner.style.cssText = 'display:block; margin-bottom:20px;';
+        banner.innerHTML = '&#10003; 5-pack purchased — thank you! Chris will email your 5 listing credits within 1 hour. Start your first Walkround below.';
+        const card = document.querySelector('#step1 .card');
+        if (card) card.prepend(banner);
+    }
+})();
+</script>
+</body>
+</html>
