@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparky — Royal Queen Seeds</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a1a0a; color: #c8e6c8; font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .container { max-width: 560px; width: 100%; text-align: center; }
+  .sparky-name { font-size: 1rem; color: #16a34a; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+  h1 { font-size: 1.8rem; color: #86efac; margin-bottom: 0.75rem; line-height: 1.3; }
+  .intro { color: #a3c4a3; font-size: 1.05rem; margin-bottom: 2.5rem; line-height: 1.6; }
+  .lang-choice { display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 2rem; }
+  .lang-btn { background: #0f2a0f; border: 2px solid #16a34a; color: #86efac; border-radius: 10px; padding: 0.75rem 1.25rem; cursor: pointer; font-size: 1rem; transition: background 0.2s, border-color 0.2s; }
+  .lang-btn:hover { background: #163a16; border-color: #86efac; }
+  .lang-btn.active { background: #16a34a; color: #0a1a0a; font-weight: 700; }
+  .mode-choice { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+  .mode-btn { background: #0f2a0f; border: 2px solid #16a34a; color: #86efac; border-radius: 12px; padding: 1.25rem 1.5rem; cursor: pointer; text-align: left; transition: background 0.2s, border-color 0.2s; }
+  .mode-btn:hover { background: #163a16; border-color: #86efac; }
+  .mode-btn .mode-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .mode-btn .mode-desc { font-size: 0.9rem; color: #a3c4a3; }
+  .question-text { font-size: 1.2rem; color: #86efac; margin-bottom: 2rem; line-height: 1.5; min-height: 3.5rem; }
+  .record-btn { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #16a34a; background: #0f2a0f; color: #86efac; font-size: 3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+  .record-btn:hover { background: #163a16; border-color: #86efac; }
+  .record-btn.recording { background: #3a0a0a; border-color: #ef4444; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 50% { box-shadow: 0 0 0 16px rgba(239,68,68,0); } }
+  .record-status { font-size: 0.95rem; color: #a3c4a3; margin-bottom: 0.5rem; min-height: 1.4rem; }
+  .record-timer { font-size: 0.85rem; color: #16a34a; margin-bottom: 1.5rem; min-height: 1.2rem; }
+  audio { width: 100%; margin-bottom: 1rem; }
+  .next-btn { display: none; background: #16a34a; color: #0a1a0a; border: none; border-radius: 8px; padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .next-btn:hover { background: #86efac; }
+  .done-msg { display: none; color: #86efac; font-size: 1.1rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-top: 2rem; color: #16a34a; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+  .share-pitch { background: #0f2a0f; border: 1px solid #16a34a; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left; }
+  .share-pitch p { font-size: 0.95rem; color: #a3c4a3; line-height: 1.6; }
+  .share-pitch strong { color: #86efac; }
+  .upload-area { border: 2px dashed #16a34a; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; cursor: pointer; transition: background 0.2s; position: relative; }
+  .upload-area:hover { background: #0f2a0f; }
+  .upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-label { font-size: 1rem; font-weight: 600; color: #86efac; margin-bottom: 0.3rem; }
+  .upload-desc { font-size: 0.85rem; color: #a3c4a3; }
+  .upload-files { font-size: 0.85rem; color: #16a34a; margin-top: 0.5rem; min-height: 1.2rem; }
+  .share-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; }
+  .share-btn { background: #16a34a; color: #0a1a0a; border: none; border-radius: 8px; padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .share-btn:hover { background: #86efac; }
+  .skip-link { color: #16a34a; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+  .offer-btn {
+    background: transparent; color: #86efac;
+    border: 2px solid #16a34a; border-radius: 8px;
+    padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s; width: 100%;
+  }
+  .offer-btn:hover { background: #0f2a0f; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="lang-screen">
+    <p class="sparky-name">Sparky</p>
+    <h1>Welcome, Daniel.</h1>
+    <p class="intro" style="margin-bottom:1.5rem;">Choose your language to get started.</p>
+    <div class="lang-choice">
+      <button class="lang-btn active" onclick="setLang('en', this)">🇬🇧 English</button>
+      <button class="lang-btn" onclick="setLang('de', this)">🇩🇪 Deutsch</button>
+      <button class="lang-btn" onclick="setLang('es', this)">🇪🇸 Español</button>
+    </div>
+    <button class="mode-btn" style="text-align:center; margin-top:0.5rem;" onclick="goToIntro()">
+      <div class="mode-title" id="lang-continue-btn">Continue →</div>
+    </button>
+  </div>
+  <div id="intro-screen" class="hidden">
+    <p class="sparky-name">Sparky</p>
+    <h1 id="intro-title"></h1>
+    <p class="intro" id="intro-body"></p>
+    <div class="mode-choice">
+      <button class="mode-btn" onclick="startMode('interview')">
+        <div class="mode-title" id="mode-interview-title"></div>
+        <div class="mode-desc" id="mode-interview-desc"></div>
+      </button>
+      <button class="mode-btn" onclick="startMode('free')">
+        <div class="mode-title" id="mode-free-title"></div>
+        <div class="mode-desc" id="mode-free-desc"></div>
+      </button>
+    </div>
+  </div>
+  <div id="share-screen" class="hidden">
+    <p class="sparky-name">Sparky</p>
+    <h1 id="share-title"></h1>
+    <div class="share-pitch"><p id="share-pitch-text"></p></div>
+    <div class="upload-area">
+      <input type="file" id="public-upload" multiple accept=".pdf,.csv,.xlsx,.txt,.json,.jpg,.png" onchange="showFiles('public-upload','public-files')">
+      <div class="upload-label" id="share-public-label"></div>
+      <div class="upload-desc" id="share-public-desc"></div>
+      <div class="upload-files" id="public-files"></div>
+    </div>
+    <div class="upload-area">
+      <input type="file" id="private-upload" multiple accept=".pdf,.csv,.xlsx,.txt,.json,.jpg,.png" onchange="showFiles('private-upload','private-files')">
+      <div class="upload-label" id="share-private-label"></div>
+      <div class="upload-desc" id="share-private-desc"></div>
+      <div class="upload-files" id="private-files"></div>
+    </div>
+    <div class="share-actions">
+      <button class="share-btn" onclick="finishSession()" id="share-send-btn"></button>
+      <span class="skip-link" onclick="finishSession()" id="share-skip-link"></span>
+    </div>
+  </div>
+  <div id="offer-screen" class="hidden">
+    <p class="sparky-name">Sparky</p>
+    <h1 id="offer-title"></h1>
+    <p class="intro" id="offer-intro"></p>
+    <div style="background:#0f2a0f; border:2px solid #16a34a; border-radius:14px; padding:1.5rem; margin-bottom:1.25rem; text-align:left;">
+      <p style="font-size:1.1rem; font-weight:700; color:#86efac; margin-bottom:1rem;" id="offer-trial-headline"></p>
+      <ul style="list-style:none; padding:0; color:#c8e6c8; font-size:0.95rem; line-height:2;" id="offer-features"></ul>
+    </div>
+    <div style="background:#0a1a0a; border:1px solid #16a34a; border-radius:10px; padding:1rem; margin-bottom:1.5rem; text-align:left;">
+      <p style="font-size:0.9rem; color:#a3c4a3; margin-bottom:0.5rem;" id="offer-pricing-label"></p>
+      <p style="font-size:1.4rem; font-weight:700; color:#86efac;" id="offer-price-monthly"></p>
+      <p style="font-size:0.85rem; color:#16a34a; margin-top:0.25rem;" id="offer-price-annual"></p>
+    </div>
+    <div style="background:#0f2a0f; border:1px solid #16a34a; border-radius:10px; padding:1rem; margin-bottom:1.5rem; text-align:left;">
+      <p style="font-size:0.95rem; color:#86efac; font-style:italic; line-height:1.6;" id="offer-flywheel"></p>
+    </div>
+    <div class="share-actions">
+      <button class="share-btn" onclick="declineOffer()" id="offer-static-btn"></button>
+      <button class="offer-btn" onclick="acceptOffer()" id="offer-accept-btn"></button>
+    </div>
+  </div>
+  <div id="recorder-screen" class="hidden">
+    <p class="sparky-name">Sparky</p>
+    <p class="question-text" id="question-text"></p>
+    <button class="record-btn" id="record-btn" onclick="toggleRecording()" aria-label="Start recording">🎙️</button>
+    <p class="record-status" id="record-status"></p>
+    <p class="record-timer" id="record-timer"></p>
+    <div id="playback" class="hidden">
+      <audio id="audio-player" controls></audio>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()"></button>
+    </div>
+    <div class="done-msg" id="done-msg"></div>
+    <span class="back-link" id="back-link" onclick="resetAll()"></span>
+  </div>
+</div>
+<script>
+  const COPY = {
+    en: {
+      introTitle: "Tell me about Royal Queen Seeds.",
+      introBody: "You found your piece of the jigsaw. This recording is the start of your SpicyDrive — your voice, your story, your AI familiar. Tell me everything.",
+      modeInterviewTitle: "🎙️ Let Sparky ask the questions",
+      modeInterviewDesc: "I'll guide you through it — one question at a time. Takes about 10 minutes.",
+      modeFreeTitle: "💬 I'll just talk",
+      modeFreeDesc: "Hit record and tell me whatever's on your mind. No questions. No structure.",
+      tapToRecord: "Tap to start recording",
+      recording: "Recording… tap to stop",
+      recorded: s => `Recorded (${s}s). Listen back, then continue.`,
+      nextGood: "That's good →",
+      nextDone: "Done ✓",
+      backLink: "← Start again",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">That's everything for now. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">Trinity are going to work their magic.<br>We'll be right back with something brilliant.<br><br><strong style="color:#86efac;">Don't panic. We've got you.</strong></p>`,
+      micDenied: "Microphone access denied — allow mic access and try again.",
+      noSupport: "Your browser does not support recording. Try Chrome or Safari.",
+      questions: [
+        "RQS is one of the biggest names in European cannabis. How did it actually start — what was the gap you saw?",
+        "F1 hybrids — everyone's talking about them. What does RQS actually do differently with genetics that others miss?",
+        "Who's the grower you built RQS for? Home cultivator, professional facility — who do you picture?",
+        "If you had to pick one strain from the RQS catalogue that every serious grower should try, what would it be and why?",
+        "Someone finds RQS for the first time today. What's the one thing you'd want them to understand about you before they clicked buy?"
+      ],
+      freePrompt: "Hit record whenever you're ready. Tell me about RQS — your story, your genetics, what makes you different from every other seed bank out there.",
+      shareTitle: "Got data to share?",
+      sharePitch: "What you share with Ask Terp becomes part of the education platform. When patients and growers ask about genetics, terpene profiles, or specific strains — your name comes up. That's how you reach new customers who are already looking. It costs you nothing. You choose what goes in.",
+      sharePublicLabel: "🌿 Share with Ask Terp",
+      sharePublicDesc: "Strain data, terpene profiles, lab results, grow guides. Terp will reference it when growers and patients ask.",
+      sharePrivateLabel: "🔒 Keep this private",
+      sharePrivateDesc: "Pricing, proprietary genetics data, anything in-house. Only you and your hamlet team will see it.",
+      shareSend: "Send it →",
+      shareSkip: "Nothing to share right now — skip",
+      offerTitle: "You got goosebumps. I got the message.",
+      offerIntro: "The rescue chain starts with a seed. For a lot of people coming through this door, that seed will be from RQS. Your piece is at the foundation. If you want a SpicyDrive built around your voice and your genetics — that is a one-to-one conversation. No forms. No funnels. Just two people who see the same picture.",
+      offerTrialHeadline: "What a SpicyDrive looks like for you:",
+      offerFeatures: [
+        "🌿 Your voice recorded and built into your own AI familiar",
+        "🌿 Your hamlet page on cannabin-oid.co.uk — your corner of the village",
+        "🌿 Built one to one — not a product, a collaboration",
+        "🌿 The rescue chain, with RQS genetics as the vehicle"
+      ],
+      offerPricingLabel: "Your next step:",
+      offerPriceMonthly: "Tell Chris. That is it.",
+      offerPriceAnnual: "One conversation. One to one. No forms. No funnels.",
+      offerFlywheel: "\"The others will follow. We will be here waiting for them.\"",
+      offerAccept: "Tell Chris I want a SpicyDrive →",
+      offerStatic: "I am good for now — thanks"
+    },
+    de: {
+      introTitle: "Erzähl mir von Royal Queen Seeds.",
+      introBody: "Ich höre zu. Was du sagst, bleibt zwischen uns.",
+      modeInterviewTitle: "🎙️ Sparky stellt die Fragen",
+      modeInterviewDesc: "Ich führe dich durch — eine Frage nach der anderen. Dauert etwa 10 Minuten.",
+      modeFreeTitle: "💬 Ich rede einfach",
+      modeFreeDesc: "Drück auf Aufnehmen und sag, was dir auf dem Herzen liegt.",
+      tapToRecord: "Tippen zum Aufnehmen",
+      recording: "Aufnahme läuft… tippen zum Stoppen",
+      recorded: s => `Aufgenommen (${s}s). Anhören und weitermachen.`,
+      nextGood: "Gut so →",
+      nextDone: "Fertig ✓",
+      backLink: "← Neu starten",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">Das ist alles für jetzt. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">Trinity arbeitet jetzt ihre Magie.<br>Wir sind gleich zurück.<br><br><strong style="color:#86efac;">Keine Panik. Wir haben dich.</strong></p>`,
+      micDenied: "Mikrofonzugriff verweigert — bitte erlauben und erneut versuchen.",
+      noSupport: "Dein Browser unterstützt keine Aufnahmen. Bitte Chrome oder Safari verwenden.",
+      questions: [
+        "RQS ist einer der bekanntesten Namen im europäischen Cannabis. Wie hat es wirklich angefangen?",
+        "F1-Hybriden — alle reden darüber. Was macht RQS bei der Genetik anders als andere?",
+        "Für wen hast du RQS gebaut? Heimanbauer, professionelle Anlage — wen siehst du vor dir?",
+        "Wenn du eine Sorte aus dem RQS-Katalog nennen müsstest, die jeder ernsthafte Anbauer probieren sollte — welche wäre das und warum?",
+        "Jemand findet RQS heute zum ersten Mal. Was soll er als Erstes über euch verstehen?"
+      ],
+      freePrompt: "Drück auf Aufnehmen, wenn du bereit bist. Erzähl mir von RQS — Geschichte, Genetik, was euch von anderen unterscheidet.",
+      shareTitle: "Hast du Daten zum Teilen?",
+      sharePitch: "Was du mit Ask Terp teilst, wird Teil der Wissensbasis. Wenn Patienten und Anbauer nach Genetik oder Sorten fragen — wird dein Name erwähnt.",
+      sharePublicLabel: "🌿 Mit Ask Terp teilen",
+      sharePublicDesc: "Sortendaten, Terpenprofile, Laborergebnisse, Anbauguides.",
+      sharePrivateLabel: "🔒 Privat behalten",
+      sharePrivateDesc: "Preislisten, proprietäre Genetikdaten — nur für dein Team.",
+      shareSend: "Absenden →",
+      shareSkip: "Nichts zu teilen — überspringen",
+      offerTitle: "Du hast Gänsehaut bekommen. Ich hab die Botschaft verstanden.",
+      offerIntro: "Die Rescue Chain beginnt mit einem Samen. Viele, die durch diese Tür kommen, werden einen Samen von RQS in der Hand haben. Dein Puzzlestück ist am Fundament. Wenn du einen SpicyDrive willst, der um deine Stimme und deine Genetik gebaut ist — das ist ein Eins-zu-eins-Gespräch. Kein Formular. Kein Funnel. Einfach zwei Menschen, die dasselbe Bild sehen.",
+      offerTrialHeadline: "Was ein SpicyDrive für dich bedeutet:",
+      offerFeatures: [
+        "🌿 Deine Stimme aufgenommen und in deinen eigenen KI-Begleiter eingebaut",
+        "🌿 Deine Hamlet-Seite auf cannabin-oid.co.uk",
+        "🌿 Eins zu eins gebaut — kein Produkt, eine Zusammenarbeit",
+        "🌿 Die Rescue Chain, mit RQS-Genetik als Fahrzeug"
+      ],
+      offerPricingLabel: "Dein nächster Schritt:",
+      offerPriceMonthly: "Sag es Chris. Das ist alles.",
+      offerPriceAnnual: "Ein Gespräch. Eins zu eins. Keine Formulare.",
+      offerFlywheel: '"Die anderen werden folgen. Wir werden hier auf sie warten."',
+      offerAccept: "Chris sagen, dass ich einen SpicyDrive will →",
+      offerStatic: "Ich bin erstmal gut — danke"
+    },
+    es: {
+      introTitle: "Cuéntame sobre Royal Queen Seeds.",
+      introBody: "Te escucho. Lo que digas queda entre nosotros.",
+      modeInterviewTitle: "🎙️ Deja que Sparky haga las preguntas",
+      modeInterviewDesc: "Te guío paso a paso — una pregunta a la vez. Unos 10 minutos.",
+      modeFreeTitle: "💬 Prefiero hablar libremente",
+      modeFreeDesc: "Dale a grabar y cuéntame lo que quieras.",
+      tapToRecord: "Toca para empezar a grabar",
+      recording: "Grabando… toca para parar",
+      recorded: s => `Grabado (${s}s). Escúchalo y continúa.`,
+      nextGood: "Bien →",
+      nextDone: "Listo ✓",
+      backLink: "← Empezar de nuevo",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">Eso es todo por ahora. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">Trinity va a hacer su magia.<br><br><strong style="color:#86efac;">No te preocupes. Te tenemos.</strong></p>`,
+      micDenied: "Acceso al micrófono denegado — permite el acceso e inténtalo de nuevo.",
+      noSupport: "Tu navegador no soporta grabación. Prueba Chrome o Safari.",
+      questions: [
+        "RQS es uno de los grandes nombres del cannabis europeo. ¿Cómo empezó realmente?",
+        "Híbridos F1 — todo el mundo habla de ellos. ¿Qué hace RQS diferente con la genética?",
+        "¿Para quién construiste RQS? ¿Cultivador casero, instalación profesional?",
+        "Si tuvieras que elegir una variedad del catálogo RQS que todo cultivador serio debería probar, ¿cuál sería?",
+        "Alguien encuentra RQS por primera vez hoy. ¿Qué quieres que entienda primero?"
+      ],
+      freePrompt: "Dale a grabar cuando estés listo. Cuéntame sobre RQS — tu historia, tu genética, lo que os hace diferentes.",
+      shareTitle: "¿Tienes datos que compartir?",
+      sharePitch: "Lo que compartes con Ask Terp pasa a formar parte de la educación. Cuando los pacientes pregunten sobre genética o variedades — tu nombre aparecerá.",
+      sharePublicLabel: "🌿 Compartir con Ask Terp",
+      sharePublicDesc: "Datos de variedades, perfiles de terpenos, resultados de laboratorio.",
+      sharePrivateLabel: "🔒 Mantener privado",
+      sharePrivateDesc: "Precios, datos genéticos propietarios. Solo tu equipo lo verá.",
+      shareSend: "Enviar →",
+      shareSkip: "Nada que compartir por ahora — saltar",
+      offerTitle: "Tuviste escalofrios. Yo recibí el mensaje.",
+      offerIntro: "La cadena de rescate empieza con una semilla. Muchos de los que lleguen por esta puerta tendrán una semilla de RQS. Tu pieza está en los cimientos. Si quieres un SpicyDrive construido alrededor de tu voz y tu genética, eso es una conversación uno a uno. Sin formularios. Sin embudos.",
+      offerTrialHeadline: "Lo que un SpicyDrive significa para ti:",
+      offerFeatures: [
+        "🌿 Tu voz grabada y construida en tu propio familiar de IA",
+        "🌿 Tu página hamlet en cannabin-oid.co.uk",
+        "🌿 Construido uno a uno — no un producto, una colaboracion",
+        "🌿 La cadena de rescate, con la genética de RQS como vehiculo"
+      ],
+      offerPricingLabel: "Tu siguiente paso:",
+      offerPriceMonthly: "Dile a Chris. Eso es todo.",
+      offerPriceAnnual: "Una conversacion. Uno a uno. Sin formularios.",
+      offerFlywheel: '"Los demas vendran. Aqui estaremos esperandolos."',
+      offerAccept: "Decirle a Chris que quiero un SpicyDrive →",
+      offerStatic: "Por ahora estoy bien — gracias"
+    }
+  };
+  let lang='en',mode=null,currentQ=0,mediaRecorder=null,audioChunks=[],audioBlob=null,recordingTimer=null,recordingSeconds=0,micStream=null;
+  const MAX_RECORDING=180;
+  function setLang(l,btn){lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  function goToIntro(){const c=COPY[lang];document.getElementById('intro-title').textContent=c.introTitle;document.getElementById('intro-body').textContent=c.introBody;document.getElementById('mode-interview-title').textContent=c.modeInterviewTitle;document.getElementById('mode-interview-desc').textContent=c.modeInterviewDesc;document.getElementById('mode-free-title').textContent=c.modeFreeTitle;document.getElementById('mode-free-desc').textContent=c.modeFreeDesc;document.getElementById('lang-screen').classList.add('hidden');document.getElementById('intro-screen').classList.remove('hidden');}
+  function startMode(m){mode=m;currentQ=0;document.getElementById('intro-screen').classList.add('hidden');document.getElementById('recorder-screen').classList.remove('hidden');document.getElementById('back-link').textContent=COPY[lang].backLink;document.getElementById('record-status').textContent=COPY[lang].tapToRecord;showQuestion();}
+  function showQuestion(){const c=COPY[lang];const pb=document.getElementById('playback');const nb=document.getElementById('next-btn');const dm=document.getElementById('done-msg');document.getElementById('audio-player').pause();document.getElementById('audio-player').src='';pb.classList.add('hidden');nb.style.display='none';dm.style.display='none';document.getElementById('record-status').textContent=c.tapToRecord;document.getElementById('record-timer').textContent='';audioBlob=null;document.getElementById('question-text').textContent=mode==='free'?c.freePrompt:c.questions[currentQ];}
+  function nextQuestion(){document.getElementById('audio-player').pause();document.getElementById('audio-player').src='';if(mode==='free'){endSession();return;}currentQ++;if(currentQ>=COPY[lang].questions.length){endSession();}else{showQuestion();}}
+  function endSession(){releaseMic();document.getElementById('recorder-screen').classList.add('hidden');const c=COPY[lang];document.getElementById('share-title').textContent=c.shareTitle;document.getElementById('share-pitch-text').innerHTML=c.sharePitch;document.getElementById('share-public-label').textContent=c.sharePublicLabel;document.getElementById('share-public-desc').textContent=c.sharePublicDesc;document.getElementById('share-private-label').textContent=c.sharePrivateLabel;document.getElementById('share-private-desc').textContent=c.sharePrivateDesc;document.getElementById('share-send-btn').textContent=c.shareSend;document.getElementById('share-skip-link').textContent=c.shareSkip;document.getElementById('share-screen').classList.remove('hidden');}
+  function finishSession(){document.getElementById('share-screen').classList.add('hidden');const c=COPY[lang];document.getElementById('offer-title').textContent=c.offerTitle;document.getElementById('offer-intro').textContent=c.offerIntro;document.getElementById('offer-trial-headline').textContent=c.offerTrialHeadline;const ul=document.getElementById('offer-features');ul.innerHTML=c.offerFeatures.map(f=>`<li>${f}</li>`).join('');document.getElementById('offer-pricing-label').textContent=c.offerPricingLabel;document.getElementById('offer-price-monthly').textContent=c.offerPriceMonthly;document.getElementById('offer-price-annual').textContent=c.offerPriceAnnual;document.getElementById('offer-flywheel').textContent=c.offerFlywheel;document.getElementById('offer-accept-btn').textContent=c.offerAccept;document.getElementById('offer-static-btn').textContent=c.offerStatic;document.getElementById('offer-screen').classList.remove('hidden');}
+  function acceptOffer(){window.open('https://wa.me/447976884254?text=Hi+Chris%2C+it%27s+Daniel+from+Royal+Queen+Seeds.+I+want+a+SpicyDrive.','_blank');document.getElementById('offer-screen').classList.add('hidden');document.getElementById('done-msg').innerHTML=`<p style="font-size:1.4rem; margin-bottom:1rem;">On its way. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">Chris will come back to you directly.<br><br><strong style="color:#86efac;">The others will follow. We will be here waiting for them.</strong></p>`;document.getElementById('done-msg').style.display='block';}
+  function declineOffer(){document.getElementById('offer-screen').classList.add('hidden');document.getElementById('done-msg').innerHTML=`<p style="font-size:1.4rem; margin-bottom:1rem;">Grateful you are here. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">Your piece of the jigsaw is noted. When it feels right, you will know where to find us.<br><br><strong style="color:#86efac;">The others will follow. We will be here waiting for them.</strong></p>`;document.getElementById('done-msg').style.display='block';}
+  function showFiles(inputId,displayId){const files=document.getElementById(inputId).files;document.getElementById(displayId).textContent=Array.from(files).map(f=>f.name).join(', ')||'';}
+  function resetAll(){stopRecording();releaseMic();document.getElementById('audio-player').pause();document.getElementById('audio-player').src='';mode=null;currentQ=0;audioBlob=null;document.getElementById('lang-screen').classList.remove('hidden');document.getElementById('intro-screen').classList.add('hidden');document.getElementById('recorder-screen').classList.add('hidden');document.getElementById('record-btn').style.display='flex';document.getElementById('done-msg').style.display='none';}
+  async function toggleRecording(){if(mediaRecorder&&mediaRecorder.state==='recording'){stopRecording();}else{await startRecording();}}
+  async function startRecording(){const c=COPY[lang];if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){document.getElementById('record-status').textContent=c.noSupport;return;}try{if(!micStream)micStream=await navigator.mediaDevices.getUserMedia({audio:true});audioChunks=[];audioBlob=null;mediaRecorder=new MediaRecorder(micStream);mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};mediaRecorder.onstop=()=>{audioBlob=new Blob(audioChunks,{type:'audio/webm'});const url=URL.createObjectURL(audioBlob);const player=document.getElementById('audio-player');player.src=url;document.getElementById('playback').classList.remove('hidden');const nb=document.getElementById('next-btn');nb.style.display='inline-block';const isLast=mode==='free'||currentQ>=COPY[lang].questions.length-1;nb.textContent=isLast?c.nextDone:c.nextGood;document.getElementById('record-status').textContent=c.recorded(recordingSeconds);uploadRecording(audioBlob,recordingSeconds);};mediaRecorder.start(100);recordingSeconds=0;const btn=document.getElementById('record-btn');btn.classList.add('recording');btn.innerHTML='⏹';document.getElementById('record-status').textContent=c.recording;document.getElementById('record-timer').textContent='';recordingTimer=setInterval(()=>{recordingSeconds++;document.getElementById('record-timer').textContent=recordingSeconds+'s';if(recordingSeconds>=MAX_RECORDING)stopRecording();},1000);}catch(e){document.getElementById('record-status').textContent=COPY[lang].micDenied;}}
+  function stopRecording(){if(recordingTimer){clearInterval(recordingTimer);recordingTimer=null;}if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();const btn=document.getElementById('record-btn');btn.classList.remove('recording');btn.innerHTML='🎙️';document.getElementById('record-timer').textContent='';}
+  function releaseMic(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}}
+  function uploadRecording(blob,durationSeconds){const reader=new FileReader();reader.onloadend=()=>{const base64=reader.result.split(',')[1];fetch('/.netlify/functions/save-intake-recording',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:'rqs',questionIndex:currentQ,mode:mode,lang:lang,audioBase64:base64,durationSeconds:durationSeconds,mimeType:'audio/webm'})}).catch(err=>console.warn('Recording upload failed:',err));};reader.readAsDataURL(blob);}
+</script>
+</body>
+</html>

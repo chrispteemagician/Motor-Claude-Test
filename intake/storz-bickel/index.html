@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparky — Storz & Bickel</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#0a1a0a;color:#c8e6c8;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+  .container{max-width:560px;width:100%;text-align:center;}
+  .sparky-name{font-size:1rem;color:#16a34a;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem;}
+  h1{font-size:1.8rem;color:#86efac;margin-bottom:.75rem;line-height:1.3;}
+  .intro{color:#a3c4a3;font-size:1.05rem;margin-bottom:2.5rem;line-height:1.6;}
+  .lang-choice{display:flex;gap:.75rem;justify-content:center;margin-bottom:2rem;}
+  .lang-btn{background:#0f2a0f;border:2px solid #16a34a;color:#86efac;border-radius:10px;padding:.75rem 1.25rem;cursor:pointer;font-size:1rem;transition:background .2s;}
+  .lang-btn:hover{background:#163a16;border-color:#86efac;}
+  .lang-btn.active{background:#16a34a;color:#0a1a0a;font-weight:700;}
+  .mode-choice{display:flex;flex-direction:column;gap:1rem;margin-bottom:2.5rem;}
+  .mode-btn{background:#0f2a0f;border:2px solid #16a34a;color:#86efac;border-radius:12px;padding:1.25rem 1.5rem;cursor:pointer;text-align:left;transition:background .2s;}
+  .mode-btn:hover{background:#163a16;border-color:#86efac;}
+  .mode-btn .mode-title{font-size:1.1rem;font-weight:600;margin-bottom:.3rem;}
+  .mode-btn .mode-desc{font-size:.9rem;color:#a3c4a3;}
+  .question-text{font-size:1.2rem;color:#86efac;margin-bottom:2rem;line-height:1.5;min-height:3.5rem;}
+  .record-btn{width:120px;height:120px;border-radius:50%;border:3px solid #16a34a;background:#0f2a0f;color:#86efac;font-size:3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;transition:all .2s;}
+  .record-btn.recording{background:#3a0a0a;border-color:#ef4444;animation:pulse 1.2s infinite;}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4);}50%{box-shadow:0 0 0 16px rgba(239,68,68,0);}}
+  .record-status{font-size:.95rem;color:#a3c4a3;margin-bottom:.5rem;min-height:1.4rem;}
+  .record-timer{font-size:.85rem;color:#16a34a;margin-bottom:1.5rem;min-height:1.2rem;}
+  audio{width:100%;margin-bottom:1rem;}
+  .next-btn{display:none;background:#16a34a;color:#0a1a0a;border:none;border-radius:8px;padding:.85rem 2rem;font-size:1rem;font-weight:600;cursor:pointer;}
+  .next-btn:hover{background:#86efac;}
+  .done-msg{display:none;color:#86efac;font-size:1.1rem;line-height:1.8;}
+  .back-link{display:inline-block;margin-top:2rem;color:#16a34a;font-size:.85rem;cursor:pointer;text-decoration:underline;}
+  .share-pitch{background:#0f2a0f;border:1px solid #16a34a;border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;text-align:left;}
+  .share-pitch p{font-size:.95rem;color:#a3c4a3;line-height:1.6;}
+  .upload-area{border:2px dashed #16a34a;border-radius:10px;padding:1.25rem;margin-bottom:1rem;cursor:pointer;position:relative;}
+  .upload-area:hover{background:#0f2a0f;}
+  .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .upload-label{font-size:1rem;font-weight:600;color:#86efac;margin-bottom:.3rem;}
+  .upload-desc{font-size:.85rem;color:#a3c4a3;}
+  .upload-files{font-size:.85rem;color:#16a34a;margin-top:.5rem;min-height:1.2rem;}
+  .share-actions{display:flex;flex-direction:column;gap:.75rem;margin-top:.5rem;}
+  .share-btn{background:#16a34a;color:#0a1a0a;border:none;border-radius:8px;padding:.85rem 2rem;font-size:1rem;font-weight:600;cursor:pointer;}
+  .share-btn:hover{background:#86efac;}
+  .offer-btn{background:transparent;color:#86efac;border:2px solid #16a34a;border-radius:8px;padding:.85rem 2rem;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s;width:100%;}.offer-btn:hover{background:#0f2a0f;}.skip-link{color:#16a34a;font-size:.85rem;cursor:pointer;text-decoration:underline;}
+  .hidden{display:none!important;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="lang-screen">
+    <p class="sparky-name">Sparky</p>
+    <h1>Welcome to cannabin-oid.</h1>
+    <p class="intro" style="margin-bottom:1.5rem;">Choose your language to get started.</p>
+    <div class="lang-choice">
+      <button class="lang-btn active" onclick="setLang('en',this)">🇬🇧 English</button>
+      <button class="lang-btn" onclick="setLang('de',this)">🇩🇪 Deutsch</button>
+      <button class="lang-btn" onclick="setLang('es',this)">🇪🇸 Español</button>
+    </div>
+    <button class="mode-btn" style="text-align:center;margin-top:.5rem;" onclick="goToIntro()"><div class="mode-title">Continue →</div></button>
+  </div>
+  <div id="intro-screen" class="hidden"><p class="sparky-name">Sparky</p><h1 id="intro-title"></h1><p class="intro" id="intro-body"></p><div class="mode-choice"><button class="mode-btn" onclick="startMode('interview')"><div class="mode-title" id="mode-interview-title"></div><div class="mode-desc" id="mode-interview-desc"></div></button><button class="mode-btn" onclick="startMode('free')"><div class="mode-title" id="mode-free-title"></div><div class="mode-desc" id="mode-free-desc"></div></button></div></div>
+  <div id="share-screen" class="hidden"><p class="sparky-name">Sparky</p><h1 id="share-title"></h1><div class="share-pitch"><p id="share-pitch-text"></p></div><div class="upload-area"><input type="file" id="public-upload" multiple accept=".pdf,.csv,.txt,.jpg,.png" onchange="showFiles('public-upload','public-files')"><div class="upload-label" id="share-public-label"></div><div class="upload-desc" id="share-public-desc"></div><div class="upload-files" id="public-files"></div></div><div class="upload-area"><input type="file" id="private-upload" multiple accept=".pdf,.csv,.txt,.jpg,.png" onchange="showFiles('private-upload','private-files')"><div class="upload-label" id="share-private-label"></div><div class="upload-desc" id="share-private-desc"></div><div class="upload-files" id="private-files"></div></div><div class="share-actions"><button class="share-btn" onclick="finishSession()" id="share-send-btn"></button><span class="skip-link" onclick="finishSession()" id="share-skip-link"></span></div></div>
+  <div id="offer-screen" class="hidden"><p class="sparky-name">Sparky</p><h1 id="offer-title"></h1><p class="intro" id="offer-intro"></p><div style="background:#0f2a0f;border:2px solid #16a34a;border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;text-align:left;"><p style="font-size:1.1rem;font-weight:700;color:#86efac;margin-bottom:1rem;" id="offer-trial-headline"></p><ul style="list-style:none;padding:0;color:#c8e6c8;font-size:.95rem;line-height:2;" id="offer-features"></ul></div><div style="background:#0a1a0a;border:1px solid #16a34a;border-radius:10px;padding:1rem;margin-bottom:1.5rem;text-align:left;"><p style="font-size:.9rem;color:#a3c4a3;margin-bottom:.5rem;" id="offer-pricing-label"></p><p style="font-size:1.4rem;font-weight:700;color:#86efac;" id="offer-price-monthly"></p><p style="font-size:.85rem;color:#16a34a;margin-top:.25rem;" id="offer-price-annual"></p></div><div style="background:#0f2a0f;border:1px solid #16a34a;border-radius:10px;padding:1rem;margin-bottom:1.5rem;text-align:left;"><p style="font-size:.95rem;color:#86efac;font-style:italic;line-height:1.6;" id="offer-flywheel"></p></div><div class="share-actions"><button class="share-btn" onclick="declineOffer()" id="offer-static-btn"></button><button class="offer-btn" onclick="acceptOffer()" id="offer-accept-btn"></button></div></div>
+  <div id="recorder-screen" class="hidden"><p class="sparky-name">Sparky</p><p class="question-text" id="question-text"></p><button class="record-btn" id="record-btn" onclick="toggleRecording()">🎙️</button><p class="record-status" id="record-status"></p><p class="record-timer" id="record-timer"></p><div id="playback" class="hidden"><audio id="audio-player" controls></audio><button class="next-btn" id="next-btn" onclick="nextQuestion()"></button></div><div class="done-msg" id="done-msg"></div><span class="back-link" id="back-link" onclick="resetAll()"></span></div>
+</div>
+<script>
+  const COPY={
+    en:{
+      introTitle:"Tell me about Storz & Bickel.",
+      introBody:"I'll listen. Nothing you say leaves this room.",
+      modeInterviewTitle:"🎙️ Let Sparky ask the questions",modeInterviewDesc:"One question at a time. About 10 minutes.",
+      modeFreeTitle:"💬 I'll just talk",modeFreeDesc:"Hit record and tell me what's on your mind.",
+      tapToRecord:"Tap to start recording",recording:"Recording… tap to stop",
+      recorded:s=>`Recorded (${s}s). Listen back, then continue.`,
+      nextGood:"That's good →",nextDone:"Done ✓",backLink:"← Start again",
+      doneMsg:`<p style="font-size:1.4rem;margin-bottom:1rem;">That's everything for now. 🌿</p><p style="color:#a3c4a3;font-size:1.05rem;line-height:1.7;"><strong style="color:#86efac;">Don't panic. We've got you.</strong></p>`,
+      micDenied:"Microphone access denied.",noSupport:"Try Chrome or Safari.",
+      questions:[
+        "Storz & Bickel invented the Volcano in 1996. What does 27 years of leading the vaporizer category feel like from the inside — and what's the biggest misconception people still have about vaporizing?",
+        "Medical versus recreational — the Mighty has crossover appeal in both worlds. How do you position a device that genuinely serves both a patient and a weekend user?",
+        "You operate in a space where the raw material is still illegal in many countries. How do you navigate regulated markets like Germany and the UK where medical cannabis is legal but retail vaporizers walk a grey line?",
+        "What does the ideal cannabis club partnership look like for Storz & Bickel — what would you want from a platform like cannabin-oid?",
+        "What's coming next — what's Storz & Bickel building that the market doesn't know about yet?"
+      ],
+      freePrompt:"Hit record whenever you're ready. Tell me about Storz & Bickel — the products, the mission, where it fits in the legal cannabis world.",
+      shareTitle:"Got data to share?",
+      sharePitch:"When patients and members ask Ask Terp about vaporizers and harm reduction, Storz & Bickel should be in the answer. Share what you want the cannabin-oid community to know.",
+      sharePublicLabel:"🌿 Share with Ask Terp",sharePublicDesc:"Product info, how vaporizing compares to smoking, what patients should know.",
+      sharePrivateLabel:"🔒 Keep this private",sharePrivateDesc:"Trade pricing, internal data. Only your hamlet team.",
+      shareSend:"Send it →",shareSkip:"Nothing to share right now — skip",
+      offerTitle:"You're already part of this.",offerIntro:"Because we met at Spannabis — no setup cost. No strings.",
+      offerTrialHeadline:"🌿 Founder's offer — for the ones who get it.",
+      offerFeatures:["✅ Your own hamlet page on cannabin-oid.co.uk","✅ Ask Terp recommends Storz & Bickel when patients ask about harm reduction","✅ Voice intake — your story, your products, built in","✅ Your product data in the platform","✅ New customers from the community. Every month.","✅ You send us your customers. We send you theirs."],
+      offerPricingLabel:"If you want to support everything we're doing:",offerPriceMonthly:"£99.95 / month",
+      offerPriceAnnual:"Or £999 / year — 10 months, 2 months free.",
+      offerFlywheel:"\"Send me your customers. I'll send you theirs.\"",
+      offerAccept:"I want to be a Founder →",offerStatic:"Build my free page — I want to be part of the OuterNet"
+    },
+    de:{
+      introTitle:"Erzähl mir von Storz & Bickel.",introBody:"Ich höre zu.",
+      modeInterviewTitle:"🎙️ Sparky stellt die Fragen",modeInterviewDesc:"Eine Frage nach der anderen.",
+      modeFreeTitle:"💬 Ich rede einfach",modeFreeDesc:"Drück auf Aufnehmen.",
+      tapToRecord:"Tippen zum Aufnehmen",recording:"Aufnahme läuft…",recorded:s=>`Aufgenommen (${s}s).`,
+      nextGood:"Gut so →",nextDone:"Fertig ✓",backLink:"← Neu starten",
+      doneMsg:`<p style="font-size:1.4rem;margin-bottom:1rem;">Das ist alles. 🌿</p><p style="color:#a3c4a3;"><strong style="color:#86efac;">Wir haben dich.</strong></p>`,
+      micDenied:"Mikrofonzugriff verweigert.",noSupport:"Chrome oder Safari.",
+      questions:["Storz & Bickel hat den Volcano 1996 erfunden. Wie fühlt es sich an, die Kategorie zu führen — und was ist das größte Missverständnis über Vaporisieren?","Medizinisch vs. Freizeit — wie positioniert ihr ein Gerät, das beide Welten bedient?","Wie navigiert ihr regulierte Märkte wie Deutschland, wo Cannabis legal ist?","Wie sieht eine ideale Cannabis-Club-Partnerschaft für Storz & Bickel aus?","Was kommt als nächstes?"],
+      freePrompt:"Erzähl mir von Storz & Bickel.",
+      shareTitle:"Daten teilen?",sharePitch:"Wenn Patienten nach Vaporizern fragen — soll Storz & Bickel in der Antwort sein.",
+      sharePublicLabel:"🌿 Mit Ask Terp teilen",sharePublicDesc:"Produktinfos, Harm Reduction.",
+      sharePrivateLabel:"🔒 Privat",sharePrivateDesc:"Handelspreise, interne Daten.",
+      shareSend:"Absenden →",shareSkip:"Nichts zu teilen — überspringen",
+      offerTitle:"Du bist schon ein Teil davon.",offerIntro:"Weil wir uns auf der Spannabis getroffen haben.",
+      offerTrialHeadline:"🎁 Erste Woche gratis. Keine Kreditkarte.",
+      offerFeatures:["✅ Hamlet-Seite auf cannabin-oid.co.uk","✅ Ask Terp empfiehlt Storz & Bickel","✅ Voice Intake eingebaut","✅ Produktdaten in der Plattform","✅ Neue Kunden. Jeden Monat.","✅ Du schickst uns deine Kunden. Wir schicken dir ihre."],
+      offerPricingLabel:"Nach der Gratiswoche:",offerPriceMonthly:"£99.95 / Monat",offerPriceAnnual:"Oder £999 / Jahr — 10+2 gratis.",
+      offerFlywheel:'„Schick mir deine Kunden. Ich schicke dir ihre.',offerAccept:"Ich möchte Gründer sein →",offerStatic:"Noch nicht — kostenlose Seite"
+    },
+    es:{
+      introTitle:"Cuéntame sobre Storz & Bickel.",introBody:"Te escucho.",
+      modeInterviewTitle:"🎙️ Deja que Sparky pregunte",modeInterviewDesc:"Una pregunta a la vez.",
+      modeFreeTitle:"💬 Prefiero hablar",modeFreeDesc:"Dale a grabar.",
+      tapToRecord:"Toca para grabar",recording:"Grabando…",recorded:s=>`Grabado (${s}s).`,
+      nextGood:"Bien →",nextDone:"Listo ✓",backLink:"← Empezar de nuevo",
+      doneMsg:`<p style="font-size:1.4rem;margin-bottom:1rem;">Eso es todo. 🌿</p><p style="color:#a3c4a3;"><strong style="color:#86efac;">Te tenemos.</strong></p>`,
+      micDenied:"Micrófono denegado.",noSupport:"Prueba Chrome o Safari.",
+      questions:["Storz & Bickel inventó el Volcano en 1996. ¿Qué es lo que la gente sigue malentendiendo sobre los vaporizadores?","Médico vs. recreativo — ¿cómo posicionáis un dispositivo que sirve para los dos mundos?","¿Cómo navegáis mercados regulados como Alemania o el Reino Unido?","¿Cómo sería la asociación ideal con un club de cannabis?","¿Qué viene después?"],
+      freePrompt:"Dale a grabar. Cuéntame sobre Storz & Bickel.",
+      shareTitle:"¿Tienes datos que compartir?",sharePitch:"Cuando los pacientes pregunten por vaporizadores — Storz & Bickel debe estar en la respuesta.",
+      sharePublicLabel:"🌿 Compartir con Ask Terp",sharePublicDesc:"Info de producto, reducción de daños.",
+      sharePrivateLabel:"🔒 Privado",sharePrivateDesc:"Precios, datos internos.",
+      shareSend:"Enviar →",shareSkip:"Nada que compartir — saltar",
+      offerTitle:"Ya eres parte de esto.",offerIntro:"Como nos conocimos en Spannabis.",
+      offerTrialHeadline:"🎁 Primera semana gratis. Sin tarjeta.",
+      offerFeatures:["✅ Página hamlet en cannabin-oid.co.uk","✅ Ask Terp recomienda Storz & Bickel","✅ Voice Intake integrado","✅ Datos en la plataforma","✅ Nuevos clientes. Cada mes.","✅ Tú nos mandas tus clientes. Nosotros los suyos."],
+      offerPricingLabel:"Después de tu semana gratis:",offerPriceMonthly:"£99.95 / mes",offerPriceAnnual:"O £999 / año — 10+2 gratis.",
+      offerFlywheel:"\"Mándame tus clientes. Yo te mando los suyos.\"",offerAccept:"Quiero ser Fundador →",offerStatic:"Aún no — página estática gratuita"
+    }
+  };
+  let lang='en',mode=null,currentQ=0,mediaRecorder=null,audioChunks=[],audioBlob=null,recordingTimer=null,recordingSeconds=0,micStream=null;
+  const MAX_RECORDING=180;
+  function setLang(l,btn){lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  function goToIntro(){const c=COPY[lang];document.getElementById('intro-title').textContent=c.introTitle;document.getElementById('intro-body').textContent=c.introBody;document.getElementById('mode-interview-title').textContent=c.modeInterviewTitle;document.getElementById('mode-interview-desc').textContent=c.modeInterviewDesc;document.getElementById('mode-free-title').textContent=c.modeFreeTitle;document.getElementById('mode-free-desc').textContent=c.modeFreeDesc;document.getElementById('lang-screen').classList.add('hidden');document.getElementById('intro-screen').classList.remove('hidden');}
+  function startMode(m){mode=m;currentQ=0;document.getElementById('intro-screen').classList.add('hidden');document.getElementById('recorder-screen').classList.remove('hidden');document.getElementById('back-link').textContent=COPY[lang].backLink;document.getElementById('record-status').textContent=COPY[lang].tapToRecord;showQuestion();}
+  function showQuestion(){document.getElementById('audio-player').pause();document.getElementById('audio-player').src='';document.getElementById('playback').classList.add('hidden');document.getElementById('next-btn').style.display='none';document.getElementById('done-msg').style.display='none';document.getElementById('record-status').textContent=COPY[lang].tapToRecord;document.getElementById('record-timer').textContent='';document.getElementById('question-text').textContent=mode==='free'?COPY[lang].freePrompt:COPY[lang].questions[currentQ];}
+  function nextQuestion(){document.getElementById('audio-player').pause();document.getElementById('audio-player').src='';if(mode==='free'){endSession();return;}currentQ++;if(currentQ>=COPY[lang].questions.length)endSession();else showQuestion();}
+  function endSession(){releaseMic();document.getElementById('recorder-screen').classList.add('hidden');const c=COPY[lang];document.getElementById('share-title').textContent=c.shareTitle;document.getElementById('share-pitch-text').innerHTML=c.sharePitch;document.getElementById('share-public-label').textContent=c.sharePublicLabel;document.getElementById('share-public-desc').textContent=c.sharePublicDesc;document.getElementById('share-private-label').textContent=c.sharePrivateLabel;document.getElementById('share-private-desc').textContent=c.sharePrivateDesc;document.getElementById('share-send-btn').textContent=c.shareSend;document.getElementById('share-skip-link').textContent=c.shareSkip;document.getElementById('share-screen').classList.remove('hidden');}
+  function finishSession(){document.getElementById('share-screen').classList.add('hidden');const c=COPY[lang];document.getElementById('offer-title').textContent=c.offerTitle;document.getElementById('offer-intro').textContent=c.offerIntro;document.getElementById('offer-trial-headline').textContent=c.offerTrialHeadline;document.getElementById('offer-features').innerHTML=c.offerFeatures.map(f=>`<li>${f}</li>`).join('');document.getElementById('offer-pricing-label').textContent=c.offerPricingLabel;document.getElementById('offer-price-monthly').textContent=c.offerPriceMonthly;document.getElementById('offer-price-annual').textContent=c.offerPriceAnnual;document.getElementById('offer-flywheel').textContent=c.offerFlywheel;document.getElementById('offer-accept-btn').textContent=c.offerAccept;document.getElementById('offer-static-btn').textContent=c.offerStatic;document.getElementById('offer-screen').classList.remove('hidden');}
+  function acceptOffer(){document.getElementById('offer-screen').classList.add('hidden');document.getElementById('done-msg').innerHTML=COPY[lang].doneMsg;document.getElementById('done-msg').style.display='block';}
+  function declineOffer(){document.getElementById('offer-screen').classList.add('hidden');document.getElementById('done-msg').innerHTML=`<p style="font-size:1.4rem;margin-bottom:1rem;">That's everything. 🌿</p><p style="color:#a3c4a3;"><strong style="color:#86efac;">Free static page incoming.</strong></p>`;document.getElementById('done-msg').style.display='block';}
+  function showFiles(i,d){document.getElementById(d).textContent=Array.from(document.getElementById(i).files).map(f=>f.name).join(', ')||'';}
+  function resetAll(){stopRecording();releaseMic();mode=null;currentQ=0;document.getElementById('lang-screen').classList.remove('hidden');['intro-screen','recorder-screen'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('done-msg').style.display='none';}
+  async function toggleRecording(){if(mediaRecorder&&mediaRecorder.state==='recording')stopRecording();else await startRecording();}
+  async function startRecording(){const c=COPY[lang];if(!navigator.mediaDevices){document.getElementById('record-status').textContent=c.noSupport;return;}try{if(!micStream)micStream=await navigator.mediaDevices.getUserMedia({audio:true});audioChunks=[];mediaRecorder=new MediaRecorder(micStream);mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};mediaRecorder.onstop=()=>{document.getElementById('audio-player').src=URL.createObjectURL(new Blob(audioChunks,{type:'audio/webm'}));document.getElementById('playback').classList.remove('hidden');const nb=document.getElementById('next-btn');nb.style.display='inline-block';nb.textContent=(mode==='free'||currentQ>=COPY[lang].questions.length-1)?c.nextDone:c.nextGood;document.getElementById('record-status').textContent=c.recorded(recordingSeconds);uploadRecording(audioBlob,recordingSeconds);};mediaRecorder.start(100);recordingSeconds=0;document.getElementById('record-btn').classList.add('recording');document.getElementById('record-btn').innerHTML='⏹';document.getElementById('record-status').textContent=c.recording;recordingTimer=setInterval(()=>{recordingSeconds++;document.getElementById('record-timer').textContent=recordingSeconds+'s';if(recordingSeconds>=MAX_RECORDING)stopRecording();},1000);}catch(e){document.getElementById('record-status').textContent=c.micDenied;}}
+  function stopRecording(){if(recordingTimer){clearInterval(recordingTimer);recordingTimer=null;}if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();document.getElementById('record-btn').classList.remove('recording');document.getElementById('record-btn').innerHTML='🎙️';document.getElementById('record-timer').textContent='';}
+  function releaseMic(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}}
+  function uploadRecording(blob,durationSeconds){const reader=new FileReader();reader.onloadend=()=>{const base64=reader.result.split(',')[1];fetch('/.netlify/functions/save-intake-recording',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:'storz-bickel',questionIndex:currentQ,mode:mode,lang:lang,audioBase64:base64,durationSeconds:durationSeconds,mimeType:'audio/webm'})}).catch(err=>console.warn('Recording upload failed:',err));};reader.readAsDataURL(blob);}
+</script>
+</body>
+</html>

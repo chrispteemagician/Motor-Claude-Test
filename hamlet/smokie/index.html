@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smokie McGreeen's Gaff | The Vapour Room | Cannabin-Oid</title>
+    <meta name="description" content="Smokie McGreeen's hamlet on Cannabin-Oid. Vaporizer expert. Giving it all away. One free week for his crew.">
+    <link rel="icon" type="image/jpeg" href="../../cannabin-oid.jpg">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #030a03;
+            --deep:     #071407;
+            --primary:       #16a34a;
+            --primary-light: #22c55e;
+            --gold:          #d4a017;
+            --gold-dark:     #b8860b;
+            --forest:        #14532d;
+            --forest-dark:   #0f3d22;
+            --cream:         #f0f7f0;
+            --text:          #c8e6c8;
+            --text-muted:    #6b9e6b;
+            --candle:        #86efac;
+            --smoke:         #a8b5a8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, var(--midnight) 0%, var(--deep) 50%, var(--midnight) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 18px;
+            line-height: 1.7;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+        /* ── GIVEAWAY BANNER ── */
+        .giveaway-banner {
+            background: linear-gradient(90deg, #7c3aed, #16a34a, #7c3aed);
+            background-size: 200% 100%;
+            animation: shimmer 4s ease-in-out infinite;
+            text-align: center;
+            padding: 18px 20px;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            text-decoration: none;
+            display: block;
+            line-height: 1.5;
+        }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .giveaway-banner span {
+            display: block;
+            font-weight: 400;
+            font-size: 15px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* ── SIGN IN BAR ── */
+        .signin-bar {
+            background: rgba(0,0,0,0.4);
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 16px;
+        }
+        .signin-bar a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ── HEADER ── */
+        .hamlet-header {
+            background: linear-gradient(135deg, #2d1b5e 0%, var(--forest-dark) 60%, #0a0a0a 100%);
+            text-align: center;
+            padding: 50px 20px;
+            border-radius: 0 0 30px 30px;
+            border: 4px solid var(--gold);
+            border-top: none;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 80px rgba(124,58,237,0.12);
+            margin-bottom: 30px;
+        }
+        .hamlet-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--forest-dark);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .hamlet-header h1 {
+            font-weight: 800;
+            font-size: clamp(2.2rem, 8vw, 4.5rem);
+            color: var(--cream);
+            margin-bottom: 8px;
+            text-shadow: 0 0 40px rgba(124,58,237,0.4);
+            word-break: break-word;
+        }
+        .hamlet-header .subtitle {
+            font-size: 1.2rem;
+            color: rgba(240,247,240,0.75);
+            font-style: italic;
+        }
+        .hamlet-header .tagline {
+            font-size: 1rem;
+            color: var(--candle);
+            margin-top: 14px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── CARDS ── */
+        .card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            font-weight: 700;
+            font-size: clamp(1.4rem, 5vw, 2rem);
+            margin-bottom: 15px;
+            color: var(--gold);
+            word-break: break-word;
+        }
+
+        .card-forest {
+            background: linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);
+            border: 4px solid var(--forest-dark);
+            color: var(--cream);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2), 0 0 40px rgba(22,163,74,0.08);
+        }
+        .card-forest h2 { color: var(--candle); }
+
+        /* ── FREE WEEK CARD ── */
+        .free-week-card {
+            background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(22,163,74,0.12) 100%);
+            border: 3px solid #7c3aed;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(124,58,237,0.15);
+        }
+        .free-week-card h2 {
+            font-size: clamp(1.6rem, 6vw, 2.4rem);
+            font-weight: 800;
+            color: #a78bfa;
+            margin-bottom: 12px;
+        }
+        .free-week-card p {
+            font-size: 1.05rem;
+            color: var(--cream);
+            margin-bottom: 16px;
+        }
+        .free-week-card .small {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ── QR SECTION ── */
+        .qr-section {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .qr-section h3 {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        #qr-code {
+            display: inline-block;
+            padding: 16px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        #qr-code img { display: block; }
+        .qr-url {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ── KIT GRID ── */
+        .kit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .kit-item {
+            background: rgba(22,163,74,0.06);
+            border: 1px solid rgba(22,163,74,0.15);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .kit-item:hover { transform: translateY(-3px); border-color: var(--primary); }
+        .kit-item .kit-name { font-weight: 700; color: var(--cream); margin-bottom: 4px; font-size: 1rem; }
+        .kit-item .kit-role { font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .kit-item .kit-note { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
+        .kit-item a {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            background: rgba(255,153,0,0.15);
+            color: #ff9900;
+            border: 1px solid rgba(255,153,0,0.3);
+            transition: opacity 0.2s;
+        }
+        .kit-item a:hover { opacity: 0.8; }
+
+        /* ── CTA BUTTON ── */
+        .btn-join {
+            display: inline-block;
+            padding: 16px 36px;
+            background: linear-gradient(135deg, #7c3aed 0%, #16a34a 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+        }
+        .btn-join:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.45); }
+
+        /* ── FOOTER ── */
+        .hamlet-footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-top: 20px;
+        }
+        .hamlet-footer a { color: var(--primary-light); text-decoration: none; }
+        .hamlet-footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .kit-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- GIVEAWAY BANNER -->
+    <div class="giveaway-banner">
+        &#x1F4A8; SMOKIE'S GIVEAWAY IS LIVE
+        <span>Win a vaporizer &mdash; Smokie's choosing the winner from his crew &darr;</span>
+    </div>
+
+    <!-- SIGN IN BAR -->
+    <div class="signin-bar">
+        <a href="https://cannabin-oid.co.uk/#sectionJoin">Already a Cannabin-Oid member? Sign in &rarr;</a>
+    </div>
+
+    <!-- HEADER -->
+    <div class="hamlet-header">
+        <div class="hamlet-badge">&#x1F4A8; Vaporizer Elder &middot; Cannabin-Oid</div>
+        <h1>Smokie's Gaff</h1>
+        <p class="subtitle">The Vapour Room</p>
+        <p class="tagline">
+            Vaporizer obsessive. Cannabis community builder.<br>
+            <em style="color:#a78bfa;">The cloud is free. The knowledge is too.</em>
+        </p>
+    </div>
+
+    <div class="container">
+
+        <!-- FREE WEEK OFFER -->
+        <div class="free-week-card">
+            <h2>&#x1F381; Free Week for Smokie's Crew</h2>
+            <p>
+                Smokie's giving away a free first week on Cannabin-Oid to every one of his followers.
+                Join the village &mdash; no card needed for the first 7 days.
+            </p>
+            <p style="font-size:0.95rem; color:var(--candle); margin-bottom:24px;">
+                Oracle strain ID &middot; Ask Terp chatbot &middot; Prescription pathway &middot; B2B directory &middot; The Monthly Draw
+            </p>
+            <a href="https://cannabin-oid.co.uk/#sectionJoin" class="btn-join">&#x1F33F; Claim Your Free Week</a>
+            <p class="small" style="margin-top:16px;">Villager &pound;3/mo after the free week &middot; Cancel anytime &middot; No catch</p>
+        </div>
+
+        <!-- QR CODE -->
+        <div class="card" style="text-align:center;">
+            <h2>&#x1F4F1; Scan &amp; Share This Page</h2>
+            <p style="color:var(--text-muted); margin-bottom:24px; font-size:0.95rem;">
+                Screenshot this page with the QR and share it on. Every friend who scans gets the same free week.
+            </p>
+            <div class="qr-section">
+                <h3>Smokie's Cannabin-Oid Page</h3>
+                <div id="qr-code"></div>
+                <p class="qr-url">cannabin-oid.co.uk/hamlet/smokie</p>
+            </div>
+        </div>
+
+        <!-- ABOUT SMOKIE -->
+        <div class="card card-forest">
+            <h2>&#x1F4A8; Who Is Smokie McGreeen?</h2>
+            <p style="margin-bottom:15px; font-size:1.05rem;">
+                Vaporizer obsessive. Community builder. The kind of person who finds something that works, learns it inside out, and then gives it away.
+            </p>
+            <p style="margin-bottom:15px;">
+                Smokie runs giveaways because he knows the barrier to entry isn't knowledge &mdash; it's getting someone their first decent piece of kit. Once you've had a proper vape, you never go back. He's been helping people make that jump for years.
+            </p>
+            <p style="margin-bottom:15px;">
+                That's exactly what Cannabin-Oid is about. The knowledge exists. The community exists. The tools exist. The barrier is just knowing where to look &mdash; and having someone you trust point the way.
+            </p>
+            <p style="font-style:italic; color:var(--candle);">
+                Smokie points the way. The village welcomes you in.
+            </p>
+        </div>
+
+        <!-- SMOKIE'S VAPORIZER PICKS -->
+        <div class="card">
+            <h2>&#x1F4A8; Smokie's Vaporizer Picks</h2>
+            <p style="margin-bottom:8px; color:var(--text-muted); font-size:0.9rem;">
+                Tried, tested, recommended. UK prescription patients and enthusiasts alike &mdash; dry herb vaporizers worth knowing about.
+            </p>
+            <p style="margin-bottom:20px; font-size:14px; color:var(--text-muted);">
+                Affiliate links support the village with small commissions. Thank you.
+            </p>
+
+            <div class="kit-grid">
+                <div class="kit-item">
+                    <div class="kit-name">Arizer Solo 2</div>
+                    <div class="kit-role">The Daily Driver</div>
+                    <div class="kit-note">Consistent, reliable, glass stem. Plug in, pack, go. The one you reach for every day.</div>
+                    <a href="https://www.amazon.co.uk/s?k=Arizer+Solo+2+vaporizer&tag=chrdocstrcromh-21" target="_blank" rel="noopener">Find on Amazon &rarr;</a>
+                </div>
+                <div class="kit-item">
+                    <div class="kit-name">Mighty+</div>
+                    <div class="kit-role">German Engineering</div>
+                    <div class="kit-note">Storz &amp; Bickel. Precise temps. Big clouds. The portable that earns its price.</div>
+                    <a href="https://www.amazon.co.uk/s?k=Storz+Bickel+Mighty+plus+vaporizer&tag=chrdocstrcromh-21" target="_blank" rel="noopener">Find on Amazon &rarr;</a>
+                </div>
+                <div class="kit-item">
+                    <div class="kit-name">DynaVap VapCap</div>
+                    <div class="kit-role">The Ritual Piece</div>
+                    <div class="kit-note">No batteries. Lighter and a click. Once you hear that click, you'll know. Every. Single. Time.</div>
+                    <a href="https://www.amazon.co.uk/s?k=DynaVap+VapCap+vaporizer&tag=chrdocstrcromh-21" target="_blank" rel="noopener">Find on Amazon &rarr;</a>
+                </div>
+                <div class="kit-item">
+                    <div class="kit-name">Arizer Air SE</div>
+                    <div class="kit-role">Budget Portable</div>
+                    <div class="kit-note">Same Arizer DNA, lighter on the wallet. Proper entry point if you're making the switch from smoking.</div>
+                    <a href="https://www.amazon.co.uk/s?k=Arizer+Air+SE+vaporizer&tag=chrdocstrcromh-21" target="_blank" rel="noopener">Find on Amazon &rarr;</a>
+                </div>
+                <div class="kit-item">
+                    <div class="kit-name">Volcano Hybrid</div>
+                    <div class="kit-role">The Party Piece</div>
+                    <div class="kit-note">Fill the bag. Pass it round. This is how you host. Not cheap, but it pays for itself in sharing.</div>
+                    <a href="https://www.amazon.co.uk/s?k=Volcano+Hybrid+vaporizer&tag=chrdocstrcromh-21" target="_blank" rel="noopener">Find on Amazon &rarr;</a>
+                </div>
+                <div class="kit-item">
+                    <div class="kit-name">Storm Vape</div>
+                    <div class="kit-role">Cheap &amp; Cheerful</div>
+                    <div class="kit-note">Not glamorous. Gets the job done. If you're just starting out and don't want to spend big, start here.</div>
+                    <a href="https://www.amazon.co.uk/s?k=Storm+dry+herb+vaporizer&tag=chrdocstrcromh-21" target="_blank" rel="noopener">Find on Amazon &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHAT IS CANNABIN-OID -->
+        <div class="card">
+            <h2>&#x1F33F; What Is Cannabin-Oid?</h2>
+            <p style="margin-bottom:15px;">
+                It's a village for cannabis patients, self-medicators, and people who want to know more. No ads. No algorithms. No clickbait. Just a community built by people who've been through it.
+            </p>
+            <p style="margin-bottom:15px; color:var(--text-muted);">
+                Inside the village you get: the Oracle AI strain identifier, Ask Terp (a terpene scientist who grew up on a council estate &mdash; pharmacology PhD meets Friday night at the pub), the B2B business directory, the prescription pathway guide, and every month &mdash; the Monthly Draw. Random members win kit donated by the businesses in the directory. Just by showing up.
+            </p>
+            <p style="font-size:0.95rem; color:var(--candle); font-weight:600;">
+                &pound;3/mo. Villager. That&rsquo;s it.
+            </p>
+
+            <details style="margin-top:20px; border:1px solid rgba(22,163,74,0.2); border-radius:12px; padding:16px;">
+                <summary style="cursor:pointer; font-weight:600; color:var(--primary-light); list-style:none;">Give me a clue &#x1F388;</summary>
+                <p style="margin-top:14px; color:var(--text-muted); font-size:0.95rem;">
+                    Think of a market town. Each stall is different &mdash; a herbalist, a seed merchant, a craftsman, someone who just knows things. You can wander through and it costs nothing. When you find your corner, you set up your own stall. The only currency is kindness. That&rsquo;s Cannabin-Oid.
+                </p>
+            </details>
+        </div>
+
+        <!-- JOIN CTA -->
+        <div style="text-align:center; padding:30px 20px 10px;">
+            <a href="https://cannabin-oid.co.uk/#sectionJoin" class="btn-join">&#x1F381; Claim Smokie's Free Week</a>
+            <p style="margin-top:14px; font-size:0.85rem; color:var(--text-muted);">
+                Smokie's crew gets the first week free. &pound;3/mo after. Cancel anytime.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="hamlet-footer">
+        <p>
+            Smokie McGreeen &mdash; Elder at <a href="https://cannabin-oid.co.uk">Cannabin-Oid</a><br>
+            Part of the <a href="https://feelfamous.co.uk">FeelFamous</a> ecosystem<br>
+            <em style="color:var(--text-muted);">Just trying to be useful. One ember at a time.</em>
+        </p>
+    </div>
+
+    <script>
+        // QR code — always toDataURL → img, never canvas directly
+        const qr = new QRCode(document.createElement('div'), {
+            text: 'https://cannabin-oid.co.uk/hamlet/smokie/',
+            width: 220,
+            height: 220,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        setTimeout(() => {
+            const canvas = qr._oDrawing._elCanvas;
+            const dataUrl = canvas.toDataURL('image/png');
+            const img = document.createElement('img');
+            img.src = dataUrl;
+            img.alt = 'QR code for Smokie\'s cannabin-oid page';
+            img.style.borderRadius = '8px';
+            document.getElementById('qr-code').appendChild(img);
+        }, 100);
+    </script>
+
+</body>
+</html>

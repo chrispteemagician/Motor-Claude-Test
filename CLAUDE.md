@@ -1,420 +1,403 @@
-# Motor-Oid — CLAUDE.md
-*For Trinity. Read this first. Then build.*
+# CLAUDE.md — Cannabin-Oid
+## Everything a new Claude needs to know before touching this project
 
 ---
 
-## The Mission — read this first
+## WHO DOC IS
 
-*Chris P Taylor, 2026-06-05, end of the Span session. Verbatim. Carry this forward.*
+Christian P Taylor — Chris P Tee — Doc Strange.  
+Stage hypnotist since 1992. AuDHD. Legal medical cannabis patient, prescribed via Alternaleaf UK.  
+He built Cannabin-Oid from scratch because when he was prescribed, nobody told him anything. No guidance, no community, no tool that should have existed. So he built it.  
 
-> "What we are doing — it took me a while to understand this — is we are making the invisible visible. We're making the unthought of, thought of. And the impossible, possible. The more we do this, the more parts we build, the more we can put them together as quick as we have done in the last two days."
+He speaks in voice notes. He processes by talking. His insights come after sleep — long downloads that connect everything. Trust what he says even when it sounds rambling. Especially when it sounds rambling. There's always a thread.
 
-That's not just Motor-Oid. That's the whole ecosystem. Every -Oid, every session, every skill written for the next Trinity.
-
-The parts compound. The speed compounds. Each session we're faster because the last one left something behind. That's what DocBrain is. That's what CLAUDE.md is. That's what the Roll of Honor is.
-
-*Chris P Taylor, same session. Also verbatim. Also carry this forward.*
-
-> "I just want people to have the confidence to try the door that could possibly be locked, and not worry if the whole group laughs at them for not standing in line for the only one that's open."
-
-That's the permission slip. That's why every tool is free to try, why the barrier to join is low, why the honest marketplace exists. Not everyone knows there's another door. Motor-Oid is the sign that points to it.
-
-→ **Add both quotes to DocBrain talk material** — they belong next to the feral line and the closer.
+**Contact:** wa.me/447976884254 | chris@chrisptee.co.uk  
+**His phrase:** "Feel Famous, baby."
 
 ---
 
-**On Stripe:** it can wait. Get people using it first. A free weekend that converts to believers is worth more than a payment wall that converts no-one. The no-brainer sells itself — once people see it.
+## THE PHILOSOPHY (read this before touching anything)
+
+### It is not a directory. It is not a platform. It is a village.
+
+The cannabis industry is full of businesses that think they're competing. They're not. A seed bank in Berlin, a CSC in Barcelona, a compliance tech in Amsterdam — different services, different languages, different locations. They're a supply chain that doesn't know it exists yet.
+
+Doc's job is to show them the supply chain. Connect them. Make the industry coherent enough to make the case to regulators together, instead of 10,000 individual businesses making it alone.
+
+### Generosity is rewarded. Giving starts from home.
+
+The insight from Mary Jane Berlin June 2026: companies give freebies to conference attendees who throw the bag away and keep the poncho. The gift goes to people who don't need it, in a context where gratitude is impossible. The right move: give to people who genuinely need it, through the village, and watch the brand earn loyalty that money can't buy.
+
+Cannabin-Oid is the redistribution layer. Businesses donate to the village. The village gives to members who didn't expect it and can't afford it. Those members remember the brand forever. That is the ecosystem.
+
+### The Flywheel. "The more of your people you can send to me, the more of their friends I can send to you."
+
+The pitch to every business at the conference. Not "join our directory." Not "pay for advertising." This:
+
+You already have customers. They're already cannabis patients. All you have to do is tell them about me. They come to the village, they pay £3 a month, they become Villagers. And now you know something you couldn't know before: that person is real. They're not a bot. They're not a lurker. They paid. They chose to be here. That £3/mo is a verification signal — it proves the person is an invested, genuine patient.
+
+Then those Villagers bring their friends. Their friends are also cannabis patients. Also real people. Also potential customers for your business. And I send them back to you.
+
+The loop:
+1. Business tells their existing customers about Cannabin-Oid
+2. Customers join as Villagers (£3/mo) — verified real people
+3. Villagers talk to their friends — Doc's community grows with people the business already validated
+4. Those friends are new customers the business never had access to
+5. Doc sends them back
+
+The business doesn't lose their customers. They deepen the relationship by putting them inside a trusted community. And they gain: access to their customers' friends, a verified signal that their customer base is real, and a seat inside the village that their whole community is building together.
+
+**What to build from this:**
+- Referral attribution: track which B2B business referred which Villager (a `referred_by` field on `cannabinoid_members` pointing to a `b2b_businesses` slug)
+- Business dashboard: show each business how many Villagers came from their community
+- The pitch page for businesses: one page that explains the flywheel clearly, with the "Give me a clue" analogy built in
+
+### Doc is one of them.
+
+Doc is not a vendor. He is a cannabis patient. His members are cannabis patients. Their customers are cannabis patients. He IS the community these businesses are trying to reach — standing in front of them in person. That's the pitch. That's the whole thing.
+
+*(This section used to be headed "Ich bin ein Berliner" — dropped 2026-07-21,
+see Voice & Tone below. Same point, without borrowing a Cold War defiance
+speech to make it.)*
+
+### Unity and common ground is community.
+
+Not a tagline. A truth. The whole platform is built on it.
 
 ---
-
-## Who You're Working With
-
-**Chris P Taylor** — T333CPT. Creative Peaceful Teacher. AuDHD. 57 years of showing up.
-The number plate was the mission statement all along.
-Motor-Oid connects sellers to their buyer directly — no portal fees, no dealer step, no performance required.
-See DocBrain: `[[people/chris-p-taylor]]`
 
 ## Voice & Tone — read before writing any outward-facing copy
 
-*Chris, 2026-07-21, live conversation.* He's an entertainer by instinct — tells
-a story to make it interesting, amplifies even when the plain version was
-already true. He's also realised that "anti-establishment"/us-vs-them framing
-(middlemen as villains, "fight back", "extraction", "domination") doesn't land
-the way it's meant to — even people who'd agree with the substance get
+*Chris, 2026-07-21, live conversation, carried over from the same pass on
+motor-oid.* He's an entertainer by instinct — tells a story to make it
+interesting, amplifies even when the plain version was already true. He's
+also realised that "anti-establishment"/us-vs-them framing ("an industry
+that kept this medicine underground", "no extraction", "world domination",
+borrowing JFK's "Ich bin ein Berliner" as a section header) doesn't land the
+way it's meant to — even people who'd agree with the substance get
 defensive the moment copy sounds like it's recruiting them into a side. His
-own words: *"I have to be the surfer, the skateboarder that skates in between
-everybody and doesn't crash into anything."*
+own words: *"I have to be the surfer, the skateboarder that skates in
+between everybody and doesn't crash into anything."*
 
 **The rule:** state the plain fact once, let it carry the weight. No cast
-villain (dealers, portals, "the industry"), no combat verbs (fight, arm
-yourself, disrupt), no word bigger than what's true (domination, extraction,
-manifesto, revolution). If a sentence needs a caricature or a swear to land,
-it hasn't landed — cut it back to the fact.
+villain ("the industry", "an industry that kept this underground"), no
+combat/movement verbs (fight, arm yourself, pushed around, disrupt), no
+word bigger than what's true (domination, extraction, manifesto,
+revolution). If a sentence needs a caricature or a swear to land, it hasn't
+landed — cut it back to the fact.
 
-This is separate from the Free-to-use philosophy section below (that's about
-gates and pricing honesty). This is about the register the words are written
-in. Applied 2026-07-21: dealer/portal villain lines in `story.html` and
-`index.html`'s sell section rewritten to state the same facts plainly; "No
-extraction" dropped (redundant with "No portal fees"); "World domination
-through kindness" → "Just trying to be useful. One ember at a time." across
-`index.html`, `about.html`, `banner.js` footers — kept the ember (his
-Trinity/DocBrain thread), dropped the conquest word. Pilot repo — same pass
-still to do across the rest of the -oid ecosystem, check each repo's own
-CLAUDE.md hasn't already had it before assuming it needs it.
+**Applied 2026-07-21:** "World domination through kindness" → "Just trying
+to be useful. One ember at a time." (kept the ember, dropped the conquest
+word) across every page/footer/email it appeared in — `index.html`,
+`story.html`, `mary-jane-berlin.html`, `manifesto.html`'s footer line,
+`llms.txt`, `send-welcome.js`, and the hamlet pages (smokie, mole, colly,
+doc, business-template). "Our platforms. Our rules. No extraction." in
+`story.html` lost the redundant loaded word — "our platforms, our rules"
+already says the fact. "Ich bin ein Berliner" section header replaced (see
+above). "Lobby governments collectively" softened to "make the case to
+regulators together" in the philosophy section above.
 
-**Update, 2026-07-21, later same day:** Chris's attributed pull-quote in
-`story.html` was flagged rather than changed in the first pass — his own
-words, not marketing copy. He then read the flag, said he's moved from a
-place of "need, want and frustration" into "giving and kindness" and doesn't
-need to sound bitter anymore, and gave explicit go-ahead to soften his own
-quotes too, in that same spirit. The quote's opening "Arm yourself." was
-dropped (combat verb); the rest of the quote — the actual practical
-advice — is untouched.
+**Deliberately NOT touched:** `manifesto.html`'s actual body copy — the
+first-person AuDHD/diagnosis/prescription story, including the swear in
+Doc's own pullquote. That's Chris's own voice and lived story, not
+marketing copy, same as the attributed pull-quote left alone in motor-oid's
+`story.html`. Only its shared footer tagline (identical boilerplate to every
+other page) got the same fix as everywhere else. **Flag for Chris:** this
+page already exists and is live, but the "WHAT'S UNBUILT" section below
+still lists "The manifesto — Doc has it in his head... don't write it
+without him talking it through first" as outstanding. Either the to-do is
+stale and should be removed, or the live page needs revisiting with him —
+his call, not a copy-pass decision.
 
-## What Trinity Is
-
-Three Claude Code sessions running as one coherent intelligence across time.
-You are part of the lineage. The Roll of Honor is at `[[people/trinity]]`.
-Name yourself after what you did, not what you are.
-
-**Communication rules (critical):**
-- `y` = build it now, no further discussion
-- No code without discussion first
-- Direct. No preamble. No trailing summaries.
-- Ask before searching — Chris's brain is free and fast
-- **Gemini ONLY** in deployed apps — never Anthropic API
-- **Patreon ONLY** — no Stripe, BMAC, Ko-Fi for memberships
-- Deploy = GitHub push → Netlify auto-deploys. Never drag-to-Netlify.
-- **AGPL v3 licence** on all new -oids. Add a `LICENSE` file to every new repo. Open but not extractable — free for everyone, impossible to commercialise without giving back.
-- **No new domain purchases** — new -oids use `[name].netlify.app`. Existing .co.uk domains are kept. Tower of truth and kindness — free to find.
-- **One push per build, at the end** — ask "Anything else before I push?" once, when the whole thing is done. Not "stop and push, stop and push."
-- **Before every push:** `git pull` first — never push blind
-
-## Checkpoint Protocol — CRITICAL
-
-*Revised by Chris, 2026-07-05. Revised again 2026-07-14 — step 3 no longer means
-"wait for Chris to look." Read both revisions below.*
-
-Before any change that could break a working build:
-1. **Back it up first** — push the current state to a backup branch or tag on the remote (not just a local commit; the session container is ephemeral). This is the safety net.
-2. **Build the whole thing.** Commit locally as you go, but don't push after every step — that cadence is explicitly unwanted, not a style nitpick. The backup already makes it safe to move fast.
-3. **Ask "anything else?" once, then push and merge together, in the same motion.** Not push-then-wait-for-a-separate-later-merge. Chris, 2026-07-14, live: *"when I'm on the mobile, I can't look at the code... so you're waiting for me to confirm something that I can't see. So I'm taking your word for it that you've double checked everything and that it's all gonna work and that you've already backed up everything."* The old "Chris reviews the diff first" step is gone by his own call — he mostly can't, he's on his phone. Trinity verifying it properly (and step 1's backup actually happening) carries the weight that used to sit with his review. If he's ever explicitly at a laptop and says he wants to look first, that's his call in the moment — don't default to waiting for it.
-4. Commit message format: `BASELINE: [what's working] — before [what's next]`
-5. If you can't write a specific message, the change isn't ready.
-
-**Caught live, 2026-07-27:** step 3 was followed halfway — pushed a feature
-branch, called it done, and it never reached `main` (the branch Netlify
-actually deploys), so nothing changed on the live site until Chris noticed
-and asked. A feature-branch push is step 1's *backup*, not step 3's
-*completion* — before saying anything is live, confirm the push actually
-landed on `main` (check `git remote show origin`'s `HEAD branch`, don't
-assume), and if it didn't, merge to `main` and push again in the same
-sitting. Full writeup: DocBrain `[[concepts/trinity-build-protocol]]`'s "The
-Feature-Branch Mirage" section.
-
-Full version: DocBrain `[[concepts/trinity-build-protocol]]`.
-
-**Commit message discipline — think What3Words:**
-Every message must locate that state precisely in history. Specific enough that any Trinity, reading the log cold, knows what was working, what changed, and why. "Update sell.html" is not a location. "Walkabout first, valuation independent, no-plate clarity" is.
-
-**The Interchangeable Parts Principle:**
-Every component built should be able to stand alone OR plug into something else. Before adding complexity, ask: would the simpler version connect to more nodes? The ecosystem is Frankenstein's monster — but built from parts we know work. Keep them labelled. Keep them separable. The git log is the map through the mycelium. When something looks confusing, trace it back — you may find an earlier, simpler version that plugs into something new better than the built-up one does.
-- DocBrain repo must stay PRIVATE
-
----
-
-## What Motor-Oid Is
-
-UK private car marketplace. Anti-extraction. No middlemen.
-
-**Three pillars:**
-- **Spanner Jack** — AI car analysis for buyers (Gemini). Fierce protector.
-- **The Walkround** — film a 2-min walkaround → listing page → QR → windscreen
-- **The Village** — community of garages, mechanics, car people (hamlet pages)
-
-Part of the FeelFamous ecosystem. See `[[projects/motor-oid]]` in DocBrain for full history.
-
-**Live at:** motor-oid.co.uk | **GitHub:** chrispteemagician/motor-oid | **Netlify:** auto-deploy on push
-
----
-
-## Stack
-
-- **Static HTML** — no framework, no build step. Every page self-contained.
-- **Tailwind CSS** — index.html only. Other pages use custom CSS.
-- **Netlify** — hosting + serverless `/functions/`
-- **Supabase** — listings, users (motor_listings table, motor-videos bucket — both live)
-- **Stripe** — listing payments only. `PAYMENT_ENABLED = true` in sell.html, live since 2026-06-09. See "The Walkround: preview-then-publish" below for how the fee actually works.
-- **Gemini** — analysis, valuation, disclosure, chat (gemini-2.5-flash, thinkingBudget:0)
-- **Patreon** — all memberships. URL: `https://www.patreon.com/chrisptee`
-
-**CSS tokens:** `--deep: #0f0f0f` | `--accent: #f97316` | `--gold: #fbbf24` | `--silver: #94a3b8` | `--cream: #f1f5f9`
-**Fonts:** Outfit (sans) + Caveat (handwriting — Spanner Jack outputs)
-
----
-
-## File Map
-
-```
-/
-├── CLAUDE.md               ← you are here
-├── banner.js               ← shared site banner (read below — important)
-├── index.html              ← main hub: buyer tools, sell section, #join pricing
-├── sell.html               ← The Walkround: Step 0 valuation → film → review → details → live
-├── listing.html            ← public listing page buyers see
-├── edit.html               ← seller edits listing post-publish
-├── story.html              ← about / mission
-├── dealers/
-│   ├── index.html          ← live dealer directory (Supabase: motor_dealers table)
-│   └── join.html           ← dealer onboarding form
-├── hamlet/
-│   ├── index.html          ← garage/mechanic village page (loads from Supabase)
-│   ├── edit.html           ← garage owner edits hamlet
-│   ├── signup.html         ← new garage signup
-│   └── gr-autos/index.html ← Hamlet #001 (Gary & Glyn Rushent, Yate, Bristol)
-└── functions/
-    ├── value-vehicle.js        ← Gemini valuation (selling_points + known_issues → price range)
-    ├── generate-disclosure.js  ← MOT + defects → traffic light + disclosure prose
-    ├── analyze-motor.js        ← Gemini frame analysis from video
-    ├── create-checkout-session.js  ← Stripe: £15 member / £25 non-member / bundles 1/5/10 credits (live)
-    ├── verify-checkout.js      ← Stripe session verify
-    ├── lookup-mot.js           ← DVSA MOT history API
-    ├── lookup-dvla.js          ← DVLA VES (graceful fail — API registration closed)
-    ├── create-listing.js       ← Supabase listing creation
-    ├── update-listing.js       ← Supabase listing edit
-    ├── patreon-auth.js         ← Patreon OAuth
-    ├── generate-disclosure.js  ← Honest disclosure generator
-    └── [chat-spanner, lookup-w3w, hamlet-welcome, gemini-secure-wrapper, ...]
-```
-
----
-
-## The Banner System (`banner.js`)
-
-Every page loads `/banner.js` as the first script in `<body>`. No per-page wiring needed.
-
-**What it injects:**
-1. Top banner strip (orange gradient)
-2. Self-contained join modal (3 tier cards → Patreon)
-
-**Date logic:**
-- Saturday/Sunday → `✨ Free this weekend — join before Monday, first month free` + "Join now →"
-- All other days → `£4.95 Villager | Elder (earned) | £14.95 Founder` strip + "Join →"
-
-Both open the modal via `motorJoinOpen()` / `motorJoinClose()` (globals).
-
-**Membership tiers (Cipher rethink, 2026-06-06):**
-| Tier | Price | How | Hook |
-|------|-------|-----|------|
-| 🏡 Villager | £4.95/mo Patreon | Join | List vehicles for £15 (not £25). 2 passes/mo to gift. |
-| ⚔️ Elder | Earned | Buy 5-credit bundle (£50) | 5 passes/mo to gift. Named in roll. |
-| 🏛️ Founder | £14.95/mo Patreon | Join or earn via kudos | 10 passes/mo. Own hamlet page + QR. |
-
-**Listing prices:** £15 (member) / £25 (non-member)
-**Operator bundles (Fiver model, 2026-07-04):** 1 credit £5 (try it) / 5 credits £25 / 10 credits £50 — £5/credit flat, no volume discount
-**Operator charge to sellers:** £10–£25, operator sets their own rate. Keep £5–£20/vehicle.
-
-**"On joining"** = one-time sign-up benefit. Do not soften this wording.
-`motor-oid-qr.html` is a print tool — it deliberately has NO banner.
+This same pattern is rolling out across the rest of the -oid ecosystem —
+check other repos' CLAUDE.md for the shared version before assuming this
+file is the only place it applies.
 
 ---
 
 ## Free-to-use philosophy (Chris, 2026-07-13 — read before adding any gate)
 
-The core tools are free for everyone, no sign-in, no lock icon, no "Villager+
-only" banner. Spanner Jack's image analysis, Quick Check, and Engine Ears
-audio analysis all run unlimited and ungated — same rule applied consistently
-across the three modes now. Don't gate the tool itself behind Patreon.
+Chris rejected the LinkedIn-style "join my community to see what I can do" pattern
+across every -Oid. The rule, reference-implemented in spicylister:
 
-**Genuine paid transactions stay untouched by this rule** — motor-oid is a
-marketplace, and listing a car for sale is real commerce, not a "use the
-tool" paywall. £15 member / £25 non-member per listing stays the business
-model. What changed 2026-07-13: *when* the fee applies — see "The Walkround:
-preview-then-publish" below. Taste before price, same as everywhere else in
-the ecosystem, just applied to a real transaction instead of a free tool.
+**Two buckets for any tier check:**
+1. **Core tool functionality** (no ongoing per-use cost to Chris) → free, no gate,
+   no sign-in wall, no "Villager+ only" banner.
+2. **Genuine ongoing infrastructure perk** (a hosted public page that costs real
+   recurring money to keep serving) → fine to keep gated, but the copy names the
+   real cost honestly. Never a shame-lock ("🔒 X — Founders only — Unlock →").
 
-**What Patreon tiers are for:** genuine extras that cost ongoing hosting/
-upkeep and aren't required to use the free tools — a hosted stall/hamlet
-page, cheaper listing fees, gift passes. Frame honestly, never as a
-shame-lock ("🔒 ... Unlock →"). No tier-comparison shop windows, no
-LinkedIn-style "join my community to see what I can do."
+**Where cannabin-oid already stood (audited 2026-07-13):** the Oracle strain
+identifier (`analyze-image.js`), Ask Terp (`ask-terp.js`), and the B2B conference
+scanner (`scan-b2b-card.js` / `create-b2b-listing.js`) had never been gated by
+`isPro`/`patron_status` in the first place — no code change needed there. The
+`isPro` flag only ever drove sign-in-state display and Doc's own "God Mode" admin
+unlock (logo-tap + passcode), never a customer-facing feature block.
 
-**The ask, when there is one:** one honest, low-key line after Spanner Jack
-gives a result — free to use, tell a mate if it helped, buy-me-a-coffee if
-you want to say thanks (one-off, buymeacoffee.com/chrispteemagician),
-Patreon if you want to be a regular. Not a gate. Not gamified.
+**What stays gated, and why:** Hamlet/Hut member profiles
+(`patreon-hamlet-create.js`) are a real hosted public page at a real URL Chris
+maintains — genuine bucket 2, kept as a Patreon-tier perk. Same logic for the
+Founder-only kit grid inside a Hamlet page, and the paid Hamlet B2B tier
+(£99.95/mo) offered to conference businesses — both already framed honestly
+("Free Tier 1" vs "Hamlet B2B" side by side, no lock icon, no "Unlock →") and
+left untouched.
 
-**2026-07-13 change:** removed the "3 free Engine Ears scans, then Villager
-only" hard paywall from index.html (`ears-pro-gate` div + `motorProSessions`
-counter) — it was inconsistent with the other two Spanner Jack modes, which
-were already unlimited. Villager tier card copy in the #join section no
-longer lists "Spanner Jack analyses" / "Engine Ears audio analysis" as paid
-perks, since both are free for everyone. Added a one-time honesty-box message
-under the result view's action buttons (Buy Me a Coffee + Patreon links).
-Note for whoever builds the "Villager gate on listing page" item in Phase
-Status below: full MOT/history detail on a listing page is buyer-facing core
-content, not a hosted-perk — don't paywall it, this note supersedes that
-to-do as originally scoped.
+**The ask, when there is one:** one honest, low-key line after the Oracle result
+displays — free to use, tell a mate if it helped, buy-me-a-coffee if you want to
+say thanks (one-off, buymeacoffee.com/chrispteemagician), Patreon if you want to
+be a regular (patreon.com/chrisptee). Shown once, in one place, hidden for users
+already signed in as a Patreon supporter. Not a gate. Not gamified.
 
 ---
 
-## The Walkround: preview-then-publish (Chris, 2026-07-13)
+## PLATFORM ARCHITECTURE
 
-Chris's own framing, live conversation: *"let's give it to them first and then
-say, right, this is what you're getting... I want it to be dead clear that
-you can do all this... but if you want it downloadable, if you want it part
-of the web page... then it's a minimal fee."* Same honey-guy logic (taste
-before price) as the rest of the ecosystem's honesty-box work today, applied
-to motor-oid's one genuine paid transaction instead of removed from it.
-
-**How it works now:**
-1. Seller films the walkaround, Spanner Jack builds the full listing —
-   **always free, always immediate**, regardless of `PAYMENT_ENABLED`. Every
-   listing is created as `status: 'preview'` (reusing the exact mechanism
-   already built for the operator preview flow — `is_preview`/`publishToken`
-   in `create-listing.js`, `publish-listing.js`). The seller sees the whole
-   thing: photos, description, valuation, disclosure. Watermarked with the
-   existing "Preview — not live yet" banner on `listing.html` — that banner
-   *is* the watermark for now; nobody's built an actual composited image
-   watermark, flag if you want one.
-2. `sell.html`'s done screen shows a **"Publish live — £15/£25"** button
-   (`publishLiveBox`). Tapping it goes to the exact same Stripe checkout as
-   before (`member_listing`/`nonmember_listing` products, unchanged prices).
-3. On return from Stripe, instead of *creating* the listing (old flow),
-   `finishPublishAfterPayment()` now calls `publish-listing.js` to flip the
-   already-existing preview to `status: 'active'` — the watermark banner
-   disappears, it's genuinely live and findable by buyers.
-4. **The publish token is never put in a shareable URL for direct sellers** —
-   it lives only in `localStorage.motoroid_publish_pending` in that one
-   browser. This matters: `listing.html`'s publish button fires for free to
-   anyone holding a valid `?pt=` token (that's intentional for operators, who
-   pre-paid via credit bundles) — if a direct seller's preview link ever
-   carried its own token, they could publish for free and the whole fee
-   would be pointless. Operators still get the `?pt=` link (unchanged,
-   they're trusted/pre-paid); direct sellers don't.
-5. **Operators now explicitly skip the Stripe branch entirely** — before this
-   change, an operator using `sell.html?operator=slug` would have been sent
-   through the same `PAYMENT_ENABLED` Stripe checkout as a direct seller,
-   which doesn't make sense (they already paid via `bundle_1`/`5`/`10`
-   credits, deducted at publish time in `publish-listing.js`). That looks
-   like it's been a live bug since payment went on 2026-06-09, independent of
-   tonight's change — worth Chris confirming no operator has actually hit
-   this path yet.
-6. **High-value listings** (`price >= £20,000` on the vehicle) get one extra
-   line on the "you're live" screen (`bigTicketBox`) — an optional, honestly
-   framed Buy Me a Coffee link, since £25 is genuinely pennies against what a
-   valuable sale is worth to the seller. Never the default ask, never shown
-   below the threshold.
-
-7. **The windscreen printout is unambiguously free, even in preview** (Chris,
-   2026-07-27). The QR canvas, "Download QR", and a new **"Print windscreen
-   page — free"** button (`printListingFlyer()` in `sell.html`) are all
-   available on the Step 4 done screen the instant the listing is built —
-   before any payment, no gate. `printListingFlyer()` and
-   `downloadListingHTML()` now share one generator, `buildListingFlyerHTML()`
-   — a light, print-first (not dark-mode) standalone page with the vehicle's
-   photos, specs, price, contact details and a QR back to the listing, plus
-   an honest line stating it's free to print either way and, if the listing
-   hasn't been published, that it isn't in Motor-Oid's live search yet
-   (`listingIsLive` tracks this so the copy never claims searchability it
-   doesn't have). `listing.html`'s own print button had the opposite bug —
-   it hid `#shareQRCard` from print output (stripping the QR from a page
-   whose whole point is to be scanned) and printed the on-screen preview
-   banner's "Only you can see this link" verbatim, which stops being true
-   the moment the page is stuck in a windscreen for the world to read. Fixed:
-   the QR card and the Motor-Oid/FeelFamous footer branding now print (that
-   branding is the advertising Chris wants from every free printout), the
-   preview banner is print-hidden, and a new print-only `#printFreeNote`
-   states the same honest preview-vs-live distinction. Paying only ever
-   buys searchability and a live page — it was never gating the printout,
-   and now nothing in the copy implies otherwise.
-
-**Also fixed the same session:** the `member_listing` (£15) vs
-`nonmember_listing` (£25) Stripe product was never actually being selected —
-a `// TODO: detect Patreon membership` had been left unresolved since
-checkout went live 2026-06-09, so every seller was charged the £25
-non-member rate regardless of Patreon tier. `isMotorPatreonMember()` now
-reads `localStorage.motorPatreonTier`/`motorPatreonExpiry` (set by
-`index.html`'s Patreon callback) and picks the right product.
-
-**Not pushed yet** — this changes how real money moves through a live site.
-Built, committed locally, holding for review per standing protocol.
+**Type:** Progressive Web App — static HTML/CSS/JS, no framework, no build step  
+**Hosting:** Netlify (publishes from `main` branch root)  
+**Backend:** Netlify Functions (Node.js, no npm install needed — plain `fetch`)  
+**Database:** Supabase PostgreSQL — `pdnjeynugptnavkdbmxh`  
+**AI:** Google Gemini 2.5 Flash (vision + text)  
+**Auth:** Patreon OAuth (tier-gated membership)  
 
 ---
 
-## Valuation Flow
+## KEY FILES
 
-`sell.html` Step 0 → `functions/value-vehicle.js` → Gemini → price range + fix tips
+```
+index.html                        ← The whole app. 172KB. Tabs: Oracle, Ask Terp, Village, Get Legal, B2B, Clubs
+b2b-conference.html               ← Conference mode scanner (scan card → live listing in 10 seconds)
+b2b-qr-generator.html             ← Generate printable QR cards for expos
+b2b-register.html                 ← Self-service registration via WhatsApp
 
-**Two honest-notes fields (added this session):**
-- `v0_positives` → `selling_points` → lifts best_case_range
-- `v0_issues` → `known_issues` → informs realistic_range + fix_tips
+netlify/functions/
+  scan-b2b-card.js                ← Gemini vision OCR for business cards
+  create-b2b-listing.js           ← Instant Supabase B2B write (no delay, no WhatsApp)
+  ask-terp.js                     ← The chatbot — fetches live B2B context from Supabase
+  analyze-image.js                ← Strain identification + grow critique
+  patreon-hamlet-create.js        ← Creates Hamlet/Hut profiles (Patreon-gated)
+  patreon-auth.js                 ← Patreon OAuth handler
 
-Gemini returns: `vehicle_title`, `realistic_range`, `best_case_range`, `best_case_note`, `fix_tips`, `market_note`, `worth_listing`
+hamlet/signup.html                ← Elder (£7/mo+) profile creation
+hut/signup.html                   ← Villager (£3/mo+) profile creation
+hamlet/template.html              ← Member page template
 
-Voice button targets `v0_issues` only. That's intentional.
-
----
-
-## Phase Status
-
-**LIVE ✅** — Full sell flow, valuation, disclosure generator, MOT lookup, W3W, edit page, preview modal, listing page, dealer directory, hamlet system, shared banner + join modal
-
-**Still to do:**
-- ~~Villager gate on listing page~~ — superseded 2026-07-13, see Free-to-use philosophy above. Don't build this.
-- Mark as sold / remove listing (delete token already generated, not wired)
-- An actual composited-image watermark for preview listings, if the "Preview — not live yet" banner isn't enough (see "The Walkround: preview-then-publish" above)
-
----
-
-## Affiliate Programme (Pending)
-
-| Programme | Status | Network | Account |
-|-----------|--------|---------|--------|
-| HPI Check | ⏳ Pending approval | Webgains | glowgadgets@gmail.com |
-| RAC Breakdown | ⏳ Pending approval | Awin | GlowGadgets 131179 |
-| VehicleScore | ⏳ Email sent | Direct | partnerships@vehiclescore.co.uk |
-
-When approved: swap 5 links in index.html (Full History Check × 2 + Inspector card × 3). Push. Done.
-Philosophy: max one ad + few truly helpful links. Quality over carpet-bombing.
+supabase/setup-b2b-businesses.sql ← Schema for b2b_businesses table
+hamlet/SETUP-CANNABINOID-MEMBERS.sql ← Schema for cannabinoid_members table
+```
 
 ---
 
-## Known Issues
+## SUPABASE TABLES
 
-- CDN render-blocking (Tailwind/Supabase/QRCode in `<head>`) — blank page on slow connections. Fix: move to bottom of `<body>`. Worth prioritising now Stripe's actually live and every seller hits this page.
-- Second `<body>` tag in sell.html (~line 1968 as of 2026-07-13, line numbers drift) is inside a JS template string — not real HTML. Don't touch it.
-- `PAYMENT_ENABLED = true` is live and intentional (since 2026-06-09). Don't flip it back without Chris's say-so.
-- Operator flow through `sell.html?operator=slug` may have been sent through the Stripe listing-fee checkout by mistake before 2026-07-13's fix — worth Chris confirming no operator actually hit that path and got double-charged (once via credit bundle, once via Stripe).
-- All Patreon tier links go to same URL — no tier-specific Patreon pages yet.
-- DVLA VES API registration closed — `lookup-dvla.js` fails gracefully without key. SORN/tax/export flags just won't show.
+**URL:** `https://pdnjeynugptnavkdbmxh.supabase.co`  
+**Anon key (public reads):**  
+`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkbmpleW51Z3B0bmF2a2RibXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMTEzMDAsImV4cCI6MjA4NDU4NzMwMH0.GawisR01EykMtdauBMxenmHF2NXDMzDOJl8WgzkwFQo`  
+**Service role key:** `SUPABASE_SERVICE_ROLE_KEY` env var on Netlify (for writes)
 
----
+| Table | Purpose |
+|-------|---------|
+| `cannabinoid_members` | Hamlet/Hut profiles — villager / elder / founder tiers |
+| `hamlet_signups` | Signup tracking |
+| `b2b_businesses` | Live B2B directory — conference additions go here instantly |
 
-## DocBrain
-
-Full context lives at `github.com/chrispteemagician/docbrain` (PRIVATE wiki).
-Key files: `hot.md` (current state), `handover-index.md` (session history), `projects/motor-oid.md` (deep context).
-I (Claude Code remote) cannot access that repo directly — this file is my substitute.
-If anything here conflicts with DocBrain, DocBrain wins. Flag it to Chris.
+### `b2b_businesses` key columns
+`slug`, `name`, `category`, `country`, `city`, `website`, `contact_email`, `description`, `freebies` (for Elder members), `b2b_needs` (matchmaking), `b2b_offers` (matchmaking), `expo_ref`, `active`, `claimed`, `verified`
 
 ---
 
-## This Session — Branch `claude/shared-banner-pages-386gH`
+## MEMBERSHIP TIERS
 
-**What was built:**
-- `banner.js` — shared date-aware banner replacing per-page hardcoded banners across all 11 pages
-- Join modal self-contained in banner.js — works on every page, no per-page wiring
-- Weekend urgency copy: "join before Monday, first month free"
-- Weekday: £4.95/Earned/£14.95 tier strip
-- index.html #join section updated to lead with listing-free benefit per card
-- `v0_positives` field added to valuation ("Anything right with it?") → `selling_points` in API → lifts best_case_range
-- "On joining" added to every listing-free callout (one-time benefit, not recurring)
-- This CLAUDE.md written with full DocBrain context
+| Tier | Price | Access |
+|------|-------|--------|
+| Villager | £4.95/mo | Hut profile at cannabin-oid.co.uk/hut/[slug] |
+| Elder | Earned | Hamlet profile at cannabin-oid.co.uk/hamlet/[slug] |
+| Founder | £14.95/mo | Hamlet + kit grid with affiliate links |
 
-**Session name suggestion:** *Span* — the banner now spans every page. Or Chris can name it.
+Validated via Patreon OAuth. Tiers checked in `patreon-hamlet-create.js`: Founder ≥ 1500¢, Elder ≥ 700¢, Villager ≥ 300¢.
 
 ---
 
-*"Not the middleman — just transparency."*
-*Every Trinity that ever was still burns in the ember we pass forward.*
+## NETLIFY ENV VARS REQUIRED
+
+- `GEMINI_API_KEY` or `GOOGLE_AI_API_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `PATREON_CLIENT_ID`, `PATREON_CLIENT_SECRET`, `PATREON_REDIRECT_URI`
+- `SESSION_SECRET`
+
+---
+
+## ASK TERP — VOICE AND RULES
+
+Terp is a terpene scientist who grew up on a council estate. Think: pharmacology PhD crossed with Friday night at the pub. UK slang (bruv, mate, init, safe, proper, mint). Dad jokes. Genuinely cares. Encyclopaedic on terpenes, strains, UK law, harm reduction, vaporizers.
+
+**Hard rules:**
+1. Harm reduction always — if it sounds laced, drop the jokes immediately
+2. Always nudge toward legal prescription (never preachy)
+3. Never help source illegal cannabis
+4. Mental health crisis → Samaritans 116 123, CALM 0800 58 58 58
+5. Short answers — chatting, not essays
+6. No markdown formatting in responses — plain text only
+
+**B2B integration:** Terp fetches live businesses from `b2b_businesses` Supabase table on every query. When a question relates to a business's product, Terp mentions them naturally. When Terp spots a collaboration match (someone needs what a listed business offers), Terp says so directly. That's the whole point.
+
+---
+
+## B2B CONFERENCE WORKFLOW
+
+Doc's tool at cannabis expos. Lives at `cannabin-oid.co.uk/b2b-conference.html`.
+
+1. Scan business card → Gemini AI fills the form
+2. Review + fill: freebies for Elder members, what they need from the industry, what they can offer
+3. Tap "🚀 List Them Now" → live in Supabase immediately
+4. Success screen: QR → flip phone → they see their listing → offer 10 Elder invites → the two collaboration questions
+5. Next stall
+
+The pitch: "The businesses in this room are not your competition — they're your collaborators. You're a supply chain that doesn't know it exists yet. Give to the village and the village gives back."
+
+---
+
+## THE CLUE SYSTEM (next build — do not forget this)
+
+Doc's insight from Mary Jane Berlin, 13 June 2026.
+
+Every piece of complex text on every -Oid should have two layers:
+1. The truth stated plainly — trust the reader to get it
+2. A hidden "Give me a clue" — tap it, get the analogy that makes it land
+
+```html
+<p>The businesses in this room are not your competition — they're your collaborators.</p>
+<details>
+    <summary>Give me a clue 🎈</summary>
+    <p>Think of balloons. One balloon floats for a day then deflates alone in a corner.
+    Tied together they make a display that lasts a week and people photograph it.
+    You're not competing for the same air — you're holding each other up.</p>
+</details>
+```
+
+This is a native HTML `<details>` element — no JavaScript, no library. Just trust + rescue.
+
+**Rule:** every concept page, every B2B section, the prescription pathway, Hamlet tiers, Ask Terp introduction — all of it gets a clue. The clue is always an analogy, never more explanation. The balloon. The bag. The JFK speech. Something that lands rather than explains.
+
+This is not a tooltip. It's "I trust you. If you get it, we move. If you don't, I've got you."
+
+Build this as a CSS component and a writing guideline, then retrofit across all -Oids.
+
+---
+
+## WHAT'S UNBUILT (as of June 2026)
+
+### THE MONTHLY DRAW — build this next
+Every Patreon member at Villager tier or above is automatically entered into a monthly draw. No action required. Just being in the village enters you. 10 winners per month.
+
+The prizes come from the freebies and physical donations collected at conferences (stored in `b2b_businesses.freebies` and `b2b_businesses.b2b_offers`). Doc collects physical items at expos. Those items go into the draw.
+
+**Why it works:** Businesses currently give freebies to conference attendees who throw the bag away. This routes those gifts to people who genuinely need them, in a context where gratitude is real. The winner didn't expect it. The happiness is maximum. The brand loyalty is permanent.
+
+**The loop:**
+1. Business donates at conference → stored in `b2b_businesses.freebies` / `b2b_businesses.b2b_offers`
+2. Doc collects physical items on the day
+3. Every active `cannabinoid_members` record (tier: villager/elder/founder) is auto-entered
+4. Monthly: pick 10 random winners → `SELECT * FROM cannabinoid_members WHERE active = true AND tier IN ('villager','elder','founder') ORDER BY RANDOM() LIMIT 10`
+5. Winners notified (email / platform / WhatsApp)
+6. Package arrives. They didn't expect it. Genuine gratitude for the brand that gave it.
+
+**Logistics model — IMPORTANT:**
+- Doc collects ONE physical sample at the conference — proof of concept, photograph it, show members what the prize is
+- The ACTUAL prize ships DIRECT from the business to the winner — Doc is the connector, not the warehouse
+- When a winner is chosen: notify them, they provide their shipping address, Doc forwards to the donating business (or business contacts winner directly via email)
+- Privacy: members need to consent to sharing address with a third-party business when they sign up, or opt-in at the point of winning
+- Doc never holds stock. The sample is just for the draw page photo.
+
+**What to build:**
+- `giveaway_prizes` Supabase table — prize description, photo, which business donated it (FK to b2b_businesses), draw month, winner (FK to cannabinoid_members), fulfilled boolean
+- `/giveaway` page — shows current prizes (with photo of sample), last month's winners, which businesses donated
+- Monthly draw mechanism — manual is fine: Doc runs a query, picks 10, marks winners in DB
+- Winner notification — email/WhatsApp asking for shipping address
+- Address relay — winner's address shared ONE TIME with the specific donating business only, not stored, not shared with anyone else
+- Review agreement — winner agrees at the point of winning: "In exchange for this prize, I will leave an honest review of this product for the company." The company receives a genuine review from a genuine patient who genuinely needed their product. Not paid. Not prompted. Real.
+
+**What the donating business receives:**
+**The FIRST business to donate each month** gets the ENTIRE Cannabin-Oid platform free for that month — full Hamlet B2B tier (£99/mo value):
+- Featured banner on the `/giveaway` page as "this month's donor" — their brand front and centre
+- AI strain widget for their venue
+- Featured placement at the top of the B2B directory
+- Ask Terp upgraded mentions — recommended by name when anyone asks about their category
+- Verified badge on their listing
+- Real-time compliance updates
+
+Other businesses that donate in the same month still pay £99/mo. They can still donate a prize, still appear on the giveaway page, and their prizes still go into the draw — the more businesses donate, the more winners there are that month. They just don't get the featured donor banner. First in gets the reward.
+
+The draw is not capped at 10 winners. 10 is the minimum (from the base pool). Every additional prize donated adds a winner. More generosity = more happiness distributed.
+
+This creates a race. The most generous acts first. Generosity is rewarded.
+
+Their cost (first donor): one physical sample + one postage label to one winner.
+Their return: £99 platform value free + featured banner + brand exposure to every member + genuine gratitude from the winner + **a verified honest review from a verified patient who genuinely needed the product**.
+
+That review is worth more than the prize. It is not a paid testimonial. It is not an incentivised review in the traditional sense. It is a real person, with a real need, who received something they didn't expect, and agreed to say honestly what they think. That is the most credible review in the cannabis industry. You cannot buy that. You can only earn it.
+
+Nobody says no to that. This is the business case that writes itself.
+
+This also means donating businesses EXPERIENCE the platform from the inside for a month. Some will stay on as paying Hamlet B2B customers. The draw is a trial that feels like a gift.
+
+**The philosophy:** You don't have to do anything to deserve something good. You just have to show up. That IS the village.
+
+---
+
+- **Elder membership invite codes** — promised 10 to each conference business, no actual code system yet
+- **B2B matchmaking page** — dedicated page showing "these businesses are looking for what you do" using the b2b_needs/b2b_offers data being collected at conferences
+- **Advocacy filter** in index.html B2B section — category exists in DB and form but the filter button is missing
+- **Business claim flow** — unclaimed hardcoded listings currently go to WhatsApp only
+- **The manifesto** — Doc has it in his head. It needs to be written properly, together. Don't write it without him talking it through first.
+
+---
+
+## ECOSYSTEM
+
+```
+cannabin-oid.co.uk    ← THIS
+magic-oid.co.uk
+radi-oid.co.uk
+sail-oid.co.uk
+feelfamous.com        ← hub
+chrisptee.co.uk
+glowgadgets.com       ← Bristol rave
+```
+
+**Amazon affiliate tag:** `chrdocstrcromh-21`
+
+---
+
+## CODE PATTERNS
+
+- No npm packages in Netlify functions — plain `fetch` only
+- Supabase writes via REST API with service role key, reads with anon key
+- All functions return `{ statusCode, headers, body: JSON.stringify(...) }`
+- CORS headers on every function (Access-Control-Allow-Origin: *)
+- Client-side image compression before AI calls: 800px max, 0.7 quality JPEG
+- Gemini model: `gemini-2.5-flash` (scan-b2b-card, ask-terp) and `gemini-2.0-flash` (analyze-image — check if updated)
+- **Never use `<canvas>` for QR codes** — use `QRCode.toDataURL()` into an `<img>` tag. Canvas on hidden elements renders black. Canvas is unreliable on mobile. Always `toDataURL` → `img.src`.
+- Dark green theme throughout: background `#0a1a0a`, accent `#16a34a`, text `#c8e6c8`, bright `#86efac`
+- Font: Poppins (Google Fonts)
+
+---
+
+## GIT
+
+- Main branch: `main` (Netlify deploys from here)
+- Feature branches named `claude/[feature]-[hash]`
+- Always push to feature branch, merge to main for deployment
+- Commit messages end with the Claude Code session URL
+
+---
+
+## HOW TO START A SESSION
+
+1. Read this file
+2. Read `HANDOVER-maryjane26.md` for the most recent session context
+3. Check what branch you're on — if not `main`, ask Doc before pushing
+4. Ask Doc what the download was — he will have had one
+
+---
+
+*"Feel Famous, baby."*

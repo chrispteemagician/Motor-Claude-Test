@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2B Connect — QR Generator | Cannabin-Oid</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: #0a1a0a; color: #c8e6c8; min-height: 100vh; padding: 24px 16px 40px; }
+        h1 { text-align: center; color: #86efac; font-size: 1.8rem; margin-bottom: 4px; }
+        .sub { text-align: center; color: #4d7a4d; font-size: 0.85rem; margin-bottom: 28px; }
+        .container { max-width: 700px; margin: 0 auto; }
+
+        .form-card {
+            background: rgba(22,163,74,0.06);
+            border: 1px solid rgba(22,163,74,0.2);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: #86efac; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; margin-top: 16px; }
+        label:first-of-type { margin-top: 0; }
+        input, select, textarea {
+            width: 100%; padding: 14px 16px;
+            background: rgba(22,163,74,0.05);
+            border: 1.5px solid rgba(22,163,74,0.2);
+            border-radius: 12px; color: #c8e6c8;
+            font-family: 'Poppins', sans-serif; font-size: 1rem;
+            outline: none; transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #16a34a; }
+        select option { background: #0f2b0f; color: #c8e6c8; }
+        textarea { resize: vertical; min-height: 70px; }
+
+        .row { display: flex; gap: 12px; }
+        .row > div { flex: 1; }
+
+        .generate-btn {
+            width: 100%; margin-top: 20px; padding: 16px;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white; border: none; border-radius: 14px;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(22,163,74,0.4); }
+        .generate-btn:active { transform: scale(0.98); }
+
+        /* ── PRINTABLE CARD ── */
+        #printArea { display: none; }
+        #printArea.visible { display: block; }
+
+        .qr-card-wrap {
+            background: white;
+            border-radius: 24px;
+            padding: 36px 32px;
+            text-align: center;
+            margin-bottom: 20px;
+            max-width: 420px;
+            margin-left: auto; margin-right: auto;
+        }
+        .qr-logo { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; color: #15803d; text-transform: uppercase; margin-bottom: 4px; }
+        .qr-title { font-size: 1.4rem; font-weight: 800; color: #14532d; margin-bottom: 2px; }
+        .qr-biz { font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 4px; }
+        .qr-country { font-size: 0.8rem; color: #9ca3af; margin-bottom: 20px; }
+        #qrCanvas { border-radius: 8px; border: 3px solid #14532d; }
+        .qr-tag { font-size: 0.8rem; color: #6b7280; margin-top: 16px; margin-bottom: 4px; }
+        .qr-offer { display: inline-block; background: linear-gradient(135deg, #16a34a, #15803d); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; margin-top: 10px; }
+        .qr-url { font-family: monospace; font-size: 0.75rem; color: #9ca3af; margin-top: 12px; background: #f9fafb; padding: 6px 12px; border-radius: 6px; display: inline-block; }
+
+        /* ── CONTROLS ── */
+        .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 24px; }
+        .ctrl-btn {
+            padding: 12px 24px; border-radius: 12px; font-family: 'Poppins', sans-serif;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; border: none; transition: all 0.15s;
+        }
+        .ctrl-green { background: linear-gradient(135deg, #16a34a, #15803d); color: white; }
+        .ctrl-outline { background: transparent; border: 2px solid #16a34a; color: #86efac; }
+        .ctrl-btn:active { transform: scale(0.97); }
+
+        .size-row { display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+        .size-row label { margin: 0; font-size: 0.8rem; color: #6b9e6b; }
+        .size-row select { width: auto; padding: 8px 12px; font-size: 0.85rem; }
+
+        .pitch-box {
+            background: rgba(22,163,74,0.05);
+            border: 1px solid rgba(22,163,74,0.15);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .pitch-box h3 { color: #86efac; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+        .pitch-box p { color: #6b9e6b; font-size: 0.9rem; line-height: 1.6; font-style: italic; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            #printArea { display: block !important; }
+            .qr-card-wrap { box-shadow: none; border: 2px solid #14532d; margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤝 B2B Connect</h1>
+        <p class="sub">QR Generator — Mary Jane Berlin June 2026 | Print one per business you meet</p>
+
+        <div class="form-card no-print">
+            <!-- SCAN BUTTON -->
+            <div style="text-align:center;margin-bottom:20px;">
+                <button onclick="document.getElementById('cardFileInput').click()" id="scanBtn" style="width:100%;padding:16px;background:linear-gradient(135deg,#14532d,#166534);color:#86efac;border:none;border-radius:14px;font-family:'Poppins',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.15s;">
+                    📷 Scan Business Card
+                </button>
+                <input type="file" id="cardFileInput" accept="image/*" capture="environment" style="display:none" onchange="handleCardScan(this)">
+                <div id="scanStatus" style="display:none;margin-top:10px;padding:10px 16px;border-radius:10px;font-size:0.85rem;font-weight:600;text-align:center;"></div>
+            </div>
+            <div style="text-align:center;color:#4d7a4d;font-size:0.75rem;margin-bottom:16px;letter-spacing:0.05em;">— or fill in manually —</div>
+
+            <label>Business Name</label>
+            <input type="text" id="bizName" placeholder="e.g. Evervale, Paradise Seeds..." oninput="slugify()">
+
+            <label>Club / Slug (auto-filled)</label>
+            <input type="text" id="bizSlug" placeholder="evervale" oninput="updatePreview()">
+
+            <div class="row">
+                <div>
+                    <label>Category</label>
+                    <select id="bizType" onchange="updatePreview()">
+                        <option value="club">🌿 Social Club</option>
+                        <option value="seedbank">🌱 Seed Bank</option>
+                        <option value="cultivationtech">⚙️ Cultivation Tech</option>
+                        <option value="compliancetech">⚖️ Compliance/Legal</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Country</label>
+                    <select id="bizCountry" onchange="updatePreview()">
+                        <option value="🇩🇪 Germany">🇩🇪 Germany</option>
+                        <option value="🇪🇸 Spain">🇪🇸 Spain</option>
+                        <option value="🇳🇱 Netherlands">🇳🇱 Netherlands</option>
+                        <option value="🇬🇧 UK">🇬🇧 UK</option>
+                        <option value="🇦🇹 Austria">🇦🇹 Austria</option>
+                        <option value="🇨🇿 Czech Republic">🇨🇿 Czech Republic</option>
+                        <option value="🇵🇱 Poland">🇵🇱 Poland</option>
+                        <option value="🇮🇹 Italy">🇮🇹 Italy</option>
+                        <option value="🇫🇷 France">🇫🇷 France</option>
+                    </select>
+                </div>
+            </div>
+
+            <label>Expo Ref (which event)</label>
+            <select id="refCode" onchange="updatePreview()">
+                <option value="maryjane26">Mary Jane Berlin June 2026</option>
+                <option value="spannabis26">Spannabis 2026</option>
+                <option value="prague420">Prague 420</option>
+                <option value="cannex">Cannex</option>
+                <option value="direct">Direct / No Expo</option>
+            </select>
+
+            <button class="generate-btn" onclick="generateQR()">Generate QR Card</button>
+        </div>
+
+        <!-- SIZE + CONTROLS -->
+        <div id="printArea">
+            <div class="size-row no-print">
+                <label>QR Size:</label>
+                <select id="qrSize" onchange="regenerateQR()">
+                    <option value="260">260px (Screen)</option>
+                    <option value="400" selected>400px (Print — A5)</option>
+                    <option value="600">600px (Print — A4)</option>
+                    <option value="1024">1024px (High Res)</option>
+                </select>
+            </div>
+
+            <!-- PRINTABLE CARD -->
+            <div class="qr-card-wrap">
+                <p class="qr-logo">cannabin-oid.co.uk</p>
+                <h2 class="qr-title">🤝 B2B Connect</h2>
+                <p class="qr-biz" id="previewBiz">Business Name</p>
+                <p class="qr-country" id="previewCountry">Country</p>
+                <canvas id="qrCanvas"></canvas>
+                <p class="qr-tag">Scan to list your business — free</p>
+                <div class="qr-offer">Hamlet B2B from £99.95/mo</div>
+                <div class="qr-url" id="previewUrl">cannabin-oid.co.uk/b2b-register</div>
+            </div>
+
+            <div class="controls no-print">
+                <button class="ctrl-btn ctrl-green" onclick="downloadQR()">⬇ Download PNG</button>
+                <button class="ctrl-btn ctrl-outline" onclick="window.print()">🖨️ Print Card</button>
+                <button class="ctrl-btn ctrl-outline" onclick="resetForm()">↩ New Card</button>
+            </div>
+
+            <div class="pitch-box no-print">
+                <h3>Your Pitch at the Expo</h3>
+                <p>"Scan that — takes 30 seconds. We list your business in the EU B2B cannabis directory, free. Seed banks, clubs, compliance tech, cultivation suppliers. If you want the AI strain widget running inside your club or on your member kiosk, that's the Hamlet B2B tier, £99 a month. Doc Strange built it. He was prescribed, nobody told him anything, so he built the tool that should have existed."</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE = 'https://cannabin-oid.co.uk';
+
+        function compressImage(file, maxDim, quality) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width * scale;
+                        canvas.height = img.height * scale;
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', quality).split(',')[1]);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        const COUNTRY_MAP = {
+            germany: '🇩🇪 Germany', spain: '🇪🇸 Spain',
+            netherlands: '🇳🇱 Netherlands', uk: '🇬🇧 UK',
+            austria: '🇦🇹 Austria', 'czech republic': '🇨🇿 Czech Republic',
+            poland: '🇵🇱 Poland', italy: '🇮🇹 Italy', france: '🇫🇷 France'
+        };
+
+        async function handleCardScan(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const status = document.getElementById('scanStatus');
+            const btn = document.getElementById('scanBtn');
+            btn.disabled = true;
+            status.style.display = 'block';
+            status.style.background = 'rgba(22,163,74,0.1)';
+            status.style.color = '#86efac';
+            status.textContent = '📷 Reading card...';
+
+            try {
+                const base64 = await compressImage(file, 800, 0.7);
+                const res = await fetch('/.netlify/functions/scan-b2b-card', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: base64 })
+                });
+                const data = await res.json();
+
+                if (data.error && !data.business_name) {
+                    status.style.background = 'rgba(239,68,68,0.1)';
+                    status.style.color = '#fca5a5';
+                    status.textContent = "Couldn't read it — fill in manually";
+                    setTimeout(() => { status.style.display = 'none'; btn.disabled = false; }, 2500);
+                    input.value = '';
+                    return;
+                }
+
+                let filled = 0;
+                if (data.business_name) { document.getElementById('bizName').value = data.business_name; slugify(); filled++; }
+                if (data.category) { document.getElementById('bizType').value = data.category; filled++; }
+                if (data.country) {
+                    const key = data.country.toLowerCase();
+                    const mapped = COUNTRY_MAP[key];
+                    if (mapped) { document.getElementById('bizCountry').value = mapped; filled++; }
+                }
+                if (data.city) { filled++; }
+
+                status.style.background = 'rgba(22,163,74,0.15)';
+                status.style.color = '#4ade80';
+                status.textContent = `✓ ${filled} field${filled !== 1 ? 's' : ''} filled — check and generate`;
+                setTimeout(() => { status.style.display = 'none'; btn.disabled = false; }, 3000);
+
+                updatePreview();
+            } catch (err) {
+                status.style.background = 'rgba(239,68,68,0.1)';
+                status.style.color = '#fca5a5';
+                status.textContent = 'Scan failed — fill in manually';
+                setTimeout(() => { status.style.display = 'none'; btn.disabled = false; }, 2500);
+            }
+            input.value = '';
+        }
+
+        function slugify() {
+            const name = document.getElementById('bizName').value;
+            const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+            document.getElementById('bizSlug').value = slug;
+            updatePreview();
+        }
+
+        function getQRUrl() {
+            const slug = document.getElementById('bizSlug').value.trim() || 'business';
+            const ref = document.getElementById('refCode').value;
+            return `${BASE}/b2b-register?club=${slug}&ref=${ref}`;
+        }
+
+        function updatePreview() {
+            const name = document.getElementById('bizName').value || 'Business Name';
+            const country = document.getElementById('bizCountry').value || 'Country';
+            document.getElementById('previewBiz').textContent = name;
+            document.getElementById('previewCountry').textContent = country;
+            document.getElementById('previewUrl').textContent = getQRUrl().replace('https://', '');
+        }
+
+        function generateQR() {
+            updatePreview();
+            regenerateQR();
+            document.getElementById('printArea').classList.add('visible');
+            setTimeout(() => document.getElementById('printArea').scrollIntoView({ behavior: 'smooth' }), 100);
+        }
+
+        function regenerateQR() {
+            const size = parseInt(document.getElementById('qrSize')?.value || 400);
+            QRCode.toCanvas(document.getElementById('qrCanvas'), getQRUrl(), {
+                width: size, margin: 2,
+                color: { dark: '#14532d', light: '#ffffff' }
+            });
+        }
+
+        function downloadQR() {
+            const slug = document.getElementById('bizSlug').value.trim() || 'business';
+            const ref = document.getElementById('refCode').value;
+            QRCode.toDataURL(getQRUrl(), { width: 1024, margin: 2, color: { dark: '#14532d', light: '#ffffff' } }, (err, dataUrl) => {
+                if (err) return;
+                const a = document.createElement('a');
+                a.download = `cannabin-oid-b2b-${slug}-${ref}.png`;
+                a.href = dataUrl;
+                a.click();
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('printArea').classList.remove('visible');
+            document.getElementById('bizName').value = '';
+            document.getElementById('bizSlug').value = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

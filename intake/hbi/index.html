@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparky — HBI Europe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a1a0a; color: #c8e6c8; font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .container { max-width: 560px; width: 100%; text-align: center; }
+  .sparky-name { font-size: 1rem; color: #16a34a; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+  h1 { font-size: 1.8rem; color: #86efac; margin-bottom: 0.75rem; line-height: 1.3; }
+  .intro { color: #a3c4a3; font-size: 1.05rem; margin-bottom: 2.5rem; line-height: 1.6; }
+  .lang-choice { display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 2rem; }
+  .lang-btn { background: #0f2a0f; border: 2px solid #16a34a; color: #86efac; border-radius: 10px; padding: 0.75rem 1.25rem; cursor: pointer; font-size: 1rem; transition: background 0.2s; }
+  .lang-btn:hover { background: #163a16; border-color: #86efac; }
+  .lang-btn.active { background: #16a34a; color: #0a1a0a; font-weight: 700; }
+  .mode-choice { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+  .mode-btn { background: #0f2a0f; border: 2px solid #16a34a; color: #86efac; border-radius: 12px; padding: 1.25rem 1.5rem; cursor: pointer; text-align: left; transition: background 0.2s; }
+  .mode-btn:hover { background: #163a16; border-color: #86efac; }
+  .mode-btn .mode-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .mode-btn .mode-desc { font-size: 0.9rem; color: #a3c4a3; }
+  .question-text { font-size: 1.2rem; color: #86efac; margin-bottom: 2rem; line-height: 1.5; min-height: 3.5rem; }
+  .record-btn { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #16a34a; background: #0f2a0f; color: #86efac; font-size: 3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+  .record-btn.recording { background: #3a0a0a; border-color: #ef4444; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 50% { box-shadow: 0 0 0 16px rgba(239,68,68,0); } }
+  .record-status { font-size: 0.95rem; color: #a3c4a3; margin-bottom: 0.5rem; min-height: 1.4rem; }
+  .record-timer { font-size: 0.85rem; color: #16a34a; margin-bottom: 1.5rem; min-height: 1.2rem; }
+  audio { width: 100%; margin-bottom: 1rem; }
+  .next-btn { display: none; background: #16a34a; color: #0a1a0a; border: none; border-radius: 8px; padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600; cursor: pointer; }
+  .next-btn:hover { background: #86efac; }
+  .done-msg { display: none; color: #86efac; font-size: 1.1rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-top: 2rem; color: #16a34a; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+  .share-pitch { background: #0f2a0f; border: 1px solid #16a34a; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left; }
+  .share-pitch p { font-size: 0.95rem; color: #a3c4a3; line-height: 1.6; }
+  .upload-area { border: 2px dashed #16a34a; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; cursor: pointer; position: relative; }
+  .upload-area:hover { background: #0f2a0f; }
+  .upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-label { font-size: 1rem; font-weight: 600; color: #86efac; margin-bottom: 0.3rem; }
+  .upload-desc { font-size: 0.85rem; color: #a3c4a3; }
+  .upload-files { font-size: 0.85rem; color: #16a34a; margin-top: 0.5rem; min-height: 1.2rem; }
+  .share-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; }
+  .share-btn { background: #16a34a; color: #0a1a0a; border: none; border-radius: 8px; padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600; cursor: pointer; }
+  .share-btn:hover { background: #86efac; }
+  .skip-link { color: #16a34a; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+  .offer-btn {
+    background: transparent; color: #86efac;
+    border: 2px solid #16a34a; border-radius: 8px;
+    padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s; width: 100%;
+  }
+  .offer-btn:hover { background: #0f2a0f; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="lang-screen">
+    <p class="sparky-name">Sparky</p>
+    <h1>Welcome, Daniel.</h1>
+    <p class="intro" style="margin-bottom:1.5rem;">Choose your language to get started.</p>
+    <div class="lang-choice">
+      <button class="lang-btn active" onclick="setLang('en', this)">🇬🇧 English</button>
+      <button class="lang-btn" onclick="setLang('de', this)">🇩🇪 Deutsch</button>
+      <button class="lang-btn" onclick="setLang('es', this)">🇪🇸 Español</button>
+    </div>
+    <button class="mode-btn" style="text-align:center; margin-top:0.5rem;" onclick="goToIntro()">
+      <div class="mode-title">Continue →</div>
+    </button>
+  </div>
+  <div id="intro-screen" class="hidden"><p class="sparky-name">Sparky</p><h1 id="intro-title"></h1><p class="intro" id="intro-body"></p><div class="mode-choice"><button class="mode-btn" onclick="startMode('interview')"><div class="mode-title" id="mode-interview-title"></div><div class="mode-desc" id="mode-interview-desc"></div></button><button class="mode-btn" onclick="startMode('free')"><div class="mode-title" id="mode-free-title"></div><div class="mode-desc" id="mode-free-desc"></div></button></div></div>
+  <div id="share-screen" class="hidden"><p class="sparky-name">Sparky</p><h1 id="share-title"></h1><div class="share-pitch"><p id="share-pitch-text"></p></div><div class="upload-area"><input type="file" id="public-upload" multiple accept=".pdf,.csv,.xlsx,.txt,.jpg,.png" onchange="showFiles('public-upload','public-files')"><div class="upload-label" id="share-public-label"></div><div class="upload-desc" id="share-public-desc"></div><div class="upload-files" id="public-files"></div></div><div class="upload-area"><input type="file" id="private-upload" multiple accept=".pdf,.csv,.xlsx,.txt,.jpg,.png" onchange="showFiles('private-upload','private-files')"><div class="upload-label" id="share-private-label"></div><div class="upload-desc" id="share-private-desc"></div><div class="upload-files" id="private-files"></div></div><div class="share-actions"><button class="share-btn" onclick="finishSession()" id="share-send-btn"></button><span class="skip-link" onclick="finishSession()" id="share-skip-link"></span></div></div>
+  <div id="offer-screen" class="hidden"><p class="sparky-name">Sparky</p><h1 id="offer-title"></h1><p class="intro" id="offer-intro"></p><div style="background:#0f2a0f; border:2px solid #16a34a; border-radius:14px; padding:1.5rem; margin-bottom:1.25rem; text-align:left;"><p style="font-size:1.1rem; font-weight:700; color:#86efac; margin-bottom:1rem;" id="offer-trial-headline"></p><ul style="list-style:none; padding:0; color:#c8e6c8; font-size:0.95rem; line-height:2;" id="offer-features"></ul></div><div style="background:#0a1a0a; border:1px solid #16a34a; border-radius:10px; padding:1rem; margin-bottom:1.5rem; text-align:left;"><p style="font-size:0.9rem; color:#a3c4a3; margin-bottom:0.5rem;" id="offer-pricing-label"></p><p style="font-size:1.4rem; font-weight:700; color:#86efac;" id="offer-price-monthly"></p><p style="font-size:0.85rem; color:#16a34a; margin-top:0.25rem;" id="offer-price-annual"></p></div><div style="background:#0f2a0f; border:1px solid #16a34a; border-radius:10px; padding:1rem; margin-bottom:1.5rem; text-align:left;"><p style="font-size:0.95rem; color:#86efac; font-style:italic; line-height:1.6;" id="offer-flywheel"></p></div><div class="share-actions"><button class="share-btn" onclick="acceptOffer()" id="offer-accept-btn"></button><span class="skip-link" onclick="declineOffer()" id="offer-static-btn"></span></div></div>
+  <div id="recorder-screen" class="hidden"><p class="sparky-name">Sparky</p><p class="question-text" id="question-text"></p><button class="record-btn" id="record-btn" onclick="toggleRecording()">🎙️</button><p class="record-status" id="record-status"></p><p class="record-timer" id="record-timer"></p><div id="playback" class="hidden"><audio id="audio-player" controls></audio><button class="next-btn" id="next-btn" onclick="nextQuestion()"></button></div><div class="done-msg" id="done-msg"></div><span class="back-link" id="back-link" onclick="resetAll()"></span></div>
+</div>
+<script>
+  const COPY = {
+    en: {
+      introTitle: "Tell me about HBI Europe.",
+      introBody: "You found your piece of the jigsaw. RAW is already in the hands of everyone who opens up. Your piece is the infrastructure of that moment. Tell me everything.",
+      modeInterviewTitle: "🎙️ Let Sparky ask the questions", modeInterviewDesc: "One question at a time. About 10 minutes.",
+      modeFreeTitle: "💬 I'll just talk", modeFreeDesc: "Hit record and tell me what's on your mind.",
+      tapToRecord: "Tap to start recording", recording: "Recording… tap to stop",
+      recorded: s=>`Recorded (${s}s). Listen back, then continue.`,
+      nextGood: "That's good →", nextDone: "Done ✓", backLink: "← Start again",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">That's everything for now. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;"><strong style="color:#86efac;">Don't panic. We've got you.</strong></p>`,
+      micDenied: "Microphone access denied.", noSupport: "Try Chrome or Safari.",
+      questions: [
+        "HBI distributes RAW, Elements, Juicy Jay's across Europe. What's the scale of that operation — how many countries, how many SKUs?",
+        "RAW has an almost cult following among smokers. In your experience, what is it about RAW that creates that loyalty?",
+        "You work with cannabis clubs, head shops, and distributors across Europe. What does the typical buyer actually need from a supplier that they can't always find?",
+        "What's the most underestimated product in the HBI catalogue — the one that moves quietly but punches above its weight?",
+        "If a cannabis club in the UK wanted to stock HBI products for the first time, what's the first thing you'd tell them?"
+      ],
+      freePrompt: "Hit record and tell me about HBI — the brands you carry, how you operate, what you offer the industry.",
+      shareTitle: "Got data to share?",
+      sharePitch: "When Ask Terp recommends rolling papers or accessories to patients, HBI brands should be in the conversation. Share what you want mentioned — product specs, what makes RAW different, what clubs should know.",
+      sharePublicLabel: "🌿 Share with Ask Terp", sharePublicDesc: "Product catalogue, brand specs, what you recommend to clubs.",
+      sharePrivateLabel: "🔒 Keep this private", sharePrivateDesc: "Pricing tiers, wholesale terms. Only your hamlet team.",
+      shareSend: "Send it →", shareSkip: "Nothing to share right now — skip",
+      offerTitle: "RAW is already in every moment where people open up.", offerIntro: "HBI's distribution reaches every stall, every circle, every rollup. That is not accessory business. That is access. Your piece is in the hands of every person in this chain. If you want a SpicyDrive built around what HBI carries, that is a one-to-one conversation.",
+      offerTrialHeadline: "What a SpicyDrive looks like for you:",
+      offerFeatures: ["🌿 Your voice recorded and built into your own AI familiar","🌿 Your hamlet page on cannabin-oid.co.uk","🌿 Built one to one — not a product, a collaboration","🌿 The rescue chain, with HBI's distribution as the access layer"],
+      offerPricingLabel: "Your next step:", offerPriceMonthly: "Tell Chris. That is it.",
+      offerPriceAnnual: "One conversation. One to one. No forms. No funnels.",
+      offerFlywheel: "\"The others will follow. We will be here waiting for them.\"",
+      offerAccept: "Tell Chris I want a SpicyDrive →", offerStatic: "I am good for now — thanks"
+    },
+    de: {
+      introTitle: "Erzähl mir von HBI Europe.",
+      introBody: "Du hast dein Puzzlestuck gefunden. RAW ist schon in den Handen derer, die sich offnen. Dein Stuck ist die Infrastruktur dieses Moments. Erzahl mir alles.",
+      modeInterviewTitle: "🎙️ Sparky stellt die Fragen", modeInterviewDesc: "Eine Frage nach der anderen.",
+      modeFreeTitle: "💬 Ich rede einfach", modeFreeDesc: "Drück auf Aufnehmen.",
+      tapToRecord: "Tippen zum Aufnehmen", recording: "Aufnahme läuft…", recorded: s=>`Aufgenommen (${s}s).`,
+      nextGood: "Gut so →", nextDone: "Fertig ✓", backLink: "← Neu starten",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">Das ist alles. 🌿</p><p style="color:#a3c4a3;"><strong style="color:#86efac;">Wir haben dich.</strong></p>`,
+      micDenied: "Mikrofonzugriff verweigert.", noSupport: "Chrome oder Safari verwenden.",
+      questions: [
+        "HBI vertreibt RAW, Elements, Juicy Jay's in ganz Europa. Wie groß ist diese Operation — wie viele Länder, wie viele SKUs?",
+        "RAW hat fast eine Kult-Anhängerschaft. Woran liegt diese Loyalität?",
+        "Was brauchen Cannabis-Clubs und Händler von einem Lieferanten, das sie nicht immer finden?",
+        "Welches Produkt im HBI-Katalog wird am meisten unterschätzt?",
+        "Ein Cannabis-Club in Großbritannien möchte zum ersten Mal HBI-Produkte führen. Was sagst du zuerst?"
+      ],
+      freePrompt: "Erzähl mir von HBI — die Marken, die du führst, wie du arbeitest, was du der Branche bietest.",
+      shareTitle: "Hast du Daten zum Teilen?",
+      sharePitch: "Wenn Ask Terp Patienten Papers empfiehlt — sollten HBI-Marken in der Antwort sein.",
+      sharePublicLabel: "🌿 Mit Ask Terp teilen", sharePublicDesc: "Produktkatalog, Markenspezifikationen.",
+      sharePrivateLabel: "🔒 Privat behalten", sharePrivateDesc: "Großhandelskonditionen — nur für dein Team.",
+      shareSend: "Absenden →", shareSkip: "Nichts zu teilen — überspringen",
+      offerTitle: "RAW ist in jedem Moment, in dem Menschen sich offnen.", offerIntro: "HBIs Distribution erreicht jeden Stand, jeden Kreis, jedes Gesprach. Das ist kein Zubehorgeschaft. Das ist Zugang. Dein Stuck liegt in den Handen jedes Menschen in dieser Kette. Wenn du einen SpicyDrive willst, der auf dem aufbaut, was HBI tragt — das ist ein Eins-zu-eins-Gesprach.",
+      offerTrialHeadline: "Was ein SpicyDrive fur dich bedeutet:",
+      offerFeatures: ["🌿 Deine Stimme aufgenommen und in deinen KI-Begleiter eingebaut","🌿 Deine Hamlet-Seite auf cannabin-oid.co.uk","🌿 Eins zu eins gebaut — kein Produkt, eine Zusammenarbeit","🌿 Die Rescue Chain, mit HBIs Distribution als Zugangssschicht"],
+      offerPricingLabel: "Dein nachster Schritt:", offerPriceMonthly: "Sag es Chris. Das ist alles.",
+      offerPriceAnnual: "Ein Gesprach. Eins zu eins. Keine Formulare.",
+      offerFlywheel: '"Die anderen werden folgen. Wir werden hier auf sie warten."',
+      offerAccept: "Chris sagen, dass ich einen SpicyDrive will →", offerStatic: "Ich bin erstmal gut — danke"
+    },
+    es: {
+      introTitle: "Cuéntame sobre HBI Europe.",
+      introBody: "Encontraste tu pieza del rompecabezas. RAW ya esta en manos de todos los que se abren. Tu pieza es la infraestructura de ese momento. Cuentame todo.",
+      modeInterviewTitle: "🎙️ Deja que Sparky pregunte", modeInterviewDesc: "Una pregunta a la vez.",
+      modeFreeTitle: "💬 Prefiero hablar libremente", modeFreeDesc: "Dale a grabar.",
+      tapToRecord: "Toca para grabar", recording: "Grabando…", recorded: s=>`Grabado (${s}s).`,
+      nextGood: "Bien →", nextDone: "Listo ✓", backLink: "← Empezar de nuevo",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">Eso es todo. 🌿</p><p style="color:#a3c4a3;"><strong style="color:#86efac;">Te tenemos.</strong></p>`,
+      micDenied: "Acceso al micrófono denegado.", noSupport: "Prueba Chrome o Safari.",
+      questions: [
+        "HBI distribuye RAW, Elements, Juicy Jay's en toda Europa. ¿Cuál es la escala — cuántos países, cuántos SKUs?",
+        "RAW tiene seguidores casi de culto. ¿A qué se debe esa lealtad?",
+        "¿Qué necesitan los clubs de cannabis y distribuidores de un proveedor que no siempre encuentran?",
+        "¿Qué producto del catálogo HBI está más subestimado?",
+        "Un club de cannabis en el UK quiere empezar a trabajar con HBI. ¿Qué le dices primero?"
+      ],
+      freePrompt: "Dale a grabar. Cuéntame sobre HBI — las marcas, cómo operáis, qué ofrecéis al sector.",
+      shareTitle: "¿Tienes datos que compartir?",
+      sharePitch: "Cuando Ask Terp recomiende papeles a pacientes — las marcas HBI deben estar en la respuesta.",
+      sharePublicLabel: "🌿 Compartir con Ask Terp", sharePublicDesc: "Catálogo de productos, especificaciones.",
+      sharePrivateLabel: "🔒 Mantener privado", sharePrivateDesc: "Condiciones mayoristas — solo tu equipo.",
+      shareSend: "Enviar →", shareSkip: "Nada que compartir — saltar",
+      offerTitle: "RAW ya esta en cada momento en el que la gente se abre.", offerIntro: "La distribucion de HBI llega a cada stand, cada circulo, cada conversacion. Eso no es negocio de accesorios. Eso es acceso. Tu pieza esta en manos de cada persona en esta cadena. Si quieres un SpicyDrive construido alrededor de lo que lleva HBI, esa es una conversacion uno a uno.",
+      offerTrialHeadline: "Lo que un SpicyDrive significa para ti:",
+      offerFeatures: ["🌿 Tu voz grabada y construida en tu propio familiar de IA","🌿 Tu pagina hamlet en cannabin-oid.co.uk","🌿 Construido uno a uno — no un producto, una colaboracion","🌿 La cadena de rescate, con la distribucion de HBI como capa de acceso"],
+      offerPricingLabel: "Tu siguiente paso:", offerPriceMonthly: "Dile a Chris. Eso es todo.",
+      offerPriceAnnual: "Una conversacion. Uno a uno. Sin formularios.",
+      offerFlywheel: '"Los demas vendran. Aqui estaremos esperandolos."',
+      offerAccept: "Decirle a Chris que quiero un SpicyDrive →", offerStatic: "Por ahora estoy bien — gracias"
+    }
+  };
+  let lang='en',mode=null,currentQ=0,mediaRecorder=null,audioChunks=[],audioBlob=null,recordingTimer=null,recordingSeconds=0,micStream=null;
+  const MAX_RECORDING=180;
+  function setLang(l,btn){lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  function goToIntro(){const c=COPY[lang];document.getElementById('intro-title').textContent=c.introTitle;document.getElementById('intro-body').textContent=c.introBody;document.getElementById('mode-interview-title').textContent=c.modeInterviewTitle;document.getElementById('mode-interview-desc').textContent=c.modeInterviewDesc;document.getElementById('mode-free-title').textContent=c.modeFreeTitle;document.getElementById('mode-free-desc').textContent=c.modeFreeDesc;document.getElementById('lang-screen').classList.add('hidden');document.getElementById('intro-screen').classList.remove('hidden');}
+  function startMode(m){mode=m;currentQ=0;document.getElementById('intro-screen').classList.add('hidden');document.getElementById('recorder-screen').classList.remove('hidden');document.getElementById('back-link').textContent=COPY[lang].backLink;document.getElementById('record-status').textContent=COPY[lang].tapToRecord;showQuestion();}
+  function showQuestion(){document.getElementById('audio-player').pause();document.getElementById('audio-player').src='';document.getElementById('playback').classList.add('hidden');document.getElementById('next-btn').style.display='none';document.getElementById('done-msg').style.display='none';document.getElementById('record-status').textContent=COPY[lang].tapToRecord;document.getElementById('record-timer').textContent='';document.getElementById('question-text').textContent=mode==='free'?COPY[lang].freePrompt:COPY[lang].questions[currentQ];}
+  function nextQuestion(){document.getElementById('audio-player').pause();document.getElementById('audio-player').src='';if(mode==='free'){endSession();return;}currentQ++;if(currentQ>=COPY[lang].questions.length){endSession();}else{showQuestion();}}
+  function endSession(){releaseMic();document.getElementById('recorder-screen').classList.add('hidden');const c=COPY[lang];document.getElementById('share-title').textContent=c.shareTitle;document.getElementById('share-pitch-text').innerHTML=c.sharePitch;document.getElementById('share-public-label').textContent=c.sharePublicLabel;document.getElementById('share-public-desc').textContent=c.sharePublicDesc;document.getElementById('share-private-label').textContent=c.sharePrivateLabel;document.getElementById('share-private-desc').textContent=c.sharePrivateDesc;document.getElementById('share-send-btn').textContent=c.shareSend;document.getElementById('share-skip-link').textContent=c.shareSkip;document.getElementById('share-screen').classList.remove('hidden');}
+  function finishSession(){document.getElementById('share-screen').classList.add('hidden');const c=COPY[lang];document.getElementById('offer-title').textContent=c.offerTitle;document.getElementById('offer-intro').textContent=c.offerIntro;document.getElementById('offer-trial-headline').textContent=c.offerTrialHeadline;document.getElementById('offer-features').innerHTML=c.offerFeatures.map(f=>`<li>${f}</li>`).join('');document.getElementById('offer-pricing-label').textContent=c.offerPricingLabel;document.getElementById('offer-price-monthly').textContent=c.offerPriceMonthly;document.getElementById('offer-price-annual').textContent=c.offerPriceAnnual;document.getElementById('offer-flywheel').textContent=c.offerFlywheel;document.getElementById('offer-accept-btn').textContent=c.offerAccept;document.getElementById('offer-static-btn').textContent=c.offerStatic;document.getElementById('offer-screen').classList.remove('hidden');}
+  function acceptOffer(){document.getElementById('offer-screen').classList.add('hidden');window.open('https://wa.me/447976884254?text=Hi+Chris%2C+it%27s+Daniel+from+HBI+Europe.+I+want+a+SpicyDrive.','_blank');document.getElementById('done-msg').innerHTML=`<p style="font-size:1.4rem; margin-bottom:1rem;">On its way. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;"><strong style="color:#86efac;">Chris will be in touch.</strong></p>`;document.getElementById('done-msg').style.display='block';}
+  function declineOffer(){document.getElementById('offer-screen').classList.add('hidden');document.getElementById('done-msg').innerHTML=`<p style="font-size:1.4rem; margin-bottom:1rem;">Grateful you are here. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;"><strong style="color:#86efac;">The others will follow. We will be here waiting for them.</strong></p>`;document.getElementById('done-msg').style.display='block';}
+  function showFiles(inputId,displayId){document.getElementById(displayId).textContent=Array.from(document.getElementById(inputId).files).map(f=>f.name).join(', ')||'';}
+  function resetAll(){stopRecording();releaseMic();mode=null;currentQ=0;document.getElementById('lang-screen').classList.remove('hidden');['intro-screen','recorder-screen'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('done-msg').style.display='none';}
+  async function toggleRecording(){if(mediaRecorder&&mediaRecorder.state==='recording'){stopRecording();}else{await startRecording();}}
+  async function startRecording(){const c=COPY[lang];if(!navigator.mediaDevices){document.getElementById('record-status').textContent=c.noSupport;return;}try{if(!micStream)micStream=await navigator.mediaDevices.getUserMedia({audio:true});audioChunks=[];mediaRecorder=new MediaRecorder(micStream);mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};mediaRecorder.onstop=()=>{document.getElementById('audio-player').src=URL.createObjectURL(new Blob(audioChunks,{type:'audio/webm'}));document.getElementById('playback').classList.remove('hidden');const nb=document.getElementById('next-btn');nb.style.display='inline-block';nb.textContent=(mode==='free'||currentQ>=COPY[lang].questions.length-1)?c.nextDone:c.nextGood;document.getElementById('record-status').textContent=c.recorded(recordingSeconds);uploadRecording(audioBlob,recordingSeconds);};mediaRecorder.start(100);recordingSeconds=0;document.getElementById('record-btn').classList.add('recording');document.getElementById('record-btn').innerHTML='⏹';document.getElementById('record-status').textContent=c.recording;recordingTimer=setInterval(()=>{recordingSeconds++;document.getElementById('record-timer').textContent=recordingSeconds+'s';if(recordingSeconds>=MAX_RECORDING)stopRecording();},1000);}catch(e){document.getElementById('record-status').textContent=c.micDenied;}}
+  function stopRecording(){if(recordingTimer){clearInterval(recordingTimer);recordingTimer=null;}if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();document.getElementById('record-btn').classList.remove('recording');document.getElementById('record-btn').innerHTML='🎙️';document.getElementById('record-timer').textContent='';}
+  function releaseMic(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}}
+  function uploadRecording(blob,durationSeconds){const reader=new FileReader();reader.onloadend=()=>{const base64=reader.result.split(',')[1];fetch('/.netlify/functions/save-intake-recording',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:'hbi',questionIndex:currentQ,mode:mode,lang:lang,audioBase64:base64,durationSeconds:durationSeconds,mimeType:'audio/webm'})}).catch(err=>console.warn('Recording upload failed:',err));};reader.readAsDataURL(blob);}
+</script>
+</body>
+</html>

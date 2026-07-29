@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doc is in Berlin — Mary Jane Berlin, June 2026 | Cannabin-Oid</title>
+    <meta name="description" content="Doc Strange (Chris P Tee) is at Mary Jane Berlin June 2026 — working with EQ Genetics, Sir Canapa, and the cannabis industry's finest. The village grew.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { overflow-x: clip; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: #0a1a0a; color: #c8e6c8; overflow-x: clip; }
+
+        .hero {
+            background: linear-gradient(135deg, #14532d 0%, #166534 50%, #15803d 100%);
+            padding: 48px 20px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(251,191,36,0.12) 0%, transparent 70%);
+        }
+        .hero-eyebrow { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; color: #4ade80; text-transform: uppercase; margin-bottom: 12px; }
+        .hero h1 { font-size: 2.2rem; font-weight: 800; color: white; margin: 0 0 8px; line-height: 1.2; }
+        .hero h1 span { color: #fbbf24; }
+        .hero-dates { font-size: 1rem; font-weight: 700; color: #86efac; margin-bottom: 20px; }
+        .hero-statement {
+            max-width: 500px; margin: 0 auto 28px;
+            font-size: 1rem; color: rgba(255,255,255,0.85); line-height: 1.7;
+        }
+        .hero-statement strong { color: #fbbf24; }
+        .hero-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1a0a00; font-weight: 800; border: none; border-radius: 12px; padding: 14px 24px; font-size: 0.95rem; cursor: pointer; text-decoration: none; display: inline-block; transition: transform 0.15s; }
+        .btn-outline { background: transparent; border: 2px solid #4ade80; color: #4ade80; border-radius: 12px; padding: 13px 24px; font-size: 0.95rem; cursor: pointer; text-decoration: none; display: inline-block; font-weight: 700; transition: all 0.15s; }
+        .btn-gold:active, .btn-outline:active { transform: scale(0.97); }
+
+        .body { max-width: 620px; margin: 0 auto; padding: 32px 16px 60px; }
+
+        .section-title {
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+            color: #4ade80; text-transform: uppercase; margin-bottom: 16px;
+            padding-bottom: 8px; border-bottom: 1px solid rgba(74,222,128,0.2);
+        }
+
+        .declaration {
+            background: rgba(22,163,74,0.06);
+            border-left: 3px solid #16a34a;
+            border-radius: 0 16px 16px 0;
+            padding: 20px 20px 20px 24px;
+            margin-bottom: 32px;
+            font-size: 1rem; line-height: 1.8; color: #a7d7a7;
+        }
+        .declaration strong { color: #86efac; }
+
+        /* FAMILY CARDS */
+        .family-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+        .family-card {
+            background: rgba(22,163,74,0.05);
+            border: 1px solid rgba(22,163,74,0.15);
+            border-radius: 16px; padding: 18px 20px;
+        }
+        .family-card .name { font-size: 1rem; font-weight: 700; color: #86efac; margin-bottom: 4px; }
+        .family-card .role { font-size: 0.75rem; font-weight: 600; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+        .family-card .desc { font-size: 0.88rem; color: #6b9e6b; line-height: 1.6; }
+        .family-card .quote { font-style: italic; color: #86efac; font-size: 0.88rem; margin-top: 8px; border-left: 2px solid #16a34a; padding-left: 12px; }
+
+        /* BUSINESS FAMILY */
+        .biz-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+        .biz-card {
+            background: rgba(22,163,74,0.04);
+            border: 1px solid rgba(22,163,74,0.12);
+            border-radius: 12px; padding: 14px 16px;
+            display: flex; align-items: flex-start; gap: 12px;
+        }
+        .biz-icon { font-size: 1.4rem; flex-shrink: 0; }
+        .biz-name { font-weight: 700; color: #86efac; font-size: 0.9rem; }
+        .biz-note { font-size: 0.8rem; color: #6b9e6b; margin-top: 2px; line-height: 1.5; }
+
+        /* WHY */
+        .why-block {
+            background: linear-gradient(135deg, #14532d, #166534);
+            border-radius: 20px; padding: 28px 24px;
+            text-align: center; margin-bottom: 32px;
+        }
+        .why-block h2 { color: white; font-size: 1.3rem; font-weight: 800; margin-bottom: 12px; }
+        .why-block p { color: #86efac; font-size: 0.9rem; line-height: 1.7; margin-bottom: 16px; }
+        .why-block .tagline { color: #fbbf24; font-weight: 700; font-size: 1rem; }
+
+        /* FOOTER BAR */
+        .footer-bar {
+            background: #0f2b0f;
+            border-top: 1px solid rgba(22,163,74,0.15);
+            padding: 20px 16px;
+            text-align: center;
+        }
+        .footer-bar a { color: #4ade80; text-decoration: none; font-size: 0.85rem; margin: 0 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <p class="hero-eyebrow">Live from the Floor</p>
+        <h1>Doc is in<br><span>Mary Jane Berlin</span></h1>
+        <p class="hero-dates">📍 Berlin, Germany &nbsp;·&nbsp; June 11–14, 2026</p>
+        <p class="hero-statement">
+            Cannabis is <strong>my medicine</strong>. I'm here representing cannabin-oid, the FeelFamous Village,<br>
+            and every patient who was handed a leaflet and told nothing.<br>
+            <strong>The village grew today.</strong>
+        </p>
+        <div class="hero-btns">
+            <a href="/index.html?tab=b2b" onclick="localStorage.setItem('mjb_visit','1');window.location='/index.html?tab=b2b';return false;" class="btn-gold">🤝 Join B2B Connect</a>
+            <a href="https://wa.me/447976884254?text=Mary%20Jane%20Berlin%20%E2%80%94%20I%20saw%20your%20page" target="_blank" rel="noopener" class="btn-outline">📱 Message Doc</a>
+        </div>
+    </div>
+
+    <div class="body">
+
+        <!-- DECLARATION -->
+        <p class="section-title">Why I'm Going</p>
+        <div class="declaration">
+            <p>I spent 42 years self-medicating. Nobody told me there was a legal route. When I finally got prescribed, nobody told me what the strains did, what the terpenes meant, or how to find the right one. So I built <strong>Cannabin-Oid</strong> — the thing that should have existed.</p>
+            <br>
+            <p>Mary Jane Berlin is Europe's biggest cannabis expo. I'm going to meet the people who grow it, who sell it, who run clubs for it, who build the technology around it — and I'm going to tell them that there's a platform that connects them all. <strong>Built by a patient. Free to join. No corporate agenda.</strong></p>
+            <br>
+            <p>If you've got a problem with cannabis being discussed openly — with the science of terpenes and the politics of prescription — <strong>move along.</strong> This is medicine. My medicine. And I'm proud of it.</p>
+        </div>
+
+        <!-- THE BILBAO FAMILY -->
+        <p class="section-title">The Bilbao Family — Honoured Here</p>
+        <p style="font-size:0.85rem;color:#4d7a4d;margin-bottom:16px;line-height:1.6;">These are the people I met at Spannabis, Bilbao, April 2026. Not contacts. Not leads. Family. This page exists partly because of them.</p>
+
+        <div class="family-grid">
+            <div class="family-card">
+                <div class="name">Alessandra</div>
+                <div class="role">The Daughter</div>
+                <div class="desc">Spanish. Warm, genuine, and immediately one of us. One of the first people I met at Spannabis — and one of the reasons Bilbao felt like home.</div>
+            </div>
+            <div class="family-card">
+                <div class="name">Traverse Dean</div>
+                <div class="role">Brother / Shaman</div>
+                <div class="desc">Syrian heritage, born in Germany, based in Gran Canaria. Hand-builds Aladdin's lamp vaporizers. A natural shaman — the kind of person the whole room gravitates toward. An honour to know him.</div>
+                <div class="quote">"Good morning to another piece of my soul. You are a very special person which I'm so happy to have met and learn from. You have now family in Gran Canaria, Germany and Syria."</div>
+            </div>
+            <div class="family-card">
+                <div class="name">Ethan</div>
+                <div class="role">Brother</div>
+                <div class="desc">Korean-American. New York roots, California soil, now living in Spain. A man on a genuine journey. Big love to Ethan.</div>
+            </div>
+            <div class="family-card">
+                <div class="name">Cielle</div>
+                <div class="role">Family</div>
+                <div class="desc">They were with us in Bilbao. Good to have them there.</div>
+            </div>
+            <div class="family-card">
+                <div class="name">DRO — Canna TV</div>
+                <div class="role">Brother · Filmmaker · Man in Europe</div>
+                <div class="desc">Filmmaker, broadcaster, Canna TV. DRO is my man in Europe — he travels, films, and makes sure the world sees what's actually happening out there. Massive respect.</div>
+            </div>
+            <div class="family-card">
+                <div class="name">Raymond — The Bulldog, Amsterdam</div>
+                <div class="role">The Connection</div>
+                <div class="desc">The Bulldog, Amsterdam. A fellow believer in education, knowledge, and giving it freely. Raymond gets it. Respect.</div>
+            </div>
+            <div class="family-card">
+                <div class="name">Colly — Donald Denzler</div>
+                <div class="role">In Memoriam &nbsp;·&nbsp; Dean's Mentor</div>
+                <div class="desc">Inventor of the VapBong. Fifteen years building ceramic vaporizer-bong hybrids by hand. Got cheated by a company he trusted with his techniques. Went back to making them himself. Died a few weeks before Spannabis. Dean was grieving.</div>
+                <div class="quote">"Vaporizing without water is like driving without air in your tyres." — Colly</div>
+                <div style="margin-top:12px;"><a href="/hamlet/colly/" style="color:#4ade80;font-size:0.8rem;font-weight:700;">Visit Colly's Memorial &raquo;</a></div>
+            </div>
+        </div>
+
+        <!-- BUSINESS FAMILY -->
+        <p class="section-title">The Business Family — Met at Spannabis 2026</p>
+        <p style="font-size:0.85rem;color:#4d7a4d;margin-bottom:16px;line-height:1.6;">These are the people and businesses who gave me their time, their data, and their trust. They're all in the <a href="/?#b2b" style="color:#4ade80;">B2B Connect directory</a>. They deserve to be named here.</p>
+
+        <div class="biz-grid">
+            <div class="biz-card">
+                <div class="biz-icon">🌱</div>
+                <div>
+                    <div class="biz-name">Paradise Seeds</div>
+                    <div class="biz-note">Gave us a 10% discount code for the village (THANKYOU). Active partnership in development. Award-winning genetics since 1994.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">🌿</div>
+                <div>
+                    <div class="biz-name">Fares Hassouna — Evervale</div>
+                    <div class="biz-note">Cologne CSC operating under the new German Cannabis Act. Called cannabin-oid "a proper concept." Berlin meetup confirmed for June.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">🌱</div>
+                <div>
+                    <div class="biz-name">Dutch Passion</div>
+                    <div class="biz-note">Handed over their full 11-terpene phytochemistry research matrix and complete cultivar catalog. That data is now inside Ask Terp. Every patient who uses this site benefits from their generosity.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">🌱</div>
+                <div>
+                    <div class="biz-name">Exclusive Seeds Bank</div>
+                    <div class="biz-note">Shared their full strain database — genetics, yields, THC, retail pricing across four collections. All in the directory.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">⚙️</div>
+                <div>
+                    <div class="biz-name">PAX — James Harrison, EU Sales Manager</div>
+                    <div class="biz-note">The vaporizer brand that prescribed patients actually use. Direct B2B conversation opened. Partnership in development.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">🌿</div>
+                <div>
+                    <div class="biz-name">The Lanzarote Four — Dream Green · Medicanna House · Green House · Green Indoor Famara</div>
+                    <div class="biz-note">Four club owners. Met at Spannabis in person. The deal is real: say "Feel Famous Baby," show them this page, walk in free with a pre-roll. They gave that to every patient who finds this site. That's not business — that's community.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">🌱</div>
+                <div>
+                    <div class="biz-name">Carnales Seeds — Basque Country</div>
+                    <div class="biz-note">Underground genetics with deep regional roots. Met in person. In the directory.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MARY JANE BERLIN — WHAT HAPPENED -->
+        <p class="section-title">Mary Jane Berlin — Who Doc Found</p>
+        <p style="font-size:0.85rem;color:#4d7a4d;margin-bottom:16px;line-height:1.6;">The businesses in this room are not competitors — they're a supply chain that didn't know it existed yet. Doc showed them the supply chain. These are the people who got it immediately.</p>
+
+        <div class="biz-grid">
+            <div class="biz-card" style="border-color:rgba(251,191,36,0.5);background:rgba(251,191,36,0.07);">
+                <div class="biz-icon">👑</div>
+                <div>
+                    <div class="biz-name" style="color:#fbbf24;">Royal Queen Seeds — Daniel Morris</div>
+                    <div class="biz-note"><strong style="color:#86efac;">We are in.</strong> royalqueenseeds.com · EU Sales Manager Daniel Morris. Doc's number one seed company — the one he most wanted to work with. They fell in love at the stand. Shared ethos. Shared vision on patient education, community, and the way cannabis should be. Doc said "you're my number one" and Daniel said "come on, let's do it." That's not a business card exchange. That's a partnership.</div>
+                </div>
+            </div>
+            <div class="biz-card" style="border-color:rgba(251,191,36,0.35);background:rgba(251,191,36,0.04);">
+                <div class="biz-icon">🌟</div>
+                <div>
+                    <div class="biz-name" style="color:#fbbf24;">Sir Canapa — Marco</div>
+                    <div class="biz-note"><strong style="color:#86efac;">Big up to Marco.</strong> sircanapa.com · @sircanapa · Milan + Prague (opening soon — Marco's moving there). Not just a cannabis store. A survivor of one of the hardest cannabis markets in Europe — 15 years deep, still standing, still going. Fabulous energy. Into Noel Gallagher (confirmed, not Liam). Stone Roses. Doc took a selfie with him at their stand. This is the kind of person the village exists for. Massive love.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">🧬</div>
+                <div>
+                    <div class="biz-name">EQ Genetics — Equilibrium Genetics</div>
+                    <div class="biz-note">One of the standout genetics operations Doc connected with on the floor at Mary Jane Berlin. The precision and the philosophy aligned. In the B2B directory. Watch this space.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">🌱</div>
+                <div>
+                    <div class="biz-name">Blimburn Seeds — BBG Products</div>
+                    <div class="biz-note">CEO Sergio Martinez. Barcelona-based, global reach. Best Seed Bank USA 2024. 15+ years of premium feminised and auto-flowering genetics. Partnership and licensing opportunities — this is a serious operation and they showed it.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">🌿</div>
+                <div>
+                    <div class="biz-name">Fares Hassouna — Evervale</div>
+                    <div class="biz-note">Already connected at Spannabis. The Berlin meetup confirmed — and delivered. Cologne CSC under the new German Cannabis Act. Called cannabin-oid "a proper concept." He was right.</div>
+                </div>
+            </div>
+            <div class="biz-card">
+                <div class="biz-icon">✊</div>
+                <div>
+                    <div class="biz-name">The Floor — Everyone Who Stopped</div>
+                    <div class="biz-note">Seed banks from Berlin. CSCs from across Germany. Compliance tech. Advocacy. Vaporizer brands. Cultivators. The ones who heard the pitch and said "that makes sense." Every single one of them is in the B2B directory — live, free, collaborative. That's the village.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHY IT MATTERS -->
+        <div class="why-block">
+            <h2>What This Is All About</h2>
+            <p>Cannabin-Oid exists because when I got prescribed, nobody told me anything. I built it so that never happens to another patient. The B2B network exists so that the businesses doing it right — the seed banks with real genetics, the clubs with real compliance, the tech companies making it safer — can find each other.</p>
+            <p>Mary Jane Berlin is where the next chapter started. The village walked in. The village walked out bigger. If you were there and want your business in the directory — it's free, it's live, and it takes ten seconds.</p>
+            <p class="tagline">Just trying to be useful. One ember at a time. 🌿</p>
+        </div>
+
+        <div style="text-align:center;">
+            <a href="/b2b-qr-generator.html" style="display:inline-block;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);color:#4ade80;padding:12px 24px;border-radius:12px;font-weight:700;font-size:0.85rem;text-decoration:none;margin-bottom:12px;">🤝 B2B Connect Directory</a>
+        </div>
+
+    </div>
+
+    <div class="footer-bar">
+        <a href="/">&laquo; Cannabin-Oid</a>
+        <a href="https://feelfamous.co.uk">FeelFamous Village</a>
+        <a href="https://wa.me/447976884254">WhatsApp Doc</a>
+    </div>
+
+</body>
+</html>

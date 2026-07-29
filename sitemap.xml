@@ -1,51 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://motor-oid.co.uk/</loc>
+    <loc>https://cannabin-oid.co.uk/</loc>
     <priority>1.0</priority>
     <changefreq>weekly</changefreq>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-05-08</lastmod>
   </url>
   <url>
-    <loc>https://motor-oid.co.uk/sell</loc>
-    <priority>0.9</priority>
-    <changefreq>weekly</changefreq>
-    <lastmod>2026-06-06</lastmod>
-  </url>
-  <url>
-    <loc>https://motor-oid.co.uk/story</loc>
+    <loc>https://cannabin-oid.co.uk/story</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-05-08</lastmod>
   </url>
   <url>
-    <loc>https://motor-oid.co.uk/operators/join</loc>
+    <loc>https://cannabin-oid.co.uk/hamlet/colly</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-05-08</lastmod>
   </url>
   <url>
-    <loc>https://motor-oid.co.uk/dealers</loc>
+    <loc>https://cannabin-oid.co.uk/hamlet/doc</loc>
     <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-    <lastmod>2026-06-06</lastmod>
-  </url>
-  <url>
-    <loc>https://motor-oid.co.uk/dealers/join</loc>
-    <priority>0.6</priority>
     <changefreq>monthly</changefreq>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-05-08</lastmod>
   </url>
   <url>
-    <loc>https://motor-oid.co.uk/hamlet</loc>
+    <loc>https://cannabin-oid.co.uk/hamlet</loc>
     <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-    <lastmod>2026-06-06</lastmod>
-  </url>
-  <url>
-    <loc>https://motor-oid.co.uk/hamlet/gr-autos</loc>
-    <priority>0.6</priority>
     <changefreq>monthly</changefreq>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-05-08</lastmod>
   </url>
 </urlset>

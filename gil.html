@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gil Hunt | Cultivator | Cannabin-Oid</title>
+    <meta name="description" content="35 years growing cannabis. Never joined the system. Still standing at 52. This is who I am.">
+    <link rel="icon" type="image/jpeg" href="cannabin-oid.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #030a03;
+            --deep: #071407;
+            --primary: #16a34a;
+            --primary-light: #22c55e;
+            --gold: #d4a017;
+            --gold-dark: #b8860b;
+            --gold-light: #f5c842;
+            --forest: #14532d;
+            --forest-dark: #0f3d22;
+            --cream: #f0f7f0;
+            --text: #c8e6c8;
+            --text-muted: #6b9e6b;
+            --candle: #86efac;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, var(--midnight) 0%, var(--deep) 50%, var(--midnight) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+        .font-hand { font-family: 'Poppins', sans-serif;
+            font-weight: 700; }
+        .container { max-width: 780px; margin: 0 auto; padding: 20px; }
+
+        /* Nav */
+        .site-nav {
+            background: rgba(3,10,3,0.96);
+            border-bottom: 1px solid rgba(22,163,74,0.2);
+            padding: 13px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 15px;
+            flex-wrap: wrap;
+        }
+        .site-nav a { color: var(--text-muted); text-decoration: none; white-space: nowrap; }
+        .site-nav a:hover { color: var(--gold-light); }
+        .site-nav .home { color: var(--primary-light); font-weight: 600; }
+        .site-nav .sep { color: rgba(255,255,255,0.2); margin: 0 4px; }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(160deg, #020a02 0%, #071407 60%, #030a03 100%);
+            text-align: center;
+            padding: 64px 24px 54px;
+            border-bottom: 2px solid rgba(22,163,74,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(22,163,74,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(22,163,74,0.1);
+            border: 1px solid rgba(22,163,74,0.35);
+            color: var(--candle);
+            padding: 8px 22px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-bottom: 26px;
+        }
+        .hero-name {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: clamp(2.8rem, 9vw, 5rem);
+            color: var(--cream);
+            line-height: 1.05;
+            margin-bottom: 14px;
+            text-shadow: 0 0 50px rgba(22,163,74,0.2);
+        }
+        .hero-tagline {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: rgba(200,230,200,0.75);
+            font-style: italic;
+            font-weight: 300;
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* The big quote */
+        .central-quote {
+            background: linear-gradient(135deg, rgba(212,160,23,0.07) 0%, rgba(7,20,7,0.98) 100%);
+            border: 1px solid rgba(212,160,23,0.25);
+            border-left: 4px solid var(--gold);
+            border-radius: 0 20px 20px 0;
+            padding: 36px 36px 36px 32px;
+            margin: 40px 0;
+            position: relative;
+        }
+        .central-quote .open-quote {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 5rem;
+            color: var(--gold);
+            opacity: 0.3;
+            line-height: 0.5;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .central-quote blockquote {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.5rem, 4vw, 2.1rem);
+            color: var(--gold-light);
+            line-height: 1.45;
+            margin-bottom: 16px;
+        }
+        .central-quote .attribution {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 22px;
+        }
+        .card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.8rem, 5vw, 2.4rem);
+            color: var(--gold);
+            margin-bottom: 18px;
+            line-height: 1.2;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        .card p { margin-bottom: 16px; }
+        .card p:last-child { margin-bottom: 0; }
+
+        .card-forest {
+            background: linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);
+            border: none;
+            color: var(--cream);
+        }
+        .card-forest h2 { color: var(--candle); }
+        .card-forest p { color: rgba(240,247,240,0.9); }
+
+        .card-ember {
+            background: linear-gradient(135deg, rgba(22,163,74,0.07) 0%, rgba(7,20,7,0.97) 100%);
+            border: 1px solid rgba(22,163,74,0.2);
+        }
+
+        /* Inline pull quote */
+        .pull {
+            border-left: 3px solid var(--primary-light);
+            padding: 14px 22px;
+            margin: 22px 0;
+            background: rgba(34,197,94,0.05);
+            border-radius: 0 12px 12px 0;
+        }
+        .pull p {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.1rem, 4vw, 1.5rem);
+            color: var(--candle);
+            line-height: 1.4;
+            margin: 0 !important;
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .stat {
+            flex: 1;
+            min-width: 130px;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(22,163,74,0.15);
+            border-radius: 14px;
+            padding: 18px 16px;
+            text-align: center;
+        }
+        .stat .num {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 2.4rem;
+            color: var(--candle);
+            display: block;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .stat .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Give me a clue (native details) */
+        .clue-wrap {
+            margin: 18px 0 0;
+        }
+        .clue-wrap details {
+            border: 1px solid rgba(22,163,74,0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .clue-wrap summary {
+            padding: 11px 18px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .clue-wrap summary::-webkit-details-marker { display: none; }
+        .clue-wrap summary:hover { color: var(--candle); }
+        .clue-wrap details[open] summary { color: var(--candle); border-bottom: 1px solid rgba(22,163,74,0.15); }
+        .clue-wrap .clue-body {
+            padding: 16px 18px;
+            font-size: 0.95rem;
+            color: rgba(200,230,200,0.75);
+            font-style: italic;
+            line-height: 1.7;
+        }
+
+        /* Village callout */
+        .village-callout {
+            background: linear-gradient(135deg, rgba(22,163,74,0.12) 0%, rgba(7,20,7,0.97) 100%);
+            border: 2px solid rgba(22,163,74,0.3);
+            border-radius: 20px;
+            padding: 36px 32px;
+            text-align: center;
+            margin: 40px 0;
+        }
+        .village-callout .vc-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        .village-callout h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            color: var(--candle);
+            margin-bottom: 14px;
+            line-height: 1.3;
+        }
+        .village-callout p {
+            color: rgba(200,230,200,0.75);
+            max-width: 520px;
+            margin: 0 auto 22px;
+            font-size: 1rem;
+        }
+        .village-callout a {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            padding: 13px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .village-callout a:hover { background: var(--primary-light); }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid rgba(22,163,74,0.12);
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .footer-logo {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--primary-light);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .footer p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .footer a { color: var(--text-muted); text-decoration: none; }
+        .footer a:hover { color: var(--candle); }
+
+        @media (max-width: 480px) {
+            .card { padding: 22px 18px; }
+            .central-quote { padding: 24px 18px 24px 18px; border-left-width: 3px; }
+            .stats-row { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="site-nav">
+        <a class="home" href="https://cannabin-oid.co.uk">Cannabin-Oid</a>
+        <span class="sep">·</span>
+        <a href="https://cannabin-oid.co.uk#village">The Village</a>
+        <span class="sep">·</span>
+        <a href="https://cannabin-oid.co.uk#b2b">B2B Directory</a>
+        <span class="sep">·</span>
+        <span style="color:rgba(255,255,255,0.35)">Gil Hunt</span>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-badge">Cultivator &nbsp;·&nbsp; 52 years old &nbsp;·&nbsp; 35 years growing</div>
+        <h1 class="hero-name">Gil Hunt</h1>
+        <p class="hero-tagline">The plant found me when I was 15.<br>I never let go. It never let me down.</p>
+    </header>
+
+    <div class="container">
+
+        <!-- The central quote -->
+        <div class="central-quote">
+            <span class="open-quote">"</span>
+            <blockquote>The system is deeply corrupt — but perfect for those who profit from it.</blockquote>
+            <p class="attribution">— Gil Hunt</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat">
+                <span class="num">35</span>
+                <span class="label">Years cultivating</span>
+            </div>
+            <div class="stat">
+                <span class="num">52</span>
+                <span class="label">Years alive</span>
+            </div>
+            <div class="stat">
+                <span class="num">0</span>
+                <span class="label">Times sold out</span>
+            </div>
+        </div>
+
+        <!-- Origin -->
+        <div class="card">
+            <h2>Where I come from</h2>
+            <p>I came from wealth. Properly wealthy — famous actors around the dinner table, movie stars in the living room. All the comfort and access that money buys. It was all there.</p>
+            <p>I didn't want it.</p>
+            <p>I wasn't naive. I didn't reject it because I didn't understand it. I rejected it because I understood it exactly. I could see the cage early. Most people spend a lifetime walking into it before they notice the bars.</p>
+            <div class="pull">
+                <p>"They told me money doesn't grow on trees. They told me I had to be programmed."</p>
+            </div>
+            <p>I was 14. I wouldn't do it. I chose cannabis. I chose community. I chose something real over something comfortable.</p>
+            <p>I've never regretted that.</p>
+
+            <div class="clue-wrap">
+                <details>
+                    <summary>Give me a clue 🎈</summary>
+                    <div class="clue-body">
+                        Imagine a bird that was handed a perfectly good cage — heated perch, regular food, a window. Most birds learn to love the cage. A few look out the window long enough to remember they have wings. Gil was 14 when he looked out the window. He hasn't stopped flying since.
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- The community -->
+        <div class="card card-forest">
+            <h2>The village before the village</h2>
+            <p>For 35 years I've been growing cannabis and sharing it with my people. And they were never customers. That word never fit.</p>
+            <p>They were family. They still are. People you go through things with. People who show up. The kind of relationship you don't build through a transaction — you build it through trust over time, through showing up, through the plant being the common ground.</p>
+            <p>I've spent my whole adult life inside a community most people don't know exists. Not a subculture. Not a scene. A genuine network of human beings who care for each other, built around something that was supposed to be shameful and turned out to be the most honest thing in the room.</p>
+            <p>That community is why I'm still here.</p>
+        </div>
+
+        <!-- The cost -->
+        <div class="card">
+            <h2>What it cost</h2>
+            <p>I've been to jail. Been deported. Lost everything I owned — more than once. Not once. More than once.</p>
+            <p>I'm not saying that for sympathy. I'm saying it because those things happened and I'm still here at 52, still growing, still part of the community I chose when I was a teenager. That means something.</p>
+            <p>The system took what it could. It didn't take the relationships. It didn't take the knowledge. It didn't take 35 years of understanding what this plant does for people and what people do for each other when they gather around it.</p>
+
+            <div class="pull">
+                <p>"I've survived my entire life since I was 14 off of growing — and the family I grew it for."</p>
+            </div>
+
+            <p>You can lose things and still be standing. That's not a small thing.</p>
+        </div>
+
+        <!-- Where I'm going -->
+        <div class="card card-ember">
+            <h2>Where I'm going</h2>
+            <p>The world is catching up. The industry is moving. Legalisation, regulation, conferences, B2B deals — all of it is happening now. There's space for people like me in the legitimate world. I know that.</p>
+            <p>But I will not join the system to do it. That's not stubbornness. That's the whole point.</p>
+            <p>Thirty-five years of operating outside the system gave me something the system cannot manufacture: genuine trust from genuine people. Real relationships. Real knowledge. Real community. None of that came from a compliance document or a business plan.</p>
+            <p>I'm looking to move forward in a way that honours what was built, not one that erases it. The plant and the people — they're the same thing to me. They always have been.</p>
+
+            <div class="clue-wrap">
+                <details>
+                    <summary>Give me a clue 🎈</summary>
+                    <div class="clue-body">
+                        Some things can't be reverse-engineered. You can build a brand-new bar on the high street, kit it out perfectly, hire great staff. But you can't buy the local where three generations of the same families have been going for forty years. That regulars' warmth — that's Gil. You don't build it from scratch. You recognise it and show up.
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Village callout -->
+        <div class="village-callout">
+            <p class="vc-label">Found at Mary Jane Berlin · June 2026</p>
+            <h3>Gil found the village.<br>The village found Gil.</h3>
+            <p>Cannabin-Oid is the community Doc Strange built because nobody built it when he needed it. A village of cannabis patients, advocates, growers and businesses. Gil belongs here. Maybe you do too.</p>
+            <a href="https://cannabin-oid.co.uk">Come into the village</a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a class="footer-logo" href="https://cannabin-oid.co.uk">Cannabin-Oid</a>
+        <p>The cannabis village. No ads. No algorithms. Just people.</p>
+        <p style="margin-top:16px;">
+            <a href="https://cannabin-oid.co.uk">cannabin-oid.co.uk</a>
+            &nbsp;·&nbsp;
+            <a href="https://cannabin-oid.co.uk#village">Join the village</a>
+        </p>
+        <p style="margin-top:20px;font-size:0.8rem;color:rgba(107,158,107,0.5);">
+            This page was made with care by the Cannabin-Oid village, June 2026.
+        </p>
+    </footer>
+
+</body>
+</html>

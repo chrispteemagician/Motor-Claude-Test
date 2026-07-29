@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Doc Strange — cannabin-oid</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,900;1,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: #b8ddb8;
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+  }
+
+  .card {
+    background: linear-gradient(135deg, #b8ddb8 0%, #d4edcf 40%, #c5e6be 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ghost leaf watermark */
+  .card::after {
+    content: '🌿';
+    position: absolute;
+    right: -2%;
+    bottom: -5%;
+    font-size: 35%;
+    opacity: 0.07;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  /* Subtle top accent line */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #2e7d32, #66bb6a, #2e7d32);
+  }
+
+  .left {
+    flex: 1;
+  }
+
+  .brand {
+    font-weight: 900;
+    color: #1b5e20;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .brand .oid {
+    color: #33691e;
+  }
+
+  .descriptor {
+    font-weight: 700;
+    color: #2d5a27;
+    line-height: 1.5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tagline {
+    font-weight: 600;
+    font-style: italic;
+    color: #1b4d1b;
+    line-height: 1.5;
+    border-left: 5px solid #43a047;
+  }
+
+  .right {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .name {
+    font-weight: 900;
+    color: #1b5e20;
+    letter-spacing: -0.5px;
+  }
+
+  .contact-block { }
+
+  .contact-label {
+    display: block;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #43a047;
+  }
+
+  .contact-value {
+    display: block;
+    font-weight: 700;
+    color: #1a3d1a;
+  }
+
+  .signal-note {
+    font-weight: 600;
+    color: #558b2f;
+    display: block;
+  }
+
+  .qr-block {
+    margin-top: auto;
+    padding-top: 1.2vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .qr-block img {
+    border-radius: 6px;
+    border: 3px solid #2e7d32;
+    display: block;
+  }
+  .qr-label {
+    font-size: clamp(6px, 0.75vw, 9px);
+    font-weight: 700;
+    color: #43a047;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: right;
+  }
+
+  /* ─── LANDSCAPE (natural or auto-rotated) ─── */
+  @media (orientation: landscape) {
+    .card {
+      width: 100vw;
+      height: 100dvh;
+      padding: 5vh 7vw;
+    }
+    .card::after { font-size: 35vw; }
+    .left { padding-right: 4vw; }
+    .brand { font-size: clamp(28px, 6vw, 72px); }
+    .descriptor { font-size: clamp(9px, 1.5vw, 17px); margin-top: 1.5vh; max-width: 38vw; }
+    .tagline { font-size: clamp(11px, 1.8vw, 20px); margin-top: 2.5vh; max-width: 42vw; padding-left: 1.2vw; }
+    .name { font-size: clamp(20px, 3.2vw, 40px); margin-bottom: 2.5vh; }
+    .contact-block { margin-bottom: 1.5vh; }
+    .contact-label { font-size: clamp(7px, 0.85vw, 11px); margin-bottom: 2px; }
+    .contact-value { font-size: clamp(11px, 1.6vw, 18px); }
+    .signal-note { font-size: clamp(7px, 0.85vw, 11px); margin-top: 2px; }
+  }
+
+  /* ─── PORTRAIT: rotate the card so screenshot is portrait,
+         turn phone sideways to read it correctly ─── */
+  @media (orientation: portrait) {
+    .card {
+      /* Landscape dimensions, rotated into the portrait viewport */
+      width: 100dvh;
+      height: 100dvw;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(90deg);
+      padding: 5dvw 7dvh;
+      /* centre both halves — contacts float in middle, not pinned to bottom edge */
+      justify-content: center;
+      gap: 8dvw;
+    }
+    .card::after { font-size: 35dvh; }
+    .left { padding-right: 4dvh; }
+    .brand { font-size: clamp(28px, 6dvh, 72px); }
+    .descriptor { font-size: clamp(9px, 1.5dvh, 17px); margin-top: 1.5dvw; max-width: 38dvh; }
+    .tagline { font-size: clamp(11px, 1.8dvh, 20px); margin-top: 2.5dvw; max-width: 42dvh; padding-left: 1.2dvh; }
+    .name { font-size: clamp(20px, 3.2dvh, 40px); margin-bottom: 2.5dvw; }
+    .contact-block { margin-bottom: 1.5dvw; }
+    .contact-label { font-size: clamp(7px, 0.85dvh, 11px); margin-bottom: 2px; }
+    .contact-value { font-size: clamp(11px, 1.6dvh, 18px); }
+    .signal-note { font-size: clamp(7px, 0.85dvh, 11px); margin-top: 2px; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="left">
+    <div class="brand">cannabin-<span class="oid">oid</span></div>
+    <div class="descriptor">The decentralised network for<br>cannabis users to become<br>cannabis patients</div>
+    <div class="tagline">"Give me your client<br>and I'll give you<br>their friends."</div>
+  </div>
+  <div class="right">
+    <div class="name">Doc Strange</div>
+    <div class="contact-block">
+      <span class="contact-label">web</span>
+      <span class="contact-value">cannabin-oid.co.uk</span>
+    </div>
+    <div class="contact-block">
+      <span class="contact-label">email</span>
+      <span class="contact-value">doc@glowgadgets.co.uk</span>
+    </div>
+    <div class="contact-block">
+      <span class="contact-label">phone</span>
+      <span class="contact-value">+44 7976 884 254</span>
+      <span class="signal-note">also on Signal</span>
+    </div>
+    <div class="qr-block">
+      <div id="qr"></div>
+      <span class="qr-label">scan to visit</span>
+    </div>
+  </div>
+</div>
+<script>
+  (function() {
+    var size = Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.12);
+    size = Math.max(64, Math.min(size, 100));
+    new QRCode(document.getElementById('qr'), {
+      text: 'https://cannabin-oid.co.uk',
+      width: size,
+      height: size,
+      colorDark: '#1b5e20',
+      colorLight: '#d4edcf',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    // QRCode lib uses canvas internally — extract to img for reliability
+    var canvas = document.querySelector('#qr canvas');
+    if (canvas) {
+      var img = new Image();
+      img.src = canvas.toDataURL('image/png');
+      img.style.cssText = canvas.style.cssText;
+      canvas.parentNode.replaceChild(img, canvas);
+    }
+  })();
+</script>
+</body>
+</html>

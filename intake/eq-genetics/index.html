@@ -1,0 +1,562 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparky — EQ Genetics</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a1a0a;
+    color: #c8e6c8;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .container { max-width: 560px; width: 100%; text-align: center; }
+  .sparky-name { font-size: 1rem; color: #16a34a; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+  h1 { font-size: 1.8rem; color: #86efac; margin-bottom: 0.75rem; line-height: 1.3; }
+  .intro { color: #a3c4a3; font-size: 1.05rem; margin-bottom: 2.5rem; line-height: 1.6; }
+
+  /* LANGUAGE */
+  .lang-choice { display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 2rem; }
+  .lang-btn {
+    background: #0f2a0f; border: 2px solid #16a34a; color: #86efac;
+    border-radius: 10px; padding: 0.75rem 1.25rem; cursor: pointer;
+    font-size: 1rem; transition: background 0.2s, border-color 0.2s;
+  }
+  .lang-btn:hover { background: #163a16; border-color: #86efac; }
+  .lang-btn.active { background: #16a34a; color: #0a1a0a; font-weight: 700; }
+
+  /* MODE */
+  .mode-choice { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+  .mode-btn {
+    background: #0f2a0f; border: 2px solid #16a34a; color: #86efac;
+    border-radius: 12px; padding: 1.25rem 1.5rem; cursor: pointer; text-align: left;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .mode-btn:hover { background: #163a16; border-color: #86efac; }
+  .mode-btn .mode-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .mode-btn .mode-desc { font-size: 0.9rem; color: #a3c4a3; }
+
+  /* RECORDER */
+  .question-text { font-size: 1.2rem; color: #86efac; margin-bottom: 2rem; line-height: 1.5; min-height: 3.5rem; }
+  .record-btn {
+    width: 120px; height: 120px; border-radius: 50%;
+    border: 3px solid #16a34a; background: #0f2a0f; color: #86efac;
+    font-size: 3rem; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;
+  }
+  .record-btn:hover { background: #163a16; border-color: #86efac; }
+  .record-btn.recording { background: #3a0a0a; border-color: #ef4444; animation: pulse 1.2s infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(239,68,68,0); }
+  }
+  .record-status { font-size: 0.95rem; color: #a3c4a3; margin-bottom: 0.5rem; min-height: 1.4rem; }
+  .record-timer { font-size: 0.85rem; color: #16a34a; margin-bottom: 1.5rem; min-height: 1.2rem; }
+  audio { width: 100%; margin-bottom: 1rem; }
+  .next-btn {
+    display: none; background: #16a34a; color: #0a1a0a;
+    border: none; border-radius: 8px; padding: 0.85rem 2rem;
+    font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+  }
+  .next-btn:hover { background: #86efac; }
+  .done-msg { display: none; color: #86efac; font-size: 1.1rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-top: 2rem; color: #16a34a; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+
+  /* SHARE SCREEN */
+  .share-pitch { background: #0f2a0f; border: 1px solid #16a34a; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left; }
+  .share-pitch p { font-size: 0.95rem; color: #a3c4a3; line-height: 1.6; }
+  .share-pitch strong { color: #86efac; }
+  .upload-area {
+    border: 2px dashed #16a34a; border-radius: 10px; padding: 1.25rem;
+    margin-bottom: 1rem; cursor: pointer; transition: background 0.2s;
+    position: relative;
+  }
+  .upload-area:hover { background: #0f2a0f; }
+  .upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-label { font-size: 1rem; font-weight: 600; color: #86efac; margin-bottom: 0.3rem; }
+  .upload-desc { font-size: 0.85rem; color: #a3c4a3; }
+  .upload-files { font-size: 0.85rem; color: #16a34a; margin-top: 0.5rem; min-height: 1.2rem; }
+  .share-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; }
+  .share-btn {
+    background: #16a34a; color: #0a1a0a; border: none;
+    border-radius: 8px; padding: 0.85rem 2rem;
+    font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+  }
+  .share-btn:hover { background: #86efac; }
+  .skip-link { color: #16a34a; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+  .offer-btn {
+    background: transparent; color: #86efac;
+    border: 2px solid #16a34a; border-radius: 8px;
+    padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s; width: 100%;
+  }
+  .offer-btn:hover { background: #0f2a0f; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- LANGUAGE SELECT -->
+  <div id="lang-screen">
+    <p class="sparky-name">Sparky</p>
+    <h1>Welcome, Jason.</h1>
+    <p class="intro" style="margin-bottom:1.5rem;">Choose your language to get started.</p>
+    <div class="lang-choice">
+      <button class="lang-btn active" onclick="setLang('en', this)">🇬🇧 English</button>
+      <button class="lang-btn" onclick="setLang('de', this)">🇩🇪 Deutsch</button>
+      <button class="lang-btn" onclick="setLang('es', this)">🇪🇸 Español</button>
+    </div>
+    <button class="mode-btn" style="text-align:center; margin-top:0.5rem;" onclick="goToIntro()">
+      <div class="mode-title" id="lang-continue-btn">Continue →</div>
+    </button>
+  </div>
+
+  <!-- INTRO / MODE SELECT -->
+  <div id="intro-screen" class="hidden">
+    <p class="sparky-name">Sparky</p>
+    <h1 id="intro-title"></h1>
+    <p class="intro" id="intro-body"></p>
+    <div class="mode-choice">
+      <button class="mode-btn" onclick="startMode('interview')">
+        <div class="mode-title" id="mode-interview-title"></div>
+        <div class="mode-desc" id="mode-interview-desc"></div>
+      </button>
+      <button class="mode-btn" onclick="startMode('free')">
+        <div class="mode-title" id="mode-free-title"></div>
+        <div class="mode-desc" id="mode-free-desc"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- SHARE SCREEN -->
+  <div id="share-screen" class="hidden">
+    <p class="sparky-name">Sparky</p>
+    <h1 id="share-title"></h1>
+    <div class="share-pitch"><p id="share-pitch-text"></p></div>
+
+    <div class="upload-area">
+      <input type="file" id="public-upload" multiple accept=".pdf,.csv,.xlsx,.txt,.json,.jpg,.png" onchange="showFiles('public-upload','public-files')">
+      <div class="upload-label" id="share-public-label"></div>
+      <div class="upload-desc" id="share-public-desc"></div>
+      <div class="upload-files" id="public-files"></div>
+    </div>
+
+    <div class="upload-area">
+      <input type="file" id="private-upload" multiple accept=".pdf,.csv,.xlsx,.txt,.json,.jpg,.png" onchange="showFiles('private-upload','private-files')">
+      <div class="upload-label" id="share-private-label"></div>
+      <div class="upload-desc" id="share-private-desc"></div>
+      <div class="upload-files" id="private-files"></div>
+    </div>
+
+    <div class="share-actions">
+      <button class="share-btn" onclick="finishSession()" id="share-send-btn"></button>
+      <span class="skip-link" onclick="finishSession()" id="share-skip-link"></span>
+    </div>
+  </div>
+
+  <!-- OFFER SCREEN -->
+  <div id="offer-screen" class="hidden">
+    <p class="sparky-name">Sparky</p>
+    <h1 id="offer-title"></h1>
+    <p class="intro" id="offer-intro"></p>
+
+    <div style="background:#0f2a0f; border:2px solid #16a34a; border-radius:14px; padding:1.5rem; margin-bottom:1.25rem; text-align:left;">
+      <p style="font-size:1.1rem; font-weight:700; color:#86efac; margin-bottom:1rem;" id="offer-trial-headline"></p>
+      <ul style="list-style:none; padding:0; color:#c8e6c8; font-size:0.95rem; line-height:2;" id="offer-features"></ul>
+    </div>
+
+    <div style="background:#0a1a0a; border:1px solid #16a34a; border-radius:10px; padding:1rem; margin-bottom:1.5rem; text-align:left;">
+      <p style="font-size:0.9rem; color:#a3c4a3; margin-bottom:0.5rem;" id="offer-pricing-label"></p>
+      <p style="font-size:1.4rem; font-weight:700; color:#86efac;" id="offer-price-monthly"></p>
+      <p style="font-size:0.85rem; color:#16a34a; margin-top:0.25rem;" id="offer-price-annual"></p>
+    </div>
+
+    <div style="background:#0f2a0f; border:1px solid #16a34a; border-radius:10px; padding:1rem; margin-bottom:1.5rem; text-align:left;">
+      <p style="font-size:0.95rem; color:#86efac; font-style:italic; line-height:1.6;" id="offer-flywheel"></p>
+    </div>
+
+    <div class="share-actions">
+      <button class="share-btn" onclick="declineOffer()" id="offer-static-btn"></button>
+      <button class="offer-btn" onclick="acceptOffer()" id="offer-accept-btn"></button>
+    </div>
+  </div>
+
+  <!-- RECORDER -->
+  <div id="recorder-screen" class="hidden">
+    <p class="sparky-name">Sparky</p>
+    <p class="question-text" id="question-text"></p>
+    <button class="record-btn" id="record-btn" onclick="toggleRecording()" aria-label="Start recording">🎙️</button>
+    <p class="record-status" id="record-status"></p>
+    <p class="record-timer" id="record-timer"></p>
+    <div id="playback" class="hidden">
+      <audio id="audio-player" controls></audio>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()"></button>
+    </div>
+    <div class="done-msg" id="done-msg"></div>
+    <span class="back-link" id="back-link" onclick="resetAll()"></span>
+  </div>
+
+</div>
+<script>
+  // ── COPY ──────────────────────────────────────────────────────────────────
+  const COPY = {
+    en: {
+      introTitle: "Tell me about EQ Genetics.",
+      introBody: "I'll listen. I won't share anything you say. This is just between us.",
+      modeInterviewTitle: "🎙️ Let Sparky ask the questions",
+      modeInterviewDesc: "I'll guide you through it — one question at a time. Takes about 10 minutes.",
+      modeFreeTitle: "💬 I'll just talk",
+      modeFreeDesc: "Hit record and tell me whatever's on your mind. No questions. No structure.",
+      tapToRecord: "Tap to start recording",
+      recording: "Recording… tap to stop",
+      recorded: s => `Recorded (${s}s). Listen back, then continue.`,
+      nextGood: "That's good →",
+      nextDone: "Done ✓",
+      backLink: "← Start again",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">That's everything for now. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">Trinity are going to work their magic.<br>We'll be right back with something brilliant.<br><br><strong style="color:#86efac;">Don't panic. We've got you.</strong></p>`,
+      micDenied: "Microphone access denied — allow mic access and try again.",
+      noSupport: "Your browser does not support recording. Try Chrome or Safari.",
+      questions: [
+        "Tell me about EQ Genetics. How did it start?",
+        "What do you actually love about the work? The part that makes it all worth it.",
+        "What's the hardest part — the thing that sometimes makes you wonder why you bother?",
+        "Give me your pitch. If a friend asked what EQ Genetics does, what would you say?",
+        "Anything else — hours, where to find you, what makes EQ Genetics different from everyone else?"
+      ],
+      freePrompt: "Hit record whenever you're ready. Tell me about EQ Genetics — your story, your work, anything you want people to know.",
+      shareTitle: "Got data to share?",
+      sharePitch: "Anything you share with Ask Terp becomes part of the education. When patients ask about genetics, terpene profiles, or strains — your name comes up. That's how you get new customers. It costs you nothing. You choose what goes in.",
+      sharePublicLabel: "🌿 Share with Ask Terp",
+      sharePublicDesc: "Terpene profiles, strain data, lab results, anything you're proud of. Terp will reference it when patients ask.",
+      sharePrivateLabel: "🔒 Keep this private",
+      sharePrivateDesc: "Pricing, formulas, anything in-house. Only you and your hamlet team will see it.",
+      shareSend: "Send it →",
+      shareSkip: "Nothing to share right now — skip",
+      offerTitle: "You're already part of this.",
+      offerIntro: "The misinformation around cannabis is real — you know it, we know it. We're building the grassroots to fix it, one honest business at a time. You don't have to pay anything to have a place here. But if you love what we're building and want to support it, we have something special for the people who believe early.",
+      offerTrialHeadline: "🌿 Founder's offer — for the ones who get it.",
+      offerFeatures: [
+        "✅ Your own hamlet page on cannabin-oid.co.uk",
+        "✅ Ask Terp mentions you when patients ask about your products",
+        "✅ Voice intake — your story, your data, built in",
+        "✅ Your terpene & strain data in the education platform",
+        "✅ New customers from the community. Every month.",
+        "✅ You send us your customers. We send you theirs."
+      ],
+      offerPricingLabel: "If you want to support everything we're doing:",
+      offerPriceMonthly: "£99.95 / month",
+      offerPriceAnnual: "That price never goes up. Ever. You decide what it's worth to stay in the loop.",
+      offerFlywheel: "\"Send me your customers. I'll send you theirs.\"",
+      offerAccept: "I want to be a Founder →",
+      offerStatic: "Build my free page — I want to be part of the OuterNet"
+    },
+    de: {
+      introTitle: "Erzähl mir von EQ Genetics.",
+      introBody: "Ich höre zu. Was du sagst, bleibt zwischen uns.",
+      modeInterviewTitle: "🎙️ Sparky stellt die Fragen",
+      modeInterviewDesc: "Ich führe dich durch — eine Frage nach der anderen. Dauert etwa 10 Minuten.",
+      modeFreeTitle: "💬 Ich rede einfach",
+      modeFreeDesc: "Drück auf Aufnehmen und sag, was dir auf dem Herzen liegt. Keine Struktur nötig.",
+      tapToRecord: "Tippen zum Aufnehmen",
+      recording: "Aufnahme läuft… tippen zum Stoppen",
+      recorded: s => `Aufgenommen (${s}s). Anhören und weitermachen.`,
+      nextGood: "Gut so →",
+      nextDone: "Fertig ✓",
+      backLink: "← Neu starten",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">Das ist alles für jetzt. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">Trinity arbeitet jetzt ihre Magie.<br>Wir sind gleich zurück mit etwas Großartigem.<br><br><strong style="color:#86efac;">Keine Panik. Wir haben dich.</strong></p>`,
+      micDenied: "Mikrofonzugriff verweigert — bitte erlauben und erneut versuchen.",
+      noSupport: "Dein Browser unterstützt keine Aufnahmen. Bitte Chrome oder Safari verwenden.",
+      questions: [
+        "Erzähl mir von EQ Genetics. Wie hat alles angefangen?",
+        "Was liebst du wirklich an deiner Arbeit? Das, was es wirklich wert macht.",
+        "Was ist das Schwierigste — das, was dich manchmal zweifeln lässt, warum du es machst?",
+        "Wie würdest du EQ Genetics einem Freund erklären? Dein bester Pitch.",
+        "Gibt es noch etwas — Öffnungszeiten, wo man euch findet, was euch von anderen unterscheidet?"
+      ],
+      freePrompt: "Drück auf Aufnehmen, wenn du bereit bist. Erzähl mir von EQ Genetics — deine Geschichte, deine Arbeit, alles was du möchtest.",
+      shareTitle: "Hast du Daten zum Teilen?",
+      sharePitch: "Was du mit Ask Terp teilst, wird Teil der Wissensbasis. Wenn Patienten nach Genetik, Terpenprofilen oder Sorten fragen — wird dein Name erwähnt. So gewinnst du neue Kunden. Es kostet dich nichts. Du entscheidest, was hineinkommt.",
+      sharePublicLabel: "🌿 Mit Ask Terp teilen",
+      sharePublicDesc: "Terpenprofile, Sortendaten, Laborergebnisse — alles worauf du stolz bist. Terp erwähnt es, wenn Patienten fragen.",
+      sharePrivateLabel: "🔒 Privat behalten",
+      sharePrivateDesc: "Preislisten, Formeln, interne Daten. Nur du und dein Hamlet-Team sehen das.",
+      shareSend: "Absenden →",
+      shareSkip: "Nichts zu teilen — überspringen",
+      offerTitle: "Dein Angebot.",
+      offerIntro: "Weil wir uns auf der Messe getroffen haben — keine Einrichtungskosten. Keine Verpflichtungen. Einfach ausprobieren.",
+      offerTrialHeadline: "🎁 Erste Woche komplett gratis. Voller Zugang. Keine Kreditkarte nötig.",
+      offerFeatures: [
+        "✅ Deine eigene Hamlet-Seite auf cannabin-oid.co.uk",
+        "✅ Ask Terp erwähnt dich, wenn Patienten nach deinen Produkten fragen",
+        "✅ Voice Intake — deine Geschichte, deine Daten, eingebaut",
+        "✅ Deine Terpen- und Sortendaten in der Bildungsplattform",
+        "✅ Neue Kunden aus der Community. Jeden Monat.",
+        "✅ Du schickst uns deine Kunden. Wir schicken dir ihre."
+      ],
+      offerPricingLabel: "Nach deiner Gratiswoche:",
+      offerPriceMonthly: "£99.95 / Monat",
+      offerPriceAnnual: "Oder £999 / Jahr — 10 Monate, 2 Monate gratis. Keine Einrichtungsgebühr.",
+      offerFlywheel: '„Schick mir deine Kunden. Ich schicke dir ihre.',
+      offerAccept: "Gratiswoche starten →",
+      offerStatic: "Noch nicht bereit — erstmal nur eine kostenlose statische Seite"
+    },
+    es: {
+      introTitle: "Cuéntame sobre EQ Genetics.",
+      introBody: "Te escucho. Lo que digas queda entre nosotros.",
+      modeInterviewTitle: "🎙️ Deja que Sparky haga las preguntas",
+      modeInterviewDesc: "Te guío paso a paso — una pregunta a la vez. Unos 10 minutos.",
+      modeFreeTitle: "💬 Prefiero hablar libremente",
+      modeFreeDesc: "Dale a grabar y cuéntame lo que quieras. Sin preguntas, sin estructura.",
+      tapToRecord: "Toca para empezar a grabar",
+      recording: "Grabando… toca para parar",
+      recorded: s => `Grabado (${s}s). Escúchalo y continúa.`,
+      nextGood: "Bien →",
+      nextDone: "Listo ✓",
+      backLink: "← Empezar de nuevo",
+      doneMsg: `<p style="font-size:1.4rem; margin-bottom:1rem;">Eso es todo por ahora. 🌿</p><p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">Trinity va a hacer su magia.<br>Volvemos enseguida con algo brillante.<br><br><strong style="color:#86efac;">No te preocupes. Te tenemos.</strong></p>`,
+      micDenied: "Acceso al micrófono denegado — permite el acceso e inténtalo de nuevo.",
+      noSupport: "Tu navegador no soporta grabación. Prueba Chrome o Safari.",
+      questions: [
+        "Cuéntame sobre EQ Genetics. ¿Cómo empezó todo?",
+        "¿Qué es lo que realmente amas de tu trabajo? La parte que hace que valga la pena.",
+        "¿Cuál es la parte más difícil — lo que a veces te hace preguntarte por qué lo haces?",
+        "Dame tu mejor presentación. Si un amigo preguntara qué hace EQ Genetics, ¿qué dirías?",
+        "¿Hay algo más — horarios, dónde encontraros, qué os hace diferentes de los demás?"
+      ],
+      freePrompt: "Pulsa grabar cuando estés listo. Cuéntame sobre EQ Genetics — tu historia, tu trabajo, lo que quieras que la gente sepa.",
+      shareTitle: "¿Tienes datos que compartir?",
+      sharePitch: "Lo que compartes con Ask Terp pasa a formar parte de la educación. Cuando los pacientes pregunten sobre genética, perfiles de terpenos o variedades — tu nombre aparecerá. Así consigues nuevos clientes. No te cuesta nada. Tú decides qué entra.",
+      sharePublicLabel: "🌿 Compartir con Ask Terp",
+      sharePublicDesc: "Perfiles de terpenos, datos de variedades, resultados de laboratorio. Terp lo mencionará cuando los pacientes pregunten.",
+      sharePrivateLabel: "🔒 Mantener privado",
+      sharePrivateDesc: "Precios, fórmulas, datos internos. Solo tú y tu equipo de hamlet lo veréis.",
+      shareSend: "Enviar →",
+      shareSkip: "Nada que compartir por ahora — saltar",
+      offerTitle: "Tu oferta.",
+      offerIntro: "Como nos conocimos en el evento — sin coste de configuración. Sin compromisos. Solo pruébalo.",
+      offerTrialHeadline: "🎁 Primera semana completamente gratis. Acceso total. Sin tarjeta.",
+      offerFeatures: [
+        "✅ Tu propia página hamlet en cannabin-oid.co.uk",
+        "✅ Ask Terp te menciona cuando los pacientes preguntan por tus productos",
+        "✅ Voice Intake — tu historia, tus datos, integrados",
+        "✅ Tus datos de terpenos y variedades en la plataforma educativa",
+        "✅ Nuevos clientes de la comunidad. Cada mes.",
+        "✅ Tú nos mandas tus clientes. Nosotros te mandamos los suyos."
+      ],
+      offerPricingLabel: "Después de tu semana gratis:",
+      offerPriceMonthly: "£99.95 / mes",
+      offerPriceAnnual: "O £999 / año — 10 meses, 2 meses gratis. Sin coste de configuración.",
+      offerFlywheel: "\"Mándame tus clientes. Yo te mando los suyos.\"",
+      offerAccept: "Empezar mi semana gratis →",
+      offerStatic: "Aún no estoy listo — solo una página estática gratuita por ahora"
+    }
+  };
+
+  // ── STATE ─────────────────────────────────────────────────────────────────
+  let lang = 'en';
+  let mode = null;
+  let currentQ = 0;
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let audioBlob = null;
+  let recordingTimer = null;
+  let recordingSeconds = 0;
+  let micStream = null;
+  const MAX_RECORDING = 180;
+
+  // ── LANGUAGE ──────────────────────────────────────────────────────────────
+  function setLang(l, btn) {
+    lang = l;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function goToIntro() {
+    const c = COPY[lang];
+    document.getElementById('intro-title').textContent = c.introTitle;
+    document.getElementById('intro-body').textContent = c.introBody;
+    document.getElementById('mode-interview-title').textContent = c.modeInterviewTitle;
+    document.getElementById('mode-interview-desc').textContent = c.modeInterviewDesc;
+    document.getElementById('mode-free-title').textContent = c.modeFreeTitle;
+    document.getElementById('mode-free-desc').textContent = c.modeFreeDesc;
+    document.getElementById('lang-screen').classList.add('hidden');
+    document.getElementById('intro-screen').classList.remove('hidden');
+  }
+
+  // ── MODE ──────────────────────────────────────────────────────────────────
+  function startMode(selectedMode) {
+    mode = selectedMode;
+    currentQ = 0;
+    document.getElementById('intro-screen').classList.add('hidden');
+    document.getElementById('recorder-screen').classList.remove('hidden');
+    document.getElementById('back-link').textContent = COPY[lang].backLink;
+    document.getElementById('record-status').textContent = COPY[lang].tapToRecord;
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const c = COPY[lang];
+    const playback = document.getElementById('playback');
+    const nextBtn = document.getElementById('next-btn');
+    const doneMsg = document.getElementById('done-msg');
+    const player = document.getElementById('audio-player');
+
+    player.pause(); player.src = '';
+    playback.classList.add('hidden');
+    nextBtn.style.display = 'none';
+    doneMsg.style.display = 'none';
+    document.getElementById('record-status').textContent = c.tapToRecord;
+    document.getElementById('record-timer').textContent = '';
+    audioBlob = null;
+
+    document.getElementById('question-text').textContent =
+      mode === 'free' ? c.freePrompt : c.questions[currentQ];
+  }
+
+  function nextQuestion() {
+    const player = document.getElementById('audio-player');
+    player.pause(); player.src = '';
+    if (mode === 'free') { endSession(); return; }
+    currentQ++;
+    if (currentQ >= COPY[lang].questions.length) { endSession(); } else { showQuestion(); }
+  }
+
+  function endSession() {
+    releaseMic();
+    document.getElementById('recorder-screen').classList.add('hidden');
+    const c = COPY[lang];
+    document.getElementById('share-title').textContent = c.shareTitle;
+    document.getElementById('share-pitch-text').innerHTML = c.sharePitch;
+    document.getElementById('share-public-label').textContent = c.sharePublicLabel;
+    document.getElementById('share-public-desc').textContent = c.sharePublicDesc;
+    document.getElementById('share-private-label').textContent = c.sharePrivateLabel;
+    document.getElementById('share-private-desc').textContent = c.sharePrivateDesc;
+    document.getElementById('share-send-btn').textContent = c.shareSend;
+    document.getElementById('share-skip-link').textContent = c.shareSkip;
+    document.getElementById('share-screen').classList.remove('hidden');
+  }
+
+  function finishSession() {
+    document.getElementById('share-screen').classList.add('hidden');
+    // TODO: upload public-upload and private-upload files to Supabase storage
+    const c = COPY[lang];
+    document.getElementById('offer-title').textContent = c.offerTitle;
+    document.getElementById('offer-intro').textContent = c.offerIntro;
+    document.getElementById('offer-trial-headline').textContent = c.offerTrialHeadline;
+    const ul = document.getElementById('offer-features');
+    ul.innerHTML = c.offerFeatures.map(f => `<li>${f}</li>`).join('');
+    document.getElementById('offer-pricing-label').textContent = c.offerPricingLabel;
+    document.getElementById('offer-price-monthly').textContent = c.offerPriceMonthly;
+    document.getElementById('offer-price-annual').textContent = c.offerPriceAnnual;
+    document.getElementById('offer-flywheel').textContent = c.offerFlywheel;
+    document.getElementById('offer-accept-btn').textContent = c.offerAccept;
+    document.getElementById('offer-static-btn').textContent = c.offerStatic;
+    document.getElementById('offer-screen').classList.remove('hidden');
+  }
+
+  function acceptOffer() {
+    document.getElementById('offer-screen').classList.add('hidden');
+    document.getElementById('done-msg').innerHTML = COPY[lang].doneMsg;
+    document.getElementById('done-msg').style.display = 'block';
+    // TODO: record acceptance in Supabase, trigger welcome email
+  }
+
+  function declineOffer() {
+    document.getElementById('offer-screen').classList.add('hidden');
+    const c = COPY[lang];
+    document.getElementById('done-msg').innerHTML = `
+      <p style="font-size:1.4rem; margin-bottom:1rem;">That's everything for now. 🌿</p>
+      <p style="color:#a3c4a3; font-size:1.05rem; line-height:1.7;">
+        We'll get your static page live. No rush on the rest — it'll be here when you're ready.<br><br>
+        <strong style="color:#86efac;">Don't panic. We've got you.</strong>
+      </p>`;
+    document.getElementById('done-msg').style.display = 'block';
+    // TODO: record static preference in Supabase
+  }
+
+  function showFiles(inputId, displayId) {
+    const files = document.getElementById(inputId).files;
+    const names = Array.from(files).map(f => f.name).join(', ');
+    document.getElementById(displayId).textContent = names || '';
+  }
+
+  function resetAll() {
+    stopRecording(); releaseMic();
+    const player = document.getElementById('audio-player');
+    player.pause(); player.src = '';
+    mode = null; currentQ = 0; audioBlob = null;
+    document.getElementById('lang-screen').classList.remove('hidden');
+    document.getElementById('intro-screen').classList.add('hidden');
+    document.getElementById('recorder-screen').classList.add('hidden');
+    document.getElementById('record-btn').style.display = 'flex';
+    document.getElementById('done-msg').style.display = 'none';
+  }
+
+  // ── RECORDING ─────────────────────────────────────────────────────────────
+  async function toggleRecording() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') { stopRecording(); }
+    else { await startRecording(); }
+  }
+
+  async function startRecording() {
+    const c = COPY[lang];
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      document.getElementById('record-status').textContent = c.noSupport; return;
+    }
+    try {
+      if (!micStream) micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunks = []; audioBlob = null;
+      mediaRecorder = new MediaRecorder(micStream);
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(audioBlob);
+        const player = document.getElementById('audio-player');
+        player.src = url;
+        document.getElementById('playback').classList.remove('hidden');
+        const nextBtn = document.getElementById('next-btn');
+        nextBtn.style.display = 'inline-block';
+        const isLast = mode === 'free' || currentQ >= COPY[lang].questions.length - 1;
+        nextBtn.textContent = isLast ? c.nextDone : c.nextGood;
+        document.getElementById('record-status').textContent = c.recorded(recordingSeconds);
+        uploadRecording(audioBlob, recordingSeconds);
+      };
+      mediaRecorder.start(100);
+      recordingSeconds = 0;
+      const btn = document.getElementById('record-btn');
+      btn.classList.add('recording'); btn.innerHTML = '⏹';
+      document.getElementById('record-status').textContent = c.recording;
+      document.getElementById('record-timer').textContent = '';
+      recordingTimer = setInterval(() => {
+        recordingSeconds++;
+        document.getElementById('record-timer').textContent = recordingSeconds + 's';
+        if (recordingSeconds >= MAX_RECORDING) stopRecording();
+      }, 1000);
+    } catch (e) {
+      document.getElementById('record-status').textContent = COPY[lang].micDenied;
+    }
+  }
+
+  function stopRecording() {
+    if (recordingTimer) { clearInterval(recordingTimer); recordingTimer = null; }
+    if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+    const btn = document.getElementById('record-btn');
+    btn.classList.remove('recording'); btn.innerHTML = '🎙️';
+    document.getElementById('record-timer').textContent = '';
+  }
+
+  function releaseMic() {
+    if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  }
+  function uploadRecording(blob,durationSeconds){const reader=new FileReader();reader.onloadend=()=>{const base64=reader.result.split(',')[1];fetch('/.netlify/functions/save-intake-recording',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:'eq-genetics',questionIndex:currentQ,mode:mode,lang:lang,audioBase64:base64,durationSeconds:durationSeconds,mimeType:'audio/webm'})}).catch(err=>console.warn('Recording upload failed:',err));};reader.readAsDataURL(blob);}
+</script>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamás Megyes | Imkerei Megyes | Honey Named After Cannabis Strains</title>
+    <meta name="description" content="A German beekeeper turned up at a cannabis convention selling honey named after Strawberry Cough and Blue Dream. We are not joking. And it's the best honey you'll ever taste.">
+    <link rel="icon" type="image/jpeg" href="cannabin-oid.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #030a03;
+            --deep: #071407;
+            --primary: #16a34a;
+            --primary-light: #22c55e;
+            --gold: #d4a017;
+            --gold-dark: #b8860b;
+            --gold-light: #f5c842;
+            --amber: #f59e0b;
+            --amber-dark: #d97706;
+            --forest: #14532d;
+            --forest-dark: #0f3d22;
+            --cream: #f0f7f0;
+            --text: #c8e6c8;
+            --text-muted: #6b9e6b;
+            --candle: #86efac;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, var(--midnight) 0%, var(--deep) 50%, var(--midnight) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+        .container { max-width: 780px; margin: 0 auto; padding: 20px; }
+
+        /* Nav */
+        .site-nav {
+            background: rgba(3,10,3,0.96);
+            border-bottom: 1px solid rgba(22,163,74,0.2);
+            padding: 13px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 15px;
+            flex-wrap: wrap;
+        }
+        .site-nav a { color: var(--text-muted); text-decoration: none; white-space: nowrap; }
+        .site-nav a:hover { color: var(--gold-light); }
+        .site-nav .home { color: var(--primary-light); font-weight: 600; }
+        .site-nav .sep { color: rgba(255,255,255,0.2); margin: 0 4px; }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(160deg, #0a0700 0%, #1a0f00 60%, #0a0700 100%);
+            text-align: center;
+            padding: 64px 24px 54px;
+            border-bottom: 2px solid rgba(212,160,23,0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.35);
+            color: var(--gold-light);
+            padding: 8px 22px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-bottom: 26px;
+        }
+        .hero-name {
+            font-weight: 700;
+            font-size: clamp(2.4rem, 8vw, 4.5rem);
+            color: var(--cream);
+            line-height: 1.05;
+            margin-bottom: 8px;
+            text-shadow: 0 0 50px rgba(245,158,11,0.2);
+        }
+        .hero-sub {
+            font-weight: 400;
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            color: var(--amber);
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+        .hero-tagline {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: rgba(200,230,200,0.65);
+            font-style: italic;
+            font-weight: 300;
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* The big quote */
+        .central-quote {
+            background: linear-gradient(135deg, rgba(245,158,11,0.07) 0%, rgba(7,20,7,0.98) 100%);
+            border: 1px solid rgba(245,158,11,0.25);
+            border-left: 4px solid var(--amber);
+            border-radius: 0 20px 20px 0;
+            padding: 36px 36px 36px 32px;
+            margin: 40px 0;
+        }
+        .central-quote .open-quote {
+            font-weight: 800;
+            font-size: 5rem;
+            color: var(--amber);
+            opacity: 0.3;
+            line-height: 0.5;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .central-quote blockquote {
+            font-weight: 700;
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            color: var(--gold-light);
+            line-height: 1.45;
+            margin-bottom: 16px;
+        }
+        .central-quote .attribution {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 22px;
+        }
+        .card h2 {
+            font-weight: 700;
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            color: var(--gold);
+            margin-bottom: 18px;
+            line-height: 1.2;
+        }
+        .card p { margin-bottom: 16px; }
+        .card p:last-child { margin-bottom: 0; }
+
+        .card-honey {
+            background: linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(7,20,7,0.97) 100%);
+            border: 1px solid rgba(245,158,11,0.2);
+        }
+        .card-honey h2 { color: var(--amber); }
+
+        .card-forest {
+            background: linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);
+            border: none;
+            color: var(--cream);
+        }
+        .card-forest h2 { color: var(--candle); }
+        .card-forest p { color: rgba(240,247,240,0.9); }
+
+        /* Product cards */
+        .products {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .product {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+        }
+        .product .strain-name {
+            font-weight: 800;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: var(--gold-light);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .product .honey-type {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+        .product .honey-desc {
+            font-size: 0.95rem;
+            color: rgba(200,230,200,0.75);
+            line-height: 1.6;
+        }
+
+        /* Pull quote */
+        .pull {
+            border-left: 3px solid var(--amber);
+            padding: 14px 22px;
+            margin: 22px 0;
+            background: rgba(245,158,11,0.05);
+            border-radius: 0 12px 12px 0;
+        }
+        .pull p {
+            font-weight: 700;
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            color: var(--gold-light);
+            line-height: 1.4;
+            margin: 0 !important;
+        }
+
+        /* Give me a clue */
+        .clue-wrap { margin: 18px 0 0; }
+        .clue-wrap details {
+            border: 1px solid rgba(245,158,11,0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .clue-wrap summary {
+            padding: 11px 18px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .clue-wrap summary::-webkit-details-marker { display: none; }
+        .clue-wrap summary:hover { color: var(--candle); }
+        .clue-wrap details[open] summary { color: var(--candle); border-bottom: 1px solid rgba(245,158,11,0.15); }
+        .clue-wrap .clue-body {
+            padding: 16px 18px;
+            font-size: 0.95rem;
+            color: rgba(200,230,200,0.75);
+            font-style: italic;
+            line-height: 1.7;
+        }
+
+        /* CTA buttons */
+        .cta-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 28px 0 0;
+        }
+        .btn-primary {
+            display: block;
+            background: var(--amber);
+            color: #000;
+            text-decoration: none;
+            padding: 16px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: var(--gold-light); }
+        .btn-secondary {
+            display: block;
+            background: transparent;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.12);
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { color: var(--candle); border-color: rgba(255,255,255,0.3); }
+
+        /* Village callout */
+        .village-callout {
+            background: linear-gradient(135deg, rgba(22,163,74,0.12) 0%, rgba(7,20,7,0.97) 100%);
+            border: 2px solid rgba(22,163,74,0.3);
+            border-radius: 20px;
+            padding: 36px 32px;
+            text-align: center;
+            margin: 40px 0;
+        }
+        .village-callout .vc-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        .village-callout h3 {
+            font-weight: 700;
+            font-size: clamp(1.6rem, 5vw, 2.3rem);
+            color: var(--candle);
+            margin-bottom: 14px;
+            line-height: 1.3;
+        }
+        .village-callout p {
+            color: rgba(200,230,200,0.75);
+            max-width: 520px;
+            margin: 0 auto 22px;
+            font-size: 1rem;
+        }
+        .village-callout a {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            padding: 13px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .village-callout a:hover { background: var(--primary-light); }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid rgba(22,163,74,0.12);
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .footer-logo {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--primary-light);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .footer p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .footer a { color: var(--text-muted); text-decoration: none; }
+        .footer a:hover { color: var(--candle); }
+
+        @media (max-width: 540px) {
+            .products { grid-template-columns: 1fr; }
+            .card { padding: 22px 18px; }
+            .central-quote { padding: 24px 18px; border-left-width: 3px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="site-nav">
+        <a class="home" href="https://cannabin-oid.co.uk">Cannabin-Oid</a>
+        <span class="sep">·</span>
+        <a href="https://cannabin-oid.co.uk#village">The Village</a>
+        <span class="sep">·</span>
+        <a href="https://cannabin-oid.co.uk#b2b">B2B Directory</a>
+        <span class="sep">·</span>
+        <span style="color:rgba(255,255,255,0.35)">Tamás Megyes</span>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-badge">Beekeeper &nbsp;·&nbsp; Wendeburg, Germany</div>
+        <h1 class="hero-name">Tamás Megyes</h1>
+        <p class="hero-sub">Imkerei Megyes</p>
+        <p class="hero-tagline">Regional. Honest. Exquisite.</p>
+    </header>
+
+    <div class="container">
+
+        <!-- The opener -->
+        <div class="central-quote">
+            <span class="open-quote">"</span>
+            <blockquote>He walked into a cannabis convention carrying honey. Named after Strawberry Cough. We knew immediately he was our kind of person.</blockquote>
+            <p class="attribution">— Doc Strange, Mary Jane Berlin, June 2026</p>
+        </div>
+
+        <!-- The story -->
+        <div class="card">
+            <h2>How we found him</h2>
+            <p>Mary Jane Berlin, 2026. Thousands of people. Hundreds of stands. Cannabis genetics, vaporisers, compliance tech, lawyers, grow equipment. The usual.</p>
+            <p>And then: a beekeeper. With a stand. Selling honey named after cannabis strains.</p>
+            <p>Not because he was trying to be clever. Because Tamás Megyes makes gourmet honey from freeze-dried fruits, tonka beans, vanilla and gourmet spices — and he named each variety after the flavour profile it reminded him of. Strawberry Cough. Blue Dream.</p>
+            <p>The man knows what he's doing.</p>
+
+            <div class="pull">
+                <p>We brought the Blue Dream home. Someone tasted it and said: "It tastes just like my dad's honey." She was tasting the character — Frühtrachthonig, the first honey of the season. Early blossom. Naturally mild. That's what her dad tasted of too.</p>
+            </div>
+
+            <div class="clue-wrap">
+                <details>
+                    <summary>Give me a clue 🎈</summary>
+                    <div class="clue-body">
+                        You know how some people just belong in a room without needing to explain why? That. Tamás didn't show up at Mary Jane Berlin to be alternative or edgy. He showed up because his honey genuinely belongs in the same world as terpenes and flavour profiles and people who pay attention to what goes into their bodies. The industry recognised its own.
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="card card-honey">
+            <h2>The honey</h2>
+            <p>Each variety is a small batch, handcrafted in Wendeburg. These aren't supermarket jars. These are what happen when someone who genuinely cares about flavour applies the precision of a beekeeper to the vocabulary of a cannabis connoisseur.</p>
+
+            <div class="products">
+                <div class="product">
+                    <div class="strain-name">Blue Dream</div>
+                    <div class="honey-type">Tonka Bean &amp; Frühtrachthonig</div>
+                    <div class="honey-desc">Smooth, warm, with a depth that lingers. Tonka bean meets early blossom — Frühtrachthonig, the first harvest of the season. Naturally mild, naturally floral. The one that made someone think of their dad.</div>
+                </div>
+                <div class="product">
+                    <div class="strain-name">Strawberry Cough</div>
+                    <div class="honey-type">Freeze-Dried Fruit</div>
+                    <div class="honey-desc">Bright, fruity, the kind of honey that makes you go quiet for a moment. Named for the strain that shares its spirit. You'll wish you'd got this one too.</div>
+                </div>
+            </div>
+
+            <p style="font-size:0.9rem; color:var(--text-muted); text-align:center;">More varieties available — ask Tamás directly.</p>
+        </div>
+
+        <!-- The philosophy -->
+        <div class="card card-forest">
+            <h2>Regional. Honest. Exquisite.</h2>
+            <p>Tamás runs Imkerei Megyes from Wendeburg, near Braunschweig in Lower Saxony. Small operation. High standards. The honey is produced where the bees are, from what the land actually grows.</p>
+            <p>No shortcuts. No bulk blending. No mystery ingredients. Regional means it comes from somewhere specific. Honest means you know exactly what's in it. Exquisite means he wasn't willing to settle for anything less.</p>
+            <p>That's the whole philosophy. It fits on three words because it doesn't need more than three words.</p>
+        </div>
+
+        <!-- Order / Get in touch -->
+        <div class="card card-honey">
+            <h2>Get some</h2>
+            <p>Tamás currently ships from Germany. If you're in the UK and you want honey that's genuinely worth the wait — email him directly. Tell him Doc Strange sent you. He'll know who that is.</p>
+            <p>If you're a UK retailer, wellness brand, or cannabis dispensary interested in stocking — the conversation is worth having. This is exactly the kind of product that belongs next to premium terpene products and mindful consumption.</p>
+
+            <div class="cta-group">
+                <a class="btn-primary" href="mailto:info@imkereimegyes.de?subject=UK%20Order%20Enquiry%20—%20via%20Cannabin-Oid&body=Hi%20Tamás%2C%0A%0AI%20found%20you%20via%20Cannabin-Oid%20and%20I'd%20love%20to%20order%20some%20honey.%0A%0A">Email Tamás to order</a>
+                <a class="btn-secondary" href="https://www.imkereimegyes.de" target="_blank" rel="noopener">Visit imkereimegyes.de (German site)</a>
+            </div>
+
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:20px; text-align:center;">
+                Imkerei Megyes &nbsp;·&nbsp; Meerdorfer Straße 16a, 39176 Wendeburg, Germany<br>
+                +49 5303 5083355 &nbsp;·&nbsp; info@imkereimegyes.de
+            </p>
+        </div>
+
+        <!-- B2B note -->
+        <div class="card">
+            <h2>UK wholesale &amp; retail</h2>
+            <p>If you run a UK cannabis dispensary, wellness shop, or mindful lifestyle brand and you're looking for a premium artisan honey that tells a genuine story — this is a conversation worth starting.</p>
+            <p>Tamás is open to discussing UK distribution. No middlemen, no dropshipping platforms, no algorithm. Direct from the beekeeper to your shelves. Email him and tell him what you're thinking.</p>
+
+            <div class="clue-wrap">
+                <details>
+                    <summary>Give me a clue 🎈</summary>
+                    <div class="clue-body">
+                        Your customers already care about what goes into their bodies. That's why they're your customers. Honey named after Strawberry Cough, made by a beekeeper who showed up at Mary Jane Berlin, is a product that doesn't need explaining to the right audience. They'll get it in three seconds. That's what a good product does.
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Village callout -->
+        <div class="village-callout">
+            <p class="vc-label">Found at Mary Jane Berlin · June 2026</p>
+            <h3>He turned up at a cannabis convention with honey.<br>Of course he's in the village.</h3>
+            <p>Cannabin-Oid is the community Doc Strange built because nobody built it when he needed it. A village of cannabis patients, advocates, growers and businesses who belong together even when the world doesn't quite have a category for them yet.</p>
+            <a href="https://cannabin-oid.co.uk">Come into the village</a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a class="footer-logo" href="https://cannabin-oid.co.uk">Cannabin-Oid</a>
+        <p>The cannabis village. No ads. No algorithms. Just people.</p>
+        <p style="margin-top:16px;">
+            <a href="https://cannabin-oid.co.uk">cannabin-oid.co.uk</a>
+            &nbsp;·&nbsp;
+            <a href="https://cannabin-oid.co.uk#village">Join the village</a>
+        </p>
+        <p style="margin-top:20px;font-size:0.8rem;color:rgba(107,158,107,0.5);">
+            Page made with care by the Cannabin-Oid village, June 2026.
+        </p>
+    </footer>
+
+</body>
+</html>

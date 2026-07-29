@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Exchange — Cannabin-Oid</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html { overflow-x: hidden; max-width: 100%; }
+        body { font-family: 'Poppins', sans-serif; background: #0a1a0a; color: #c8e6c8; min-height: 100dvh; overflow-x: hidden; max-width: 100%; }
+
+        .header { padding: 20px 16px 16px; text-align: center; }
+        .header .logo { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: #7ba87b; text-transform: uppercase; margin-bottom: 6px; }
+        .header h1 { color: #86efac; font-size: 1.5rem; font-weight: 800; margin-bottom: 2px; }
+        .header .sub { color: #7ba87b; font-size: 0.82rem; max-width: 480px; margin: 6px auto 0; line-height: 1.4; }
+
+        .container { max-width: 560px; margin: 0 auto; padding: 0 16px 60px; }
+
+        details { margin: 14px 0 22px; background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.15); border-radius: 12px; padding: 10px 14px; }
+        details summary { cursor: pointer; font-size: 0.85rem; font-weight: 700; color: #86efac; }
+        details p { margin-top: 8px; font-size: 0.82rem; color: #a3c9a3; line-height: 1.5; }
+
+        h4.section-heading { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #7ba87b; margin: 24px 0 10px; }
+
+        input, select, textarea {
+            width: 100%; padding: 12px 14px; margin-bottom: 10px;
+            background: rgba(22,163,74,0.05); border: 1.5px solid rgba(22,163,74,0.2);
+            border-radius: 12px; color: #c8e6c8; font-family: 'Poppins', sans-serif; font-size: 0.9rem;
+            outline: none; -webkit-appearance: none;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #16a34a; }
+        input::placeholder, textarea::placeholder { color: #5a7d5a; }
+        label { display: block; font-size: 0.72rem; font-weight: 700; color: #7ba87b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
+
+        .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .pill {
+            padding: 7px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+            background: rgba(22,163,74,0.08); border: 1.5px solid rgba(22,163,74,0.2); color: #a3c9a3;
+            cursor: pointer; font-family: 'Poppins', sans-serif;
+        }
+        .pill.active { background: #16a34a; border-color: #16a34a; color: #06170a; }
+
+        .post-card {
+            background: rgba(22,163,74,0.07); border: 1.5px solid rgba(134,239,172,0.18);
+            border-radius: 16px; padding: 16px; margin-bottom: 12px;
+        }
+        .post-type-tag { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 10px; border-radius: 10px; display: inline-block; margin-bottom: 8px; }
+        .post-type-tag.for_sale { background: rgba(134,239,172,0.15); color: #86efac; }
+        .post-type-tag.wanted { background: rgba(96,165,250,0.15); color: #93c5fd; }
+        .post-type-tag.help_request { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .post-title { font-size: 1rem; font-weight: 700; color: #e8f5e8; margin-bottom: 4px; }
+        .post-business { font-size: 0.78rem; color: #7ba87b; margin-bottom: 8px; }
+        .post-desc { font-size: 0.85rem; color: #c8e6c8; line-height: 1.5; }
+
+        .empty-state { text-align: center; color: #7ba87b; padding: 30px 10px; font-size: 0.85rem; }
+
+        #postFormSection { display: none; }
+        #postFormSection.open { display: block; }
+        .toggle-post-btn {
+            width: 100%; padding: 14px 16px; margin: 18px 0;
+            background: linear-gradient(135deg, #14532d, #166534);
+            border: 2px solid rgba(134,239,172,0.3); color: #86efac; border-radius: 14px;
+            font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+        }
+        .submit-btn {
+            width: 100%; padding: 13px 16px; background: #16a34a; color: #06170a;
+            border: none; border-radius: 12px; font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem; font-weight: 800; cursor: pointer; margin-top: 4px;
+        }
+        .submit-btn:disabled { opacity: 0.6; }
+        #postStatus { font-size: 0.82rem; margin-top: 10px; padding: 10px 12px; border-radius: 10px; display: none; }
+        #postStatus.ok { display: block; background: rgba(22,163,74,0.15); color: #86efac; }
+        #postStatus.err { display: block; background: rgba(251,113,133,0.15); color: #fca5a5; }
+
+        .back-link { display: block; text-align: center; margin-top: 30px; color: #7ba87b; font-size: 0.8rem; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">CANNABIN-OID</div>
+        <h1>🔄 The Exchange</h1>
+        <p class="sub">Surplus stock going spare, things people are hunting for, and the "does anyone actually know how to fix this?" questions no one wants to ask alone.</p>
+    </div>
+    <div class="container">
+        <details>
+            <summary>Give me a clue 🎈</summary>
+            <p>Think of a village noticeboard nailed up outside the shop. One corner says "spare timber, going begging." Another says "anyone know how to fix a jammed till?" Different problems, same board — because in a village you don't have to own every skill yourself, you just need to know who does.</p>
+        </details>
+
+        <input type="text" id="searchInput" placeholder="Search the Exchange…" oninput="renderPosts()">
+        <div class="pill-row" id="typeFilters">
+            <button class="pill active" data-type="all" onclick="setTypeFilter('all')">All</button>
+            <button class="pill" data-type="for_sale" onclick="setTypeFilter('for_sale')">📦 For Sale</button>
+            <button class="pill" data-type="wanted" onclick="setTypeFilter('wanted')">🔍 Wanted</button>
+            <button class="pill" data-type="help_request" onclick="setTypeFilter('help_request')">🆘 Help Wanted</button>
+        </div>
+
+        <div id="postList"><p class="empty-state">Loading the board…</p></div>
+
+        <button class="toggle-post-btn" onclick="togglePostForm()">➕ Post to the Exchange</button>
+
+        <div id="postFormSection">
+            <p style="font-size:0.78rem;color:#7ba87b;margin-bottom:12px;">Posting is a premium perk for onboarded businesses. Not claimed your profile yet? <a href="https://wa.me/447976884254?text=I%20want%20to%20claim%20my%20B2B%20profile" target="_blank" rel="noopener" style="color:#86efac;">WhatsApp Doc</a>.</p>
+
+            <label for="fBusiness">Your Business</label>
+            <select id="fBusiness"><option value="">Loading businesses…</option></select>
+
+            <label for="fType">Post Type</label>
+            <select id="fType">
+                <option value="for_sale">📦 For Sale / Surplus</option>
+                <option value="wanted">🔍 Wanted</option>
+                <option value="help_request">🆘 Help Wanted</option>
+            </select>
+
+            <label for="fTitle">Title</label>
+            <input type="text" id="fTitle" placeholder="e.g. 200 unfixed torch units, going cheap">
+
+            <label for="fDescription">Description</label>
+            <textarea id="fDescription" rows="4" placeholder="What is it, what's the catch, what do you need in return?"></textarea>
+
+            <label for="fContact">Contact (optional — leave blank to use your listing's contact)</label>
+            <input type="text" id="fContact" placeholder="email, phone, or WhatsApp link">
+
+            <button class="submit-btn" id="submitBtn" onclick="submitPost()">Post It</button>
+            <div id="postStatus"></div>
+        </div>
+
+        <a href="index.html" class="back-link">← Back to Cannabin-Oid</a>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://pdnjeynugptnavkdbmxh.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkbmpleW51Z3B0bmF2a2RibXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMTEzMDAsImV4cCI6MjA4NDU4NzMwMH0.GawisR01EykMtdauBMxenmHF2NXDMzDOJl8WgzkwFQo';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let allPosts = [];
+        let typeFilter = 'all';
+
+        async function loadPosts() {
+            const listEl = document.getElementById('postList');
+            try {
+                const { data, error } = await supabaseClient
+                    .from('b2b_exchange')
+                    .select('*')
+                    .eq('active', true)
+                    .eq('resolved', false)
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                allPosts = data || [];
+                renderPosts();
+            } catch (err) {
+                listEl.innerHTML = '<p class="empty-state">Couldn\'t load the board right now — try again shortly.</p>';
+            }
+        }
+
+        function setTypeFilter(type) {
+            typeFilter = type;
+            document.querySelectorAll('#typeFilters .pill').forEach(p => p.classList.toggle('active', p.dataset.type === type));
+            renderPosts();
+        }
+
+        const TYPE_LABELS = { for_sale: '📦 For Sale', wanted: '🔍 Wanted', help_request: '🆘 Help Wanted' };
+
+        function renderPosts() {
+            const listEl = document.getElementById('postList');
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            const visible = allPosts.filter(p => {
+                if (typeFilter !== 'all' && p.post_type !== typeFilter) return false;
+                if (!q) return true;
+                return (p.title + ' ' + (p.description || '') + ' ' + p.business_name).toLowerCase().includes(q);
+            });
+            if (visible.length === 0) {
+                listEl.innerHTML = '<p class="empty-state">Nothing here yet — be the first to post.</p>';
+                return;
+            }
+            listEl.innerHTML = visible.map(p => `
+                <div class="post-card">
+                    <span class="post-type-tag ${p.post_type}">${TYPE_LABELS[p.post_type] || p.post_type}</span>
+                    <div class="post-title">${p.title}</div>
+                    <div class="post-business">${p.business_name}${p.category ? ' · ' + p.category : ''}</div>
+                    ${p.description ? `<div class="post-desc">${p.description}</div>` : ''}
+                    ${p.contact_override ? `<div class="post-desc" style="margin-top:6px;color:#86efac;">✉ ${p.contact_override}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        async function loadBusinessOptions() {
+            const select = document.getElementById('fBusiness');
+            try {
+                const { data, error } = await supabaseClient
+                    .from('b2b_businesses')
+                    .select('slug, name')
+                    .eq('claimed', true)
+                    .eq('active', true)
+                    .order('name');
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    select.innerHTML = '<option value="">No onboarded businesses yet</option>';
+                    return;
+                }
+                select.innerHTML = '<option value="">Select your business…</option>' +
+                    data.map(b => `<option value="${b.slug}">${b.name}</option>`).join('');
+            } catch (err) {
+                select.innerHTML = '<option value="">Couldn\'t load — try refreshing</option>';
+            }
+        }
+
+        function togglePostForm() {
+            document.getElementById('postFormSection').classList.toggle('open');
+        }
+
+        async function submitPost() {
+            const business_slug = document.getElementById('fBusiness').value;
+            const post_type = document.getElementById('fType').value;
+            const title = document.getElementById('fTitle').value.trim();
+            const description = document.getElementById('fDescription').value.trim();
+            const contact_override = document.getElementById('fContact').value.trim();
+            const statusEl = document.getElementById('postStatus');
+            const btn = document.getElementById('submitBtn');
+
+            statusEl.className = '';
+            if (!business_slug || !title) {
+                statusEl.className = 'err';
+                statusEl.textContent = 'Pick your business and give it a title first.';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Posting…';
+            try {
+                const res = await fetch('/.netlify/functions/create-exchange-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ business_slug, post_type, title, description, contact_override })
+                });
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.error || 'Something went wrong');
+
+                statusEl.className = 'ok';
+                statusEl.textContent = '✅ Posted — live on the board now.';
+                document.getElementById('fTitle').value = '';
+                document.getElementById('fDescription').value = '';
+                document.getElementById('fContact').value = '';
+                loadPosts();
+            } catch (err) {
+                statusEl.className = 'err';
+                statusEl.textContent = '❌ ' + err.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Post It';
+            }
+        }
+
+        loadPosts();
+        loadBusinessOptions();
+    </script>
+</body>
+</html>

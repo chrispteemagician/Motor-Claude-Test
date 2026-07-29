@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join B2B Connect | Cannabin-Oid</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: #f0fdf4; }
+        .header { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); padding: 24px 20px 20px; text-align: center; }
+        .header h1 { color: white; font-size: 1.6rem; font-weight: 800; margin: 0 0 4px; }
+        .header p { color: rgba(255,255,255,0.85); font-size: 0.85rem; margin: 0; }
+        .body { max-width: 560px; margin: 0 auto; padding: 24px 16px 40px; }
+
+        .kudos-banner {
+            background: linear-gradient(135deg, #14532d, #166534);
+            border-radius: 16px; padding: 16px 20px;
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 20px;
+        }
+        .kudos-num { font-size: 2rem; font-weight: 800; color: #fbbf24; line-height: 1; }
+        .kudos-label { color: #86efac; font-size: 0.9rem; font-weight: 600; }
+        .kudos-sub { color: #4ade80; font-size: 0.75rem; }
+
+        .card { background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 24px; margin-bottom: 16px; }
+        .card h2 { font-size: 1.1rem; font-weight: 700; color: #1f2937; margin: 0 0 16px; }
+
+        .field { margin-bottom: 14px; }
+        .field label { display: block; font-size: 0.75rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .field input, .field select, .field textarea {
+            width: 100%; padding: 14px 16px;
+            border: 2px solid #e5e7eb; border-radius: 12px;
+            font-family: 'Poppins', sans-serif; font-size: 1rem; color: #1f2937;
+            outline: none; transition: border-color 0.15s; background: white;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus { border-color: #16a34a; }
+        .field textarea { resize: vertical; min-height: 80px; }
+        .field.required label::after { content: ' *'; color: #16a34a; }
+
+        .row { display: flex; gap: 12px; }
+        .row .field { flex: 1; }
+
+        .submit-btn {
+            width: 100%; padding: 18px; margin-top: 4px;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white; border: none; border-radius: 14px;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 800;
+            cursor: pointer; transition: all 0.15s; min-height: 56px;
+        }
+        .submit-btn:active { transform: scale(0.98); }
+
+        .tier-card {
+            border: 2px solid #e5e7eb; border-radius: 16px; padding: 16px;
+            display: flex; gap: 14px; align-items: flex-start;
+            cursor: pointer; transition: border-color 0.15s; margin-bottom: 10px;
+        }
+        .tier-card.selected { border-color: #16a34a; background: #f0fdf4; }
+        .tier-radio { width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 50%; margin-top: 2px; flex-shrink: 0; transition: all 0.15s; }
+        .tier-card.selected .tier-radio { border-color: #16a34a; background: #16a34a; box-shadow: inset 0 0 0 4px white; }
+        .tier-name { font-weight: 700; color: #1f2937; font-size: 0.95rem; }
+        .tier-price { color: #16a34a; font-weight: 700; font-size: 0.85rem; }
+        .tier-desc { color: #6b7280; font-size: 0.8rem; margin-top: 3px; line-height: 1.4; }
+
+        /* SUCCESS STATE */
+        #successState { display: none; text-align: center; padding: 40px 20px; }
+        #successState.show { display: block; }
+        #formState.hide { display: none; }
+        .success-icon { font-size: 4rem; margin-bottom: 16px; }
+        .success-title { font-size: 1.6rem; font-weight: 800; color: #14532d; margin-bottom: 8px; }
+        .success-sub { color: #6b7280; font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }
+        .kudos-awarded { background: linear-gradient(135deg, #14532d, #166534); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .kudos-awarded .num { font-size: 3rem; font-weight: 800; color: #fbbf24; }
+        .kudos-awarded .label { color: #86efac; font-weight: 700; }
+        .back-btn { display: block; background: white; border: 2px solid #16a34a; color: #16a34a; border-radius: 12px; padding: 14px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 700; text-decoration: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🤝 B2B Connect</h1>
+        <p>Join the EU cannabis business directory — powered by Cannabin-Oid</p>
+    </div>
+
+    <div class="body">
+
+        <!-- Success State -->
+        <div id="successState">
+            <div class="success-icon">✅</div>
+            <div class="success-title">You're in the Village</div>
+            <p class="success-sub">Doc will review and add your listing within 24 hours. You'll appear in the B2B Connect directory at cannabin-oid.co.uk.</p>
+            <div class="kudos-awarded">
+                <div class="num">+50</div>
+                <div class="label">Kudos Awarded</div>
+                <p style="color:#4ade80;font-size:0.8rem;margin-top:6px;">Village trust score — builds over time</p>
+            </div>
+            <a href="https://cannabin-oid.co.uk" class="back-btn">← Back to Cannabin-Oid</a>
+        </div>
+
+        <!-- Form State -->
+        <div id="formState">
+
+            <div class="kudos-banner">
+                <div>
+                    <div class="kudos-num">+50</div>
+                </div>
+                <div>
+                    <div class="kudos-label">Kudos for registering</div>
+                    <div class="kudos-sub">Village trust score — compounds as you use the platform</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Your Business</h2>
+
+                <div class="field required">
+                    <label>Business Name</label>
+                    <input type="text" id="bizName" placeholder="e.g. Evervale, Paradise Seeds...">
+                </div>
+
+                <div class="row">
+                    <div class="field required">
+                        <label>Type</label>
+                        <select id="bizType">
+                            <option value="club">🌿 Social Club / CSC</option>
+                            <option value="seedbank">🌱 Seed Bank</option>
+                            <option value="cultivationtech">⚙️ Cultivation Tech</option>
+                            <option value="compliancetech">⚖️ Compliance / Legal</option>
+                        </select>
+                    </div>
+                    <div class="field required">
+                        <label>Country</label>
+                        <select id="bizCountry">
+                            <option value="Germany">🇩🇪 Germany</option>
+                            <option value="Spain">🇪🇸 Spain</option>
+                            <option value="Netherlands">🇳🇱 Netherlands</option>
+                            <option value="UK">🇬🇧 UK</option>
+                            <option value="Austria">🇦🇹 Austria</option>
+                            <option value="Czech Republic">🇨🇿 Czech Republic</option>
+                            <option value="Poland">🇵🇱 Poland</option>
+                            <option value="Italy">🇮🇹 Italy</option>
+                            <option value="France">🇫🇷 France</option>
+                            <option value="Other">🌍 Other EU</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>City</label>
+                    <input type="text" id="bizCity" placeholder="e.g. Cologne, Berlin, Barcelona...">
+                </div>
+
+                <div class="field">
+                    <label>Website</label>
+                    <input type="url" id="bizWebsite" placeholder="https://...">
+                </div>
+
+                <div class="field required">
+                    <label>Contact Email</label>
+                    <input type="email" id="bizEmail" placeholder="hello@yourbusiness.com">
+                </div>
+
+                <div class="field">
+                    <label>Short Description (1-2 sentences)</label>
+                    <textarea id="bizDesc" placeholder="What you do, who you serve, what makes you different..."></textarea>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Choose Your Tier</h2>
+
+                <div class="tier-card selected" id="tierFree" onclick="selectTier('free')">
+                    <div class="tier-radio"></div>
+                    <div>
+                        <div class="tier-name">Tier 1 — Free Listing</div>
+                        <div class="tier-price">Free forever</div>
+                        <div class="tier-desc">Standard directory listing. Appear in B2B Connect filters. Verified badge when confirmed.</div>
+                    </div>
+                </div>
+
+                <div class="tier-card" id="tierHamlet" onclick="selectTier('hamlet')">
+                    <div class="tier-radio"></div>
+                    <div>
+                        <div class="tier-name">🏰 Hamlet B2B — £99.95/mo</div>
+                        <div class="tier-price">Doc will contact you to set up</div>
+                        <div class="tier-desc">Custom AI strain widget for your venue + SpicyDrive business intel + real-time compliance updates + featured placement. Doc contacts you to onboard.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <button class="submit-btn" onclick="submitRegistration()">🌿 Join the Village — Free</button>
+                <p style="text-align:center;font-size:0.75rem;color:#9ca3af;margin-top:12px;">Doc reviews and adds your listing within 24 hours. No spam. No selling your data.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let selectedTier = 'free';
+
+        // Pre-fill from URL params
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const club = params.get('club');
+            const ref = params.get('ref');
+
+            if (club) {
+                const formatted = club.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                document.getElementById('bizName').value = formatted;
+            }
+            if (ref) {
+                document.title = `B2B Connect — ${ref} | Cannabin-Oid`;
+            }
+
+            // Restore Kudos from localStorage
+            const existing = parseInt(localStorage.getItem('cannabinoid_kudos') || '0');
+            if (existing > 0) {
+                document.querySelector('.kudos-banner .kudos-sub').textContent = `Your current score: ${existing} Kudos`;
+            }
+        });
+
+        function selectTier(tier) {
+            selectedTier = tier;
+            document.getElementById('tierFree').classList.toggle('selected', tier === 'free');
+            document.getElementById('tierHamlet').classList.toggle('selected', tier === 'hamlet');
+            document.querySelector('.submit-btn').textContent = tier === 'hamlet'
+                ? '🏰 Request Hamlet B2B Setup'
+                : '🌿 Join the Village — Free';
+        }
+
+        function submitRegistration() {
+            const name = document.getElementById('bizName').value.trim();
+            const email = document.getElementById('bizEmail').value.trim();
+
+            if (!name || !email) {
+                alert('Please fill in your business name and contact email.');
+                return;
+            }
+
+            const type = document.getElementById('bizType').value;
+            const country = document.getElementById('bizCountry').value;
+            const city = document.getElementById('bizCity').value.trim();
+            const website = document.getElementById('bizWebsite').value.trim();
+            const desc = document.getElementById('bizDesc').value.trim();
+            const ref = new URLSearchParams(window.location.search).get('ref') || 'direct';
+
+            const tierLabel = selectedTier === 'hamlet' ? 'Hamlet B2B (£99.95/mo)' : 'Free Tier 1';
+
+            const msg = encodeURIComponent(
+                `B2B Connect Registration\n\nBusiness: ${name}\nType: ${type}\nCountry: ${country}\nCity: ${city}\nEmail: ${email}\nWebsite: ${website || 'none'}\nTier: ${tierLabel}\nRef: ${ref}\n\nDescription:\n${desc || 'none'}`
+            );
+
+            // Award Kudos
+            const existing = parseInt(localStorage.getItem('cannabinoid_kudos') || '0');
+            localStorage.setItem('cannabinoid_kudos', existing + 50);
+
+            // Open WhatsApp to Doc
+            window.open(`https://wa.me/447976884254?text=${msg}`, '_blank');
+
+            // Show success
+            document.getElementById('formState').classList.add('hide');
+            document.getElementById('successState').classList.add('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
