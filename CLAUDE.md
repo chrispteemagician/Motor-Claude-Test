@@ -136,7 +136,7 @@ Terp: terpene scientist raised on a council estate. Pharmacology PhD crossed wit
 
 ---
 
-## The Clue system
+## The Clue system (next build — do not forget this)
 
 Every piece of complex text on every -Oid gets two layers: the truth stated plainly, plus a hidden "Give me a clue" `<details>` with an analogy — no JS, no library.
 
@@ -156,7 +156,12 @@ Rule: every concept page, every B2B section, the prescription pathway, Hamlet ti
 
 ## What's unbuilt
 
-- **Monthly Draw** — Villager+ auto-entered monthly prize draw from conference-donated freebies; not built. See Doc for the full spec before building.
+- **Monthly Draw** — Villager+ auto-entered monthly prize draw from conference-donated freebies (`b2b_businesses.freebies`/`b2b_offers`); 10 winners minimum, one extra winner per extra prize donated. Not built yet. **Rules that apply whenever this gets built, non-negotiable:**
+  - Doc collects and holds ONE physical sample only, for the draw-page photo — the actual prize ships DIRECT from the donating business to the winner. Doc is the connector, never the warehouse.
+  - Winner's shipping address is shared **ONE TIME** with the specific donating business only — never stored, never shared with anyone else, never CC'd elsewhere. Get explicit consent at the point of winning (no standing signup-time consent exists yet).
+  - Winner agrees at the point of winning to leave an honest review for the product — stated as a condition, not implied.
+  - First business to donate in a given month gets that month's Hamlet B2B tier (£99/mo value) free; later donors in the same month still pay but still add a winner slot.
+  - See Doc for the rest of the spec before building — this is the load-bearing part, not the whole thing.
 - **Elder membership invite codes** — promised 10 per conference business, no code system yet
 - **B2B matchmaking page** — using the b2b_needs/b2b_offers data already being collected
 - **Advocacy filter** in index.html B2B section — exists in DB/form, filter button missing
